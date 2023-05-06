@@ -22,7 +22,9 @@ void main() {
       .thenReturn(Map.of({"serverId": DiscordGuild("serverId", "Goon Squad", "", false)}));
     when(mockAppStore.discordDetailsStore)
       .thenReturn(mockDetailsStore);
-    await loadAppFonts();
+    if (const bool.fromEnvironment("LoadFont")) {
+      await loadAppFonts();
+    }
     final builder = GoldenBuilder.column()
       ..addScenario(
           'Simple',
