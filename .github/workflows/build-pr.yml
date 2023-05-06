@@ -17,7 +17,7 @@ jobs:
         - name: Configure AWS Credentials
           uses: aws-actions/configure-aws-credentials@v2
           with:
-            role-to-assume: ${{ secrets.AWS_DEPLOYMENT_ARN }}
+            role-to-assume: arn:aws:iam::816923827429:role/ClashBotGithubRepoUser
             aws-region: us-east-1
           
         - name: List Buckets
