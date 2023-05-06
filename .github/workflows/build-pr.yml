@@ -12,6 +12,8 @@ jobs:
     aws:
       name: Test AWS
       runs-on: ubuntu-latest
+      permissions:
+        id-token: write 
 
       steps:
         - name: Configure AWS Credentials
