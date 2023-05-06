@@ -41,7 +41,6 @@ class TentativeQueue {
         o.serverId == serverId &&
         o.tournamentName == tournamentName &&
         o.tournamentDay == tournamentDay &&
-        o.lastUpdatedAt == lastUpdatedAt &&
         const ListEquality().equals(o.users, users);
   }
 

@@ -1,0 +1,83 @@
+name: Clash Bot Flutter UI - Pull Request
+
+on:
+  pull_request:
+      branches:
+          - main
+      paths-ignore:
+          - '**/README.md'
+          - '**/.gitignore'
+
+jobs:
+  unit:
+      name: Run Tests
+      runs-on: ubuntu-latest
+  
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v3
+
+        - uses: subosito/flutter-action@v2
+          with:
+              flutter-version: '3.7.12'
+              channel: 'stable'
+
+        - name: Check Flutter version
+          run: flutter --version
+
+        - name: Download Dependencies
+          run: flutter pub get
+
+        - name: Unit Tests
+          run: flutter test "test/unit/"
+
+  golden:
+      name: Run Golden File tests
+      runs-on: macos-latest
+
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v3
+
+        - uses: subosito/flutter-action@v2
+          with:
+              flutter-version: '3.7.12'
+              channel: 'stable'
+
+        - name: Check Flutter version
+          run: flutter --version
+
+        - name: Download Dependencies
+          run: flutter pub get
+
+        - name: Golden Tests
+          run: flutter test "test/widget/"
+
+        - name: Publish Test Golden Test Failures
+          if: ${{ failure() }}
+          uses: actions/upload-artifact@v3
+          with:
+            name: golden-failures
+            path: test/widget/failures
+  
+  build:
+    name: Build web package
+    needs:
+      - unit
+      - golden 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - uses: subosito/flutter-action@v2
+        with:
+            flutter-version: '3.7.12'
+            channel: 'stable'
+
+      - name: Check Flutter version
+        run: flutter --version
+
+      - name: Build Web Bundle
+        run: flutter build web

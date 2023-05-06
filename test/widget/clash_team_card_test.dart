@@ -53,7 +53,9 @@ void main() {
     when(mockAppStore.discordDetailsStore).thenReturn(mockDetailsStore);
     when(mockAppStore.loggedInClashUser).thenReturn(mockClashPlayerStore);
     when(mockAppStore.riotChampionStore).thenReturn(mockRiotChampionStore);
-    await loadAppFonts();
+    if (const bool.fromEnvironment("LoadFont")) {
+      await loadAppFonts();
+    }
     var mapWithTopOnly = Map.of({
       Role.TOP: PlayerDetails("1234", "Some Player", ["Anivia", "Ahri"])
     });
@@ -201,7 +203,9 @@ void main() {
     when(mockAppStore.discordDetailsStore).thenReturn(mockDetailsStore);
     when(mockAppStore.loggedInClashUser).thenReturn(mockClashPlayerStore);
     when(mockAppStore.riotChampionStore).thenReturn(mockRiotChampionStore);
-    await loadAppFonts();
+    if (const bool.fromEnvironment("LoadFont")) {
+      await loadAppFonts();
+    }
     var mapWithTopOnly = Map.of({
       Role.TOP: PlayerDetails("1234", "Some Player", ["Anivia", "Ahri"])
     });

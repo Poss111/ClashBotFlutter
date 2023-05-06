@@ -490,6 +490,15 @@ class ClashCard extends StatelessWidget {
           padding: const EdgeInsets.all(5.0),
           child: Column(
             children: <Widget>[
+              Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.update),
+                      BodyTextSmall(
+                          message:
+                              DateFormat.yMd().add_jm().format(clashTeam.lastUpdatedAt.toLocal())),
+                    ],
+                  ),
               ListTile(
                 leading: CircleAvatar(
                   radius:25,
@@ -502,15 +511,6 @@ class ClashCard extends StatelessWidget {
                   title: TournamentText(
                       tournamentName: clashTeam.tournamentName.sentenceCase,
                       tournamentDay: clashTeam.tournamentDay),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.update),
-                      LabelTextSmall(
-                          message:
-                              "${DateFormat.yMd().add_jm().format(clashTeam.lastUpdatedAt.toLocal())}"),
-                    ],
-                  ),
                 ),
               ),
               ListView.builder(
