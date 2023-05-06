@@ -62,6 +62,9 @@ jobs:
     
     build:
       name: Build web package
+      needs:
+        - unit
+        - golden 
       runs-on: ubuntu-latest
 
       steps:
