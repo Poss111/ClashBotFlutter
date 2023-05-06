@@ -25,6 +25,7 @@ class _WelcomeDashboard extends State<WelcomeDashboard> {
   ServerFormController serverFormController = ServerFormController();
   late SelectedServerFormStore selectedServerFormStore;
   bool enableNavigation = true;
+  bool showDisclaimer = true;
 
   @override
   void initState() {
@@ -44,6 +45,14 @@ class _WelcomeDashboard extends State<WelcomeDashboard> {
         });
       }
     }
+
+    Future.delayed(
+        Duration.zero,
+        () => showDialog<String>(
+            context: context,
+            builder: (context) {
+              return const Dialog(child: DisclaimerWidget());
+            }));
 
     List<Widget> welcomeWidgetsOrder = List.empty(growable: true);
     welcomeWidgetsOrder.add(const WelcomeWidget());
@@ -100,7 +109,6 @@ class _WelcomeDashboard extends State<WelcomeDashboard> {
                           child: const Text("Next")),
                 ],
               ),
-              const DisclaimerWidget(),
             ]));
   }
 }
@@ -189,7 +197,8 @@ class LoginToDiscordWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appStore = context.read<ApplicationDetailsStore>();
-    var dispose = when((_) => appStore.discordDetailsStore.detailsLoaded == true, () {
+    var dispose =
+        when((_) => appStore.discordDetailsStore.detailsLoaded == true, () {
       callback(true);
     });
     return Observer(builder: (_) {
@@ -301,25 +310,32 @@ class DisclaimerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
-                Text('Disclaimers', style: subHeaderStyle),
-              ],
-            ),
-            const SmallBreak(),
-            const Text(
-                'Clash-Bot is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends &copy Riot Games, Inc.'),
-            const SmallBreak(),
-            const Text(
-                'Clash-Bot is not endorsed by Discord and does not reflect the views or opinions of Discord or anyone officially involved in producing or managing League of Legends. League of Legends and Discord are trademarks or registered trademarks of Discord.'),
-          ],
-        ),
-      ),
+      child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: SingleChildScrollView(
+              child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const [
+                  Text('Disclaimers', style: subHeaderStyle),
+                ],
+              ),
+              const SmallBreak(),
+              const Text(
+                  'Clash-Bot is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends &copy Riot Games, Inc.'),
+              const SmallBreak(),
+              const Text(
+                  'Clash-Bot is not endorsed by Discord and does not reflect the views or opinions of Discord or anyone officially involved in producing or managing Discord. Discord is a trademark or registered trademark of Discord.'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Dismiss"))
+              ])
+            ],
+          ))),
     );
   }
 }
