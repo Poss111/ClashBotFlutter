@@ -1,32 +1,61 @@
 name: Clash Bot Flutter UI - Release
 
 on:
-    push:
-      tags:
-        - 'v*'
+  push:
+    tags:
+      - 'v*'
 
 jobs:
-    build:
-        name: Build Flutter UI
-        runs-on: ubuntu-latest
-    
-        steps:
-          - name: Checkout repo
-            uses: actions/checkout@v3
+  build:
+      name: Build Flutter UI
+      runs-on: ubuntu-latest
+  
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v3
 
-          - uses: subosito/flutter-action@v2
-            with:
-                flutter-version: '3.7.9'
-                channel: 'stable'
+        - uses: subosito/flutter-action@v2
+          with:
+              flutter-version: '3.7.9'
+              channel: 'stable'
 
-          - name: Check Flutter version
-            run: flutter --version
+        - name: Check Flutter version
+          run: flutter --version
 
-          - name: Download Dependencies
-            run: flutter pub get
+        - name: Download Dependencies
+          run: flutter pub get
 
-          - name: Tests
-            run: flutter test
+        - name: Build Web Bundle
+          run: flutter build web
 
-          - name: Build Web Bundle
-            run: flutter build web
+        - name: Archive Web Bundle
+          uses: actions/upload-artifact@v3
+          with:
+            name: web-bundle
+            path: build/web/**
+
+  deployment:
+    name: Deploy to S3
+    runs-on: ubuntu-latest
+    environment: Production
+    permissions:
+      id-token: write 
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOYMENT_ARN }}
+          aws-region: us-east-1
+
+      - name: Download web bundle
+        uses: actions/download-artifact@v3
+        with:
+          name: web-bundle
+          path: web
+
+      - name: Remove old files from S3
+        run: aws s3 rm s3://${{ secrets.S3_BUCKET }} --recursive
+
+      - name: Push to s3
+        run: aws s3 cp web/ s3://${{ secrets.S3_BUCKET }} --recursive
