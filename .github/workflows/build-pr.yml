@@ -32,10 +32,10 @@ jobs:
                 flutter pub get
 
           - name: Unit Tests
-            run: flutter test "unit/"
+            run: flutter test "test/unit/"
 
           - name: Golden Tests
-            run: flutter test "widget/"
+            run: flutter test "test/widget/"
 
           - name: Publish Test Golden Test Failures
             if: ${{ failure() }}
