@@ -9,6 +9,20 @@ on:
             - '**/.gitignore'
 
 jobs:
+    aws:
+      name: Test AWS
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v2
+          with:
+            role-to-assume: ${{ secrets.AWS_DEPLOYMENT_ARN }}
+            aws-region: us-east-1
+          
+        - name: List Buckets
+          run: aws s3 ls
+
     unit:
         name: Run Tests
         runs-on: ubuntu-latest
