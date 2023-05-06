@@ -1,3 +1,4 @@
+import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/services/clashbot_service.dart';
 import 'package:clashbot_flutter/services/discord_service.dart';
@@ -52,9 +53,10 @@ void main() {
     discordService = DiscordServiceMock();
     resourcesService = RiotResourcesServiceMock();
     applicationDetailsStore = MockApplicationDetailsStore();
+    mockito.when(applicationDetailsStore.id).thenReturn("1");
     final clashPlayerStore = ClashPlayerStore(clashBotService, applicationDetailsStore);
     clashPlayerStore.selectedServers = ObservableList.of(["0"]);
-    var list = List.of([ClashTeam("1", "Some Name", "Awesome Sauce", "1", {}, "1234", DateTime.now())]);
+    var list = List.of([ClashTeam("1", "Some Name", "Awesome Sauce", "1", { Role.TOP: PlayerDetails("123", "", [])}, "1234", DateTime.now())]);
     mockito.when(clashBotService.getClashTeams("1", [])).thenAnswer((_) async => list);
     await clashPlayerStore.refreshTeamList();
     expect(clashPlayerStore.numberOfTeams, 1);

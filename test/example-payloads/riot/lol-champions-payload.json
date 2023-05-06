@@ -1,0 +1,256 @@
+{
+    "type": "champion",
+    "format": "standAloneComplex",
+    "version": "13.7.1",
+    "data": {
+        "Aatrox": {
+            "version": "13.7.1",
+            "id": "Aatrox",
+            "key": "266",
+            "name": "Aatrox",
+            "title": "the Darkin Blade",
+            "blurb": "Once honored defenders of Shurima against the Void, Aatrox and his brethren would eventually become an even greater threat to Runeterra, and were defeated only by cunning mortal sorcery. But after centuries of imprisonment, Aatrox was the first to find...",
+            "info": {
+                "attack": 8,
+                "defense": 4,
+                "magic": 3,
+                "difficulty": 4
+            },
+            "image": {
+                "full": "Aatrox.png",
+                "sprite": "champion0.png",
+                "group": "champion",
+                "x": 0,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "tags": [
+                "Fighter",
+                "Tank"
+            ],
+            "partype": "Blood Well",
+            "stats": {
+                "hp": 650,
+                "hpperlevel": 114,
+                "mp": 0,
+                "mpperlevel": 0,
+                "movespeed": 345,
+                "armor": 38,
+                "armorperlevel": 4.45,
+                "spellblock": 32,
+                "spellblockperlevel": 2.05,
+                "attackrange": 175,
+                "hpregen": 3,
+                "hpregenperlevel": 1,
+                "mpregen": 0,
+                "mpregenperlevel": 0,
+                "crit": 0,
+                "critperlevel": 0,
+                "attackdamage": 60,
+                "attackdamageperlevel": 5,
+                "attackspeedperlevel": 2.5,
+                "attackspeed": 0.651
+            }
+        },
+        "Ahri": {
+            "version": "13.7.1",
+            "id": "Ahri",
+            "key": "103",
+            "name": "Ahri",
+            "title": "the Nine-Tailed Fox",
+            "blurb": "Innately connected to the magic of the spirit realm, Ahri is a fox-like vastaya who can manipulate her prey's emotions and consume their essence—receiving flashes of their memory and insight from each soul she consumes. Once a powerful yet wayward...",
+            "info": {
+                "attack": 3,
+                "defense": 4,
+                "magic": 8,
+                "difficulty": 5
+            },
+            "image": {
+                "full": "Ahri.png",
+                "sprite": "champion0.png",
+                "group": "champion",
+                "x": 48,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "tags": [
+                "Mage",
+                "Assassin"
+            ],
+            "partype": "Mana",
+            "stats": {
+                "hp": 590,
+                "hpperlevel": 96,
+                "mp": 418,
+                "mpperlevel": 25,
+                "movespeed": 330,
+                "armor": 21,
+                "armorperlevel": 4.7,
+                "spellblock": 30,
+                "spellblockperlevel": 1.3,
+                "attackrange": 550,
+                "hpregen": 2.5,
+                "hpregenperlevel": 0.6,
+                "mpregen": 8,
+                "mpregenperlevel": 0.8,
+                "crit": 0,
+                "critperlevel": 0,
+                "attackdamage": 53,
+                "attackdamageperlevel": 3,
+                "attackspeedperlevel": 2,
+                "attackspeed": 0.668
+            }
+        },
+        "Akali": {
+            "version": "13.7.1",
+            "id": "Akali",
+            "key": "84",
+            "name": "Akali",
+            "title": "the Rogue Assassin",
+            "blurb": "Abandoning the Kinkou Order and her title of the Fist of Shadow, Akali now strikes alone, ready to be the deadly weapon her people need. Though she holds onto all she learned from her master Shen, she has pledged to defend Ionia from its enemies, one...",
+            "info": {
+                "attack": 5,
+                "defense": 3,
+                "magic": 8,
+                "difficulty": 7
+            },
+            "image": {
+                "full": "Akali.png",
+                "sprite": "champion0.png",
+                "group": "champion",
+                "x": 96,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "tags": [
+                "Assassin"
+            ],
+            "partype": "Energy",
+            "stats": {
+                "hp": 570,
+                "hpperlevel": 119,
+                "mp": 200,
+                "mpperlevel": 0,
+                "movespeed": 345,
+                "armor": 23,
+                "armorperlevel": 4.7,
+                "spellblock": 37,
+                "spellblockperlevel": 2.05,
+                "attackrange": 125,
+                "hpregen": 9,
+                "hpregenperlevel": 0.9,
+                "mpregen": 50,
+                "mpregenperlevel": 0,
+                "crit": 0,
+                "critperlevel": 0,
+                "attackdamage": 62,
+                "attackdamageperlevel": 3.3,
+                "attackspeedperlevel": 3.2,
+                "attackspeed": 0.625
+            }
+        },
+        "Akshan": {
+            "version": "13.7.1",
+            "id": "Akshan",
+            "key": "166",
+            "name": "Akshan",
+            "title": "the Rogue Sentinel",
+            "blurb": "Raising an eyebrow in the face of danger, Akshan fights evil with dashing charisma, righteous vengeance, and a conspicuous lack of shirts. He is highly skilled in the art of stealth combat, able to evade the eyes of his enemies and reappear when they...",
+            "info": {
+                "attack": 0,
+                "defense": 0,
+                "magic": 0,
+                "difficulty": 0
+            },
+            "image": {
+                "full": "Akshan.png",
+                "sprite": "champion0.png",
+                "group": "champion",
+                "x": 144,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "tags": [
+                "Marksman",
+                "Assassin"
+            ],
+            "partype": "Mana",
+            "stats": {
+                "hp": 630,
+                "hpperlevel": 104,
+                "mp": 350,
+                "mpperlevel": 40,
+                "movespeed": 330,
+                "armor": 26,
+                "armorperlevel": 4.2,
+                "spellblock": 30,
+                "spellblockperlevel": 1.3,
+                "attackrange": 500,
+                "hpregen": 3.75,
+                "hpregenperlevel": 0.65,
+                "mpregen": 8.2,
+                "mpregenperlevel": 0.7,
+                "crit": 0,
+                "critperlevel": 0,
+                "attackdamage": 52,
+                "attackdamageperlevel": 3.5,
+                "attackspeedperlevel": 4,
+                "attackspeed": 0.638
+            }
+        },
+        "Alistar": {
+            "version": "13.7.1",
+            "id": "Alistar",
+            "key": "12",
+            "name": "Alistar",
+            "title": "the Minotaur",
+            "blurb": "Always a mighty warrior with a fearsome reputation, Alistar seeks revenge for the death of his clan at the hands of the Noxian empire. Though he was enslaved and forced into the life of a gladiator, his unbreakable will was what kept him from truly...",
+            "info": {
+                "attack": 6,
+                "defense": 9,
+                "magic": 5,
+                "difficulty": 7
+            },
+            "image": {
+                "full": "Alistar.png",
+                "sprite": "champion0.png",
+                "group": "champion",
+                "x": 192,
+                "y": 0,
+                "w": 48,
+                "h": 48
+            },
+            "tags": [
+                "Tank",
+                "Support"
+            ],
+            "partype": "Mana",
+            "stats": {
+                "hp": 685,
+                "hpperlevel": 120,
+                "mp": 350,
+                "mpperlevel": 40,
+                "movespeed": 330,
+                "armor": 47,
+                "armorperlevel": 4.7,
+                "spellblock": 32,
+                "spellblockperlevel": 2.05,
+                "attackrange": 125,
+                "hpregen": 8.5,
+                "hpregenperlevel": 0.85,
+                "mpregen": 8.5,
+                "mpregenperlevel": 0.8,
+                "crit": 0,
+                "critperlevel": 0,
+                "attackdamage": 62,
+                "attackdamageperlevel": 3.75,
+                "attackspeedperlevel": 2.125,
+                "attackspeed": 0.625
+            }
+        }
+    }
+}

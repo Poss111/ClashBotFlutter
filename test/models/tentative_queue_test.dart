@@ -9,8 +9,9 @@ void main() {
       var tentative = Tentative(id: "tq-1234", serverId: "1234", tournamentDetails: BaseTournament(tournamentName: "awesome_sauce", tournamentDay: "1"), tentativePlayers: [TentativePlayer(
         discordId: "1",
       )]);
-      var expectedTentativeQueue = TentativeQueue("tq-1234", "awesome_sauce", "1", "1", ["1"], DateTime.now());
-      expect(TentativeQueue.tentativeToTentativeQueue(tentative), expectedTentativeQueue);
+      var expectedTentativeQueue = TentativeQueue("tq-1234", "1234", "awesome_sauce", "1", ["1"], DateTime.now());
+      var actualTentativeQueue = TentativeQueue.tentativeToTentativeQueue(tentative);
+      expect(actualTentativeQueue, expectedTentativeQueue);
     });
   });
 }
