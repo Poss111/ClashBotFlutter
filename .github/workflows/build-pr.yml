@@ -31,8 +31,18 @@ jobs:
                 ls -lha
                 flutter pub get
 
-          - name: Tests
-            run: flutter test
+          - name: Unit Tests
+            run: flutter test "unit/"
+
+          - name: Golden Tests
+            run: flutter test "widget/"
+
+          - name: Publish Test Golden Test Failures
+            if: ${{ failure() }}
+            uses: actions/upload-artifact@v3
+            with:
+              name: golden-failures
+              path: /test/widget/failures
 
           - name: Build Web Bundle
             run: flutter build web
