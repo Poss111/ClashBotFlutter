@@ -9,8 +9,8 @@ on:
             - '**/.gitignore'
 
 jobs:
-    build:
-        name: Build Flutter UI
+    unit:
+        name: Run Tests
         runs-on: ubuntu-latest
     
         steps:
@@ -26,13 +26,29 @@ jobs:
             run: flutter --version
 
           - name: Download Dependencies
-            run: |
-                pwd
-                ls -lha
-                flutter pub get
+            run: flutter pub get
 
           - name: Unit Tests
             run: flutter test "test/unit/"
+
+    golden:
+        name: Run Golden File tests
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout repo
+            uses: actions/checkout@v3
+
+          - uses: subosito/flutter-action@v2
+            with:
+                flutter-version: '3.7.12'
+                channel: 'stable'
+
+          - name: Check Flutter version
+            run: flutter --version
+
+          - name: Download Dependencies
+            run: flutter pub get
 
           - name: Golden Tests
             run: flutter test "test/widget/"
@@ -43,6 +59,22 @@ jobs:
             with:
               name: golden-failures
               path: /test/widget/failures
+    
+    build:
+      name: Build web package
+      runs-on: ubuntu-latest
 
-          - name: Build Web Bundle
-            run: flutter build web
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v3
+
+        - uses: subosito/flutter-action@v2
+          with:
+              flutter-version: '3.7.12'
+              channel: 'stable'
+
+        - name: Check Flutter version
+          run: flutter --version
+
+        - name: Build Web Bundle
+          run: flutter build web
