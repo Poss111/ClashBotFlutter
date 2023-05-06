@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <script>
+            console.log("Hit!")
+            window.onload = function() {
+                console.log("Loading up index.html on login....");
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get('code');
+                const state = urlParams.get('state');
+                const location = window.location.href + " " + window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "?code=" + code + "&state=" + state;
+                if(code && state) {
+                    window.opener.postMessage(window.location.href, location);
+                } else {
+                    console.error("Failed to login you in.")
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <p>Logging you in...</p>
+    </body>
+</html>
