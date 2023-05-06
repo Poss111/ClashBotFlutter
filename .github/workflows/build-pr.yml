@@ -1,0 +1,38 @@
+name: Clash Bot Flutter UI - Pull Request
+
+on:
+    pull_request:
+        branches:
+            - main
+        paths-ignore:
+            - '**/README.md'
+            - '**/.gitignore'
+
+jobs:
+    build:
+        name: Build Flutter UI
+        runs-on: ubuntu-latest
+    
+        steps:
+          - name: Checkout repo
+            uses: actions/checkout@v3
+
+          - uses: subosito/flutter-action@v2
+            with:
+                flutter-version: '3.7.12'
+                channel: 'stable'
+
+          - name: Check Flutter version
+            run: flutter --version
+
+          - name: Download Dependencies
+            run: |
+                pwd
+                ls -lha
+                flutter pub get
+
+          - name: Tests
+            run: flutter test
+
+          - name: Build Web Bundle
+            run: flutter build web

@@ -1,0 +1,32 @@
+name: Clash Bot Flutter UI - Release
+
+on:
+    push:
+      tags:
+        - 'v*'
+
+jobs:
+    build:
+        name: Build Flutter UI
+        runs-on: ubuntu-latest
+    
+        steps:
+          - name: Checkout repo
+            uses: actions/checkout@v3
+
+          - uses: subosito/flutter-action@v2
+            with:
+                flutter-version: '3.7.9'
+                channel: 'stable'
+
+          - name: Check Flutter version
+            run: flutter --version
+
+          - name: Download Dependencies
+            run: flutter pub get
+
+          - name: Tests
+            run: flutter test
+
+          - name: Build Web Bundle
+            run: flutter build web
