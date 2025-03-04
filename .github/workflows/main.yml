@@ -28,6 +28,9 @@ jobs:
         - name: Download Dependencies
           run: flutter pub get
 
+        - name: Set environment variables
+          run: ./build.sh prod
+
         - name: Build Web Bundle
           run: flutter build web
 
