@@ -1,0 +1,7 @@
+name: ClashBotFlutterPulumi
+description: Infrastructure to support a static web site built with flutter
+runtime: go
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-go
