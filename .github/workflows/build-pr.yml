@@ -8,9 +8,10 @@ on:
           - '**/README.md'
           - '**/.gitignore'
 
+env:
+  FLUTTER_VERSION: '3.29.0'
+
 jobs:
-  matrix:
-    
   unit:
       name: Run Tests
       runs-on: ubuntu-latest
@@ -21,7 +22,7 @@ jobs:
 
         - uses: subosito/flutter-action@v2.18.0
           with:
-              flutter-version: '3.29.0'
+              flutter-version: ${{ env.FLUTTER_VERSION }}
               channel: 'stable'
 
         - name: Check Flutter version
@@ -43,7 +44,7 @@ jobs:
 
         - uses: subosito/flutter-action@v2.18.0
           with:
-              flutter-version: '3.29.0'
+              flutter-version: ${{ env.FLUTTER_VERSION }}
               channel: 'stable'
 
         - name: Check Flutter version
@@ -75,7 +76,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2.18.0
         with:
-            flutter-version: '3.29.0'
+            flutter-version: ${{ env.FLUTTER_VERSION }}
             channel: 'stable'
 
       - name: Check Flutter version
