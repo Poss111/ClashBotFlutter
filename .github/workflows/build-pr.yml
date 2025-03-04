@@ -32,7 +32,7 @@ jobs:
           run: flutter pub get
 
         - name: Unit Tests
-          run: flutter test "test/unit/"
+          run: flutter test "test/unit/" >> $GITHUB_STEP_SUMMARY
 
   golden:
       name: Run Golden File tests
@@ -54,7 +54,7 @@ jobs:
           run: flutter pub get
 
         - name: Golden Tests
-          run: flutter test "test/widget/"
+          run: flutter test "test/widget/" >> $GITHUB_STEP_SUMMARY
 
         - name: Publish Test Golden Test Failures
           if: ${{ failure() }}
@@ -83,4 +83,4 @@ jobs:
         run: flutter --version
 
       - name: Build Web Bundle
-        run: flutter build web
+        run: flutter build web >> $GITHUB_STEP_SUMMARY
