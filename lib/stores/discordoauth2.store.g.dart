@@ -72,11 +72,15 @@ mixin _$DiscordOAuth2Store on _DiscordOAuth2Store, Store {
     return super.lastReceivedResponse;
   }
 
+  bool _lastReceivedResponseIsInitialized = false;
+
   @override
   set lastReceivedResponse(Response value) {
-    _$lastReceivedResponseAtom.reportWrite(value, super.lastReceivedResponse,
+    _$lastReceivedResponseAtom.reportWrite(value,
+        _lastReceivedResponseIsInitialized ? super.lastReceivedResponse : null,
         () {
       super.lastReceivedResponse = value;
+      _lastReceivedResponseIsInitialized = true;
     });
   }
 
@@ -137,10 +141,15 @@ mixin _$DiscordOAuth2Store on _DiscordOAuth2Store, Store {
     return super.discordUserGuilds;
   }
 
+  bool _discordUserGuildsIsInitialized = false;
+
   @override
   set discordUserGuilds(List<DiscordGuild> value) {
-    _$discordUserGuildsAtom.reportWrite(value, super.discordUserGuilds, () {
+    _$discordUserGuildsAtom.reportWrite(
+        value, _discordUserGuildsIsInitialized ? super.discordUserGuilds : null,
+        () {
       super.discordUserGuilds = value;
+      _discordUserGuildsIsInitialized = true;
     });
   }
 

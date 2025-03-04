@@ -8,6 +8,9 @@ on:
           - '**/README.md'
           - '**/.gitignore'
 
+env:
+  FLUTTER_VERSION: '3.29.0'
+
 jobs:
   unit:
       name: Run Tests
@@ -15,11 +18,11 @@ jobs:
   
       steps:
         - name: Checkout repo
-          uses: actions/checkout@v3
+          uses: actions/checkout@v4.2.2
 
-        - uses: subosito/flutter-action@v2
+        - uses: subosito/flutter-action@v2.18.0
           with:
-              flutter-version: '3.7.12'
+              flutter-version: ${{ env.FLUTTER_VERSION }}
               channel: 'stable'
 
         - name: Check Flutter version
@@ -29,7 +32,7 @@ jobs:
           run: flutter pub get
 
         - name: Unit Tests
-          run: flutter test "test/unit/"
+          run: flutter test "test/unit/" >> $GITHUB_STEP_SUMMARY
 
   golden:
       name: Run Golden File tests
@@ -37,11 +40,11 @@ jobs:
 
       steps:
         - name: Checkout repo
-          uses: actions/checkout@v3
+          uses: actions/checkout@v4.2.2
 
-        - uses: subosito/flutter-action@v2
+        - uses: subosito/flutter-action@v2.18.0
           with:
-              flutter-version: '3.7.12'
+              flutter-version: ${{ env.FLUTTER_VERSION }}
               channel: 'stable'
 
         - name: Check Flutter version
@@ -51,11 +54,11 @@ jobs:
           run: flutter pub get
 
         - name: Golden Tests
-          run: flutter test "test/widget/"
+          run: flutter test "test/widget/" >> $GITHUB_STEP_SUMMARY
 
         - name: Publish Test Golden Test Failures
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4.6.1
           with:
             name: golden-failures
             path: test/widget/failures
@@ -69,15 +72,15 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.2.2
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2.18.0
         with:
-            flutter-version: '3.7.12'
+            flutter-version: ${{ env.FLUTTER_VERSION }}
             channel: 'stable'
 
       - name: Check Flutter version
         run: flutter --version
 
       - name: Build Web Bundle
-        run: flutter build web
+        run: flutter build web >> $GITHUB_STEP_SUMMARY
