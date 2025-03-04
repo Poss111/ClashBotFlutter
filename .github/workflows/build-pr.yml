@@ -16,6 +16,10 @@ jobs:
       steps:
         - name: Checkout repo
           uses: actions/checkout@v4.2.2
+      
+        - uses: dart-lang/setup-dart@v1.7.1
+          with:
+            sdk: 3.7.1
 
         - uses: subosito/flutter-action@v2.18.0
           with:
@@ -38,6 +42,10 @@ jobs:
       steps:
         - name: Checkout repo
           uses: actions/checkout@v4.2.2
+
+        - uses: dart-lang/setup-dart@v1.7.1
+          with:
+            sdk: 3.7.1
 
         - uses: subosito/flutter-action@v2.18.0
           with:
@@ -70,6 +78,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4.2.2
+
+      - uses: dart-lang/setup-dart@v1.7.1
+        with:
+          sdk: 3.7.1
 
       - uses: subosito/flutter-action@v2.18.0
         with:
