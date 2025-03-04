@@ -12,9 +12,9 @@ jobs:
   
       steps:
         - name: Checkout repo
-          uses: actions/checkout@v3
+          uses: actions/checkout@v4.2.2
 
-        - uses: subosito/flutter-action@v2
+        - uses: subosito/flutter-action@v2.18.0
           with:
               flutter-version: '3.7.9'
               channel: 'stable'
@@ -29,7 +29,7 @@ jobs:
           run: flutter build web
 
         - name: Archive Web Bundle
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4.6.1
           with:
             name: web-bundle
             path: build/web/**
@@ -45,13 +45,13 @@ jobs:
 
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOYMENT_ARN }}
           aws-region: us-east-1
 
       - name: Download web bundle
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.9
         with:
           name: web-bundle
           path: web
