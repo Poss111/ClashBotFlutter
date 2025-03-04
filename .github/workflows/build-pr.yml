@@ -16,15 +16,15 @@ jobs:
       steps:
         - name: Checkout repo
           uses: actions/checkout@v4.2.2
-      
-        - uses: dart-lang/setup-dart@v1.7.1
-          with:
-            sdk: 3.7.1
 
         - uses: subosito/flutter-action@v2.18.0
           with:
               flutter-version: '3.7.12'
               channel: 'stable'
+      
+        - uses: dart-lang/setup-dart@v1.7.1
+          with:
+            sdk: 3.7.1
 
         - name: Check Flutter version
           run: flutter --version
@@ -43,14 +43,14 @@ jobs:
         - name: Checkout repo
           uses: actions/checkout@v4.2.2
 
-        - uses: dart-lang/setup-dart@v1.7.1
-          with:
-            sdk: 3.7.1
-
         - uses: subosito/flutter-action@v2.18.0
           with:
               flutter-version: '3.7.12'
               channel: 'stable'
+
+        - uses: dart-lang/setup-dart@v1.7.1
+          with:
+            sdk: 3.7.1
 
         - name: Check Flutter version
           run: flutter --version
@@ -79,14 +79,14 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4.2.2
 
-      - uses: dart-lang/setup-dart@v1.7.1
-        with:
-          sdk: 3.7.1
-
       - uses: subosito/flutter-action@v2.18.0
         with:
             flutter-version: '3.7.12'
             channel: 'stable'
+
+      - uses: dart-lang/setup-dart@v1.7.1
+        with:
+          sdk: 3.7.1
 
       - name: Check Flutter version
         run: flutter --version
