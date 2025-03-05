@@ -8,5 +8,5 @@ part 'env.g.dart';
 )
 abstract class Env {
   @EnviedField(varName: 'CLASHBOT_SERVICE_URL')
-  static const String clashbotServiceUrl = _Env.clashbotServiceUrl;
+  static String clashbotServiceUrl = _Env.clashbotServiceUrl;
 }
