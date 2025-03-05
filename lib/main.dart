@@ -1,4 +1,5 @@
 import 'package:clash_bot_api/api.dart';
+import 'package:clashbot_flutter/core/config/env.dart';
 import 'package:clashbot_flutter/globals/color_schemes.dart';
 import 'package:clashbot_flutter/models/model_first_time.dart';
 import 'package:clashbot_flutter/pages/intro/welcome_page.dart';
@@ -126,14 +127,16 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider(create: (context) => widget.modelTheme),
           Provider<DiscordService>(
               create: (_) => DiscordServiceImpl(setupOauth2Helper())),
-          Provider<ClashBotService>(
-              create: (_) => ClashBotServiceImpl(
-                  UserApi(),
-                  TeamApi(),
-                  ChampionsApi(),
-                  SubscriptionApi(),
-                  TentativeApi(),
-                  TournamentApi())),
+          Provider<ApiClient>(
+              create: (_) => ApiClient(basePath: Env.clashbotServiceUrl)),
+          ProxyProvider<ApiClient, ClashBotService>(
+              update: (_, apiClient, __) => ClashBotServiceImpl(
+                  UserApi(apiClient),
+                  TeamApi(apiClient),
+                  ChampionsApi(apiClient),
+                  SubscriptionApi(apiClient),
+                  TentativeApi(apiClient),
+                  TournamentApi(apiClient))),
           Provider<RiotResourcesService>(
               create: (_) => RiotResourceServiceImpl()),
           Provider<ClashBotEventsService>(
