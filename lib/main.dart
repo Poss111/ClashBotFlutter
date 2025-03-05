@@ -24,6 +24,7 @@ import 'dart:developer' as developer;
 import 'package:intl/intl.dart';
 import 'package:validators/validators.dart';
 
+import 'generated/git_info.dart';
 import 'globals/global_settings.dart';
 import 'models/model_theme.dart';
 import 'pages/home/home.dart';
@@ -137,18 +138,16 @@ class _MyAppState extends State<MyApp> {
               create: (_) => RiotResourceServiceImpl()),
           Provider<ClashBotEventsService>(
               create: (_) => ClashBotEventsService()),
-          ProxyProvider4<DiscordService, ClashBotService, RiotResourcesService, ClashBotEventsService,
-                  ApplicationDetailsStore>(
-              update: (_, discordService, clashBotService, riotResourceService, clashBotEventService,
-                      __) =>
-                  ApplicationDetailsStore(
-                      discordService, clashBotService, riotResourceService, clashBotEventService)),
+          ProxyProvider4<DiscordService, ClashBotService, RiotResourcesService,
+                  ClashBotEventsService, ApplicationDetailsStore>(
+              update: (_, discordService, clashBotService, riotResourceService,
+                      clashBotEventService, __) =>
+                  ApplicationDetailsStore(discordService, clashBotService,
+                      riotResourceService, clashBotEventService)),
         ],
-        child: Consumer2<ApplicationDetailsStore, ModelFirstTime>(
-            builder: (context,
-                ApplicationDetailsStore appStore,
-                ModelFirstTime modelFirstTime,
-                child) {
+        child: Consumer2<ApplicationDetailsStore, ModelFirstTime>(builder:
+            (context, ApplicationDetailsStore appStore,
+                ModelFirstTime modelFirstTime, child) {
           if (modelFirstTime.visited) {
             appStore.loadUserDetails();
           }
@@ -301,6 +300,26 @@ class MainContainer extends StatelessWidget {
                     isLabelVisible: appStore.unreadNotifications.isNotEmpty,
                     child: const ClashBotNotificationsWidget(),
                   )),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            // spacing: 1.0,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.code),
+                tooltip: 'GitHub',
+                onPressed: () {
+                  // Add your GitHub link or functionality here
+                },
+              ),
+              const Text(
+                "${GitInfo.branchName} - ${GitInfo.commitHash}",
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w100,
+                ),
+              )
+            ],
+          ),
           IconButton(
               icon: Icon(themeNotifier.isDark
                   ? Icons.nightlight_round
@@ -400,8 +419,7 @@ class ClashBotNotificationBody extends StatelessWidget {
         padding: const EdgeInsets.all(5.0),
         child: ListTile(
           leading: CircleAvatar(
-            foregroundImage: isNull(iconUrl) ? null :
-            NetworkImage(iconUrl),
+            foregroundImage: isNull(iconUrl) ? null : NetworkImage(iconUrl),
           ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -24,27 +24,26 @@ class _MainContainer extends State<MainContainer> {
     var mainContentWidth = 500.0;
     var margin = 15.0;
     return Scaffold(
-      appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: const Text('ClashBot 2.0'),
-          leading: const Text(
-            'v 2.0.0',
-            style: TextStyle(
-              fontWeight: FontWeight.w100,
+        appBar: AppBar(
+            // Here we take the value from the MyHomePage object that was created by
+            // the App.build method, and use it to set our appbar title.
+            title: const Text('ClashBot 2.0'),
+            leading: const Text(
+              'v 2.0.0',
+              style: TextStyle(
+                fontWeight: FontWeight.w100,
+              ),
             ),
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.add_alert),
-              tooltip: 'Show Snackbar',
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('This is a snackbar')));
-              },
-            ),
-          ]),
-      body: WelcomeDashboard()
-    );
+            actions: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.add_alert),
+                tooltip: 'Show Snackbar',
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('This is a snackbar')));
+                },
+              ),
+            ]),
+        body: WelcomeDashboard());
   }
 }
