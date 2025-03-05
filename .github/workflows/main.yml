@@ -32,6 +32,10 @@ jobs:
           run: |
             ./pre_build.sh prod
             ./build.sh prod
+            ls -lha .env
+
+        - name: Generate Envied Files
+          run: flutter pub run build_runner build --delete-conflicting-outputs
 
         - name: Build Web Bundle
           run: flutter build web
