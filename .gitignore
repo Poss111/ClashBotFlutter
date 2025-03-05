@@ -46,7 +46,6 @@ app.*.map.json
 
 **/failures/*.png
 
-.env
 .env.local
 .env.prod
 .env.g.dart
