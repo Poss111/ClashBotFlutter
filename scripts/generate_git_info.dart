@@ -23,7 +23,10 @@ class GitInfo {
 
     final outputFile = File('lib/generated/git_info.dart');
     outputFile.writeAsStringSync(content);
-    print('Git info generated successfully.');
+    print('# Generated Git info');
+    print('| Branch/Tag | Commit hash |');
+    print('|------------|-------------|');
+    print('| $branchName | $commitHash |');
   } catch (e) {
     print('Error generating Git info: $e');
   }

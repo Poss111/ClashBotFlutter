@@ -35,6 +35,7 @@ jobs:
             CLASHBOT_SERVICE_URL: ${{ vars.CLASHBOT_SERVICE_URL }}
           run: |
             dart run build_runner clean
+            dart scripts/generate_git_info.dart >> $GITHUB_STEP_SUMMARY
             dart run build_runner build --delete-conflicting-outputs
 
         - name: Build Web Bundle
