@@ -78,8 +78,8 @@ func main() {
 					},
 				},
 				MinTtl:     pulumi.Int(0),
-				DefaultTtl: pulumi.Int(3600),
-				MaxTtl:     pulumi.Int(86400),
+				DefaultTtl: pulumi.Int(120),
+				MaxTtl:     pulumi.Int(240),
 			},
 			Restrictions: &cloudfront.DistributionRestrictionsArgs{
 				GeoRestriction: &cloudfront.DistributionRestrictionsGeoRestrictionArgs{

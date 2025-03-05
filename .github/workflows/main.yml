@@ -29,7 +29,9 @@ jobs:
           run: flutter pub get
 
         - name: Set environment variables
-          run: ./build.sh prod
+          run: |
+            ./pre-build.sh prod
+            ./build.sh prod
 
         - name: Build Web Bundle
           run: flutter build web
