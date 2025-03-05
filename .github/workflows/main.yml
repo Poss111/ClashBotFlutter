@@ -30,7 +30,7 @@ jobs:
 
         - name: Set environment variables
           run: |
-            ./pre-build.sh prod
+            ./pre_build.sh prod
             ./build.sh prod
 
         - name: Build Web Bundle
