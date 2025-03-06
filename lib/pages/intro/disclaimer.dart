@@ -21,7 +21,7 @@ class DisclaimerWidget extends StatelessWidget {
               children: [
                 FutureBuilder(
                   future: DefaultAssetBundle.of(context)
-                      .loadString('markdown/privacy-policy.md'),
+                      .loadString('assets/markdown/privacy-policy.md'),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return MarkdownBlock(data: snapshot.data ?? '');
