@@ -8,6 +8,7 @@ import 'package:clashbot_flutter/pages/intro/step_pages/welcome.dart';
 import 'package:clashbot_flutter/pages/intro/step_pages/what_is_clash.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
 import 'package:clashbot_flutter/stores/short-lived/selected_server_form.store.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
@@ -102,7 +103,9 @@ class _WelcomeDashboard extends State<WelcomeDashboard> {
                           selectedServerFormStore: selectedServerFormStore)
                       : ElevatedButton(
                           onPressed: enableNavigation
-                              ? () {
+                              ? () async {
+                                  await FirebaseAnalytics.instance.logEvent(
+                                      name: 'welcome_page_next_button');
                                   if (index + 1 < welcomeWidgetsOrder.length) {
                                     setState(() {
                                       index = index + 1;

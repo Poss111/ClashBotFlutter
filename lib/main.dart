@@ -22,7 +22,6 @@ import 'package:go_router/go_router.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'dart:developer' as developer;
-import 'package:intl/intl.dart';
 import 'package:validators/validators.dart';
 
 import 'generated/git_info.dart';
