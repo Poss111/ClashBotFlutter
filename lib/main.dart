@@ -23,6 +23,7 @@ import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'dart:developer' as developer;
 import 'package:validators/validators.dart';
+import 'package:intl/intl.dart';
 
 import 'generated/git_info.dart';
 import 'globals/global_settings.dart';
