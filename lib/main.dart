@@ -64,7 +64,7 @@ GoRouter router = GoRouter(
                 name: 'home',
                 path: HOME_ROUTE,
                 builder: (BuildContext context, GoRouterState state) {
-                  return const HomePage();
+                  return const HomeV2Data();
                 }),
             GoRoute(
               name: 'teams',
@@ -233,7 +233,6 @@ class TestWidget extends StatelessWidget {
               Text('This is a body small',
                   style: Theme.of(context).textTheme.bodySmall),
             ],
-          ),
         ),
       ),
     );
