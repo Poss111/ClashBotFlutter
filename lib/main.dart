@@ -1,15 +1,18 @@
+import 'dart:developer' as developer;
+
 import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/core/config/env.dart';
 import 'package:clashbot_flutter/globals/color_schemes.dart';
 import 'package:clashbot_flutter/models/model_first_time.dart';
+import 'package:clashbot_flutter/pages/home/home_v2_service.dart';
 import 'package:clashbot_flutter/pages/intro/welcome_page.dart';
 import 'package:clashbot_flutter/pages/settings/settings_page.dart';
-import 'package:clashbot_flutter/pages/teams/team_page.dart';
 import 'package:clashbot_flutter/routes.dart';
 import 'package:clashbot_flutter/services/clashbot_service.dart';
 import 'package:clashbot_flutter/services/clashbot_service_impl.dart';
 import 'package:clashbot_flutter/services/discord_service.dart';
 import 'package:clashbot_flutter/services/discord_service_impl.dart';
+import 'package:clashbot_flutter/services/discord_service_mock_impl.dart';
 import 'package:clashbot_flutter/services/riot_resources_service.dart';
 import 'package:clashbot_flutter/services/riot_resources_service_impl.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
@@ -19,16 +22,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
-import 'dart:developer' as developer;
 import 'package:validators/validators.dart';
-import 'package:intl/intl.dart';
 
 import 'generated/git_info.dart';
 import 'globals/global_settings.dart';
 import 'models/model_theme.dart';
-import 'pages/home/home.dart';
 import 'services/clashbot_events_service.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -66,13 +67,6 @@ GoRouter router = GoRouter(
                 builder: (BuildContext context, GoRouterState state) {
                   return const HomeV2Data();
                 }),
-            GoRoute(
-              name: 'teams',
-              path: TEAMS_DASHBOARD_ROUTE,
-              builder: (BuildContext context, GoRouterState state) {
-                return const TeamPage();
-              },
-            ),
             GoRoute(
               name: 'settings',
               path: SETTINGS_ROUTE,
@@ -126,7 +120,9 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider(create: (context) => widget.modelFirstTime),
           ChangeNotifierProvider(create: (context) => widget.modelTheme),
           Provider<DiscordService>(
-              create: (_) => DiscordServiceImpl(setupOauth2Helper())),
+              create: (_) => Env.mockDiscordService == 'true'
+                  ? DiscordServiceMockImpl()
+                  : DiscordServiceImpl(setupOauth2Helper())),
           Provider<ApiClient>(
               create: (_) => ApiClient(basePath: Env.clashbotServiceUrl)),
           ProxyProvider<ApiClient, ClashBotService>(
@@ -196,46 +192,46 @@ class TestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(10),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('This is a display large',
-                  style: Theme.of(context).textTheme.displayLarge),
-              Text('This is a display medium',
-                  style: Theme.of(context).textTheme.displayMedium),
-              Text('This is a display small',
-                  style: Theme.of(context).textTheme.displaySmall),
-              Text('This is a headline large',
-                  style: Theme.of(context).textTheme.headlineLarge),
-              Text('This is a headline medium',
-                  style: Theme.of(context).textTheme.headlineMedium),
-              Text('This is a headline small',
-                  style: Theme.of(context).textTheme.headlineSmall),
-              Text('This is a title large',
-                  style: Theme.of(context).textTheme.titleLarge),
-              Text('This is a title medium',
-                  style: Theme.of(context).textTheme.titleMedium),
-              Text('This is a title small',
-                  style: Theme.of(context).textTheme.titleSmall),
-              Text('This is a label large',
-                  style: Theme.of(context).textTheme.labelLarge),
-              Text('This is a label medium',
-                  style: Theme.of(context).textTheme.labelMedium),
-              Text('This is a label small',
-                  style: Theme.of(context).textTheme.labelSmall),
-              Text('This is a body large',
-                  style: Theme.of(context).textTheme.bodyLarge),
-              Text('This is a body medium',
-                  style: Theme.of(context).textTheme.bodyMedium),
-              Text('This is a body small',
-                  style: Theme.of(context).textTheme.bodySmall),
-            ],
+        body: Container(
+      padding: EdgeInsets.all(10),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('This is a display large',
+                style: Theme.of(context).textTheme.displayLarge),
+            Text('This is a display medium',
+                style: Theme.of(context).textTheme.displayMedium),
+            Text('This is a display small',
+                style: Theme.of(context).textTheme.displaySmall),
+            Text('This is a headline large',
+                style: Theme.of(context).textTheme.headlineLarge),
+            Text('This is a headline medium',
+                style: Theme.of(context).textTheme.headlineMedium),
+            Text('This is a headline small',
+                style: Theme.of(context).textTheme.headlineSmall),
+            Text('This is a title large',
+                style: Theme.of(context).textTheme.titleLarge),
+            Text('This is a title medium',
+                style: Theme.of(context).textTheme.titleMedium),
+            Text('This is a title small',
+                style: Theme.of(context).textTheme.titleSmall),
+            Text('This is a label large',
+                style: Theme.of(context).textTheme.labelLarge),
+            Text('This is a label medium',
+                style: Theme.of(context).textTheme.labelMedium),
+            Text('This is a label small',
+                style: Theme.of(context).textTheme.labelSmall),
+            Text('This is a body large',
+                style: Theme.of(context).textTheme.bodyLarge),
+            Text('This is a body medium',
+                style: Theme.of(context).textTheme.bodyMedium),
+            Text('This is a body small',
+                style: Theme.of(context).textTheme.bodySmall),
+          ],
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -357,7 +353,6 @@ class MainContainer extends StatelessWidget {
             }
           })
         ]),
-        drawer: const ClashDrawer(),
         body: child,
       );
     });

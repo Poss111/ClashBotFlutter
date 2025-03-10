@@ -123,13 +123,14 @@ class TeamTile extends StatelessWidget {
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         subtitle: Row(
+            spacing: 4,
             children: Role.values.map((role) {
-          return RoleChip(
-              image: roleToImage[role] ?? 'Unkown',
-              role: role,
-              player: team.members[role],
-              teamId: team.teamId);
-        }).toList()));
+              return RoleChip(
+                  image: roleToImage[role] ?? 'Unkown',
+                  role: role,
+                  player: team.members[role],
+                  teamId: team.teamId);
+            }).toList()));
   }
 }
 
@@ -148,31 +149,79 @@ class RoleChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // Define your onClick behavior here
-        ScaffoldMessenger.of(context).showSnackBar(player != null
-            ? removeFromTeam(role, player!.id, player!.name, teamId)
-            : joinTeam(role, player!.id, player!.name, teamId));
-      },
-      child: Chip(
-        avatar: Container(
-          decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              image: DecorationImage(image: AssetImage(image))),
-        ),
-        label: Text(
-          role.toString().split('.').last,
-          style: const TextStyle(fontWeight: FontWeight.w900),
-        ),
-        backgroundColor: player != null
-            ? (Theme.of(context).brightness == Brightness.dark
-                ? Colors.green
-                : Colors.lightGreen)
-            : (Theme.of(context).brightness == Brightness.dark
-                ? Colors.red
-                : Colors.redAccent),
-      ),
-    );
+    return player != null
+        ? RoleFilledWidget(
+            role: role, player: player, teamId: teamId, image: image)
+        : UnfilledRoleWidget(
+            role: role, player: player, teamId: teamId, image: image);
+  }
+}
+
+class UnfilledRoleWidget extends StatelessWidget {
+  const UnfilledRoleWidget({
+    super.key,
+    required this.role,
+    required this.player,
+    required this.teamId,
+    required this.image,
+  });
+
+  final Role role;
+  final PlayerDetails? player;
+  final String teamId;
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton.tonal(
+        onPressed: () {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(joinTeam(role, player!.id, player!.name, teamId));
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Row(spacing: 5, children: [
+            SizedBox(
+                width: 15, height: 15, child: Image(image: AssetImage(image))),
+            // Text(role.toString())
+          ]),
+        ));
+  }
+}
+
+class RoleFilledWidget extends StatelessWidget {
+  const RoleFilledWidget({
+    super.key,
+    required this.role,
+    required this.player,
+    required this.teamId,
+    required this.image,
+  });
+
+  final Role role;
+  final PlayerDetails? player;
+  final String teamId;
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+        onPressed: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+              removeFromTeam(role, player!.id, player!.name, teamId));
+        },
+        child: SizedBox(
+          width: 150,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Row(spacing: 5, children: [
+              SizedBox(
+                  width: 15,
+                  height: 15,
+                  child: Image(image: AssetImage(image))),
+              Text(player?.name ?? 'Unknown')
+            ]),
+          ),
+        ));
   }
 }
