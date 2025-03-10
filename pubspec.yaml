@@ -63,6 +63,7 @@ dependencies:
   firebase_analytics_web: ^0.5.10+10
   intl: ^0.18.1
   flutter_neat_and_clean_calendar: ^0.4.16
+  flutter_svg: ^2.0.9
 
 dev_dependencies:
   flutter_test:
@@ -99,8 +100,11 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/markdown/privacy-policy.md
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+    - assets/images/TopIcon.webp
+    - assets/images/BotIcon.webp
+    - assets/images/MidIcon.webp
+    - assets/images/JGIcon.webp
+    - assets/images/SuppIcon.webp
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
