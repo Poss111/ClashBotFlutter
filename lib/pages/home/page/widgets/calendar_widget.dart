@@ -24,13 +24,12 @@ class CalendarWidget extends StatefulWidget {
 
 class _CalendarWidgetState extends State<CalendarWidget> {
   late DateTime _focusedDay;
-  DateTime? _selectedDay;
+  DateTime? _hoveredDay;
 
   @override
   void initState() {
     super.initState();
     _focusedDay = widget.focusedDay;
-    _selectedDay = widget.selectedDay;
   }
 
   void onMonthChanged(DateTime day) {
@@ -39,9 +38,14 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     });
   }
 
-  void onDaySelected(DateTime day) {
+  void onDaySelected(DateTime day, ClashStore clashStore) {
     setState(() {
-      _selectedDay = day;
+      if (isSameDay(clashStore.filterDate, day)) {
+        clashStore.turnOffDayFilter();
+      } else {
+        clashStore.turnOnDayFilter();
+        clashStore.setFilterDate(day);
+      }
     });
   }
 
@@ -105,71 +109,94 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                     List<Event> dayEvents = clashStore.events
                         .where((event) => isSameDay(event.date, currentDay))
                         .toList();
-                    return GestureDetector(
-                      onTap: () {
-                        onDaySelected(currentDay);
+                    return MouseRegion(
+                      onEnter: (_) {
+                        setState(() {
+                          _hoveredDay = currentDay;
+                        });
                       },
-                      child: Container(
-                        margin: EdgeInsets.all(4.0),
-                        decoration: BoxDecoration(
-                          color: isSameDay(_selectedDay, currentDay)
-                              ? Colors.blue
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: Text(
-                                '$day',
-                                style: TextStyle(
-                                  color: isSameDay(_selectedDay, currentDay)
-                                      ? Colors.white
-                                      : isDarkMode
-                                          ? Colors.white
-                                          : Colors.black,
+                      onExit: (_) {
+                        setState(() {
+                          _hoveredDay = null;
+                        });
+                      },
+                      child: GestureDetector(
+                        onTap: () {
+                          onDaySelected(currentDay, clashStore);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(4.0),
+                          decoration: BoxDecoration(
+                            color: isSameDay(
+                                    clashStore.filterByDay
+                                        ? clashStore.filterDate
+                                        : null,
+                                    currentDay)
+                                ? Colors.blue
+                                : _hoveredDay == currentDay
+                                    ? Colors.blue.withOpacity(0.2)
+                                    : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Text(
+                                  '$day',
+                                  style: TextStyle(
+                                    color: isSameDay(
+                                            clashStore.filterByDay
+                                                ? clashStore.filterDate
+                                                : null,
+                                            currentDay)
+                                        ? Colors.white
+                                        : isDarkMode
+                                            ? Colors.white
+                                            : Colors.black,
+                                  ),
                                 ),
                               ),
-                            ),
-                            if (dayEvents.isNotEmpty)
-                              Positioned(
-                                right: 4.0,
-                                top: 4.0,
-                                child: Row(
-                                  children: [
-                                    ...dayEvents.take(5).map((event) {
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 2.0),
-                                        child: Observer(
-                                            builder: (_) => CircleAvatar(
-                                                  backgroundImage: NetworkImage(
-                                                      appStore
-                                                          .discordDetailsStore
-                                                          .discordGuildMap[event
-                                                              .team.serverId]!
-                                                          .iconURL),
-                                                  radius: 8.0,
-                                                )),
-                                      );
-                                    }).toList(),
-                                    if (dayEvents.length > 5)
-                                      const Padding(
-                                        padding: EdgeInsets.only(left: 2.0),
-                                        child: Text('...'),
-                                      ),
-                                  ],
+                              if (dayEvents.isNotEmpty)
+                                Positioned(
+                                  right: 4.0,
+                                  top: 4.0,
+                                  child: Row(
+                                    children: [
+                                      ...dayEvents.take(5).map((event) {
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 2.0),
+                                          child: Observer(
+                                              builder: (_) => CircleAvatar(
+                                                    backgroundImage:
+                                                        NetworkImage(appStore
+                                                            .discordDetailsStore
+                                                            .discordGuildMap[
+                                                                event.team
+                                                                    .serverId]!
+                                                            .iconURL),
+                                                    radius: 8.0,
+                                                  )),
+                                        );
+                                      }).toList(),
+                                      if (dayEvents.length > 5)
+                                        const Padding(
+                                          padding: EdgeInsets.only(left: 2.0),
+                                          child: Text('...'),
+                                        ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            if (clashStore.tournaments.any((tournament) =>
-                                isSameDay(tournament.startTime, currentDay)))
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.blue.withOpacity(0.3),
-                                  borderRadius: BorderRadius.circular(8.0),
+                              if (clashStore.tournaments.any((tournament) =>
+                                  isSameDay(tournament.startTime, currentDay)))
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );

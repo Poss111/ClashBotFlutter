@@ -84,11 +84,9 @@ class HomeV2 extends StatefulWidget {
 class _HomeV2State extends State<HomeV2> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  List<String> _selectedServers = [];
 
   @override
   Widget build(BuildContext context) {
-    final ClashStore clashStore = context.read<ClashStore>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Clash Tournaments'),
@@ -97,11 +95,7 @@ class _HomeV2State extends State<HomeV2> {
         children: [
           const ServerChipList(),
           CalendarWidget(focusedDay: _focusedDay, selectedDay: _selectedDay),
-          Observer(
-              builder: (_) => Expanded(
-                    child: EventsListWidget(
-                        upcomingEvents: clashStore.tournamentsToTeams),
-                  )),
+          Expanded(child: EventsListWidget()),
         ],
       ),
     );

@@ -9,6 +9,8 @@ import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:developer' as developer;
 
+import 'package:table_calendar/table_calendar.dart';
+
 part 'clash.store.g.dart';
 
 class ClashStore = _ClashStore with _$ClashStore;
@@ -55,6 +57,27 @@ abstract class _ClashStore with Store {
   }
 
   @observable
+  bool filterByDay = false;
+
+  @action
+  void turnOnDayFilter() {
+    filterByDay = true;
+  }
+
+  @action
+  void turnOffDayFilter() {
+    filterByDay = false;
+  }
+
+  @observable
+  DateTime filterDate = DateTime.now();
+
+  @action
+  void setFilterDate(DateTime date) {
+    filterDate = date;
+  }
+
+  @observable
   ObservableList<ClashTournament> tournaments = ObservableList();
 
   @computed
@@ -85,6 +108,24 @@ abstract class _ClashStore with Store {
       }).toList();
     }
     return tournamentsToTeams;
+  }
+
+  @computed
+  Map<ClashTournament, List<ClashTeam>>
+      get tournamentsToTeamsFilteredToADayIfActive {
+    Map<ClashTournament, List<ClashTeam>> ogTeams = tournamentsToTeams;
+    if (filterByDay) {
+      developer.log("Filtering by day");
+      ogTeams = ogTeams.map((key, value) {
+        return MapEntry(
+            key,
+            value.where((team) {
+              return isSameDay(key.startTime, filterDate);
+            }).toList());
+      });
+    }
+    developer.log("Not filtering by day");
+    return ogTeams;
   }
 
   @computed

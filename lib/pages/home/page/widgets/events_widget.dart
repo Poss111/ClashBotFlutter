@@ -1,40 +1,50 @@
 import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/models/clash_tournament.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
+import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'dart:developer' as developer;
 
 class EventsListWidget extends StatelessWidget {
-  final Map<ClashTournament, List<ClashTeam>> upcomingEvents;
-
-  const EventsListWidget({required this.upcomingEvents});
+  const EventsListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var events = upcomingEvents.entries.toList();
+    ClashStore clashStore = context.read<ClashStore>();
     final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ssZ');
-    return SingleChildScrollView(
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: events.length,
-        itemBuilder: (context, index) {
-          return EventTile(
-            event: {
-              'title': events[index].key.tournamentName +
-                  events[index].key.tournamentDay,
-              'date': formatter.format(events[index].key.startTime),
-              'startTime': formatter.format(events[index].key.startTime),
-              'endTime': formatter.format(events[index].key.startTime),
-              'description': "Some description.",
-              'registrationOpenDateTime':
-                  formatter.format(events[index].key.startTime)
-            },
-            eventTeams: events[index].value,
-          );
-        },
-      ),
-    );
+    return Observer(builder: (_) {
+      var events =
+          clashStore.tournamentsToTeamsFilteredToADayIfActive.entries.toList();
+      developer.log("Events: $events");
+      return SingleChildScrollView(
+        child: ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: clashStore.tournamentsToTeams.entries.length,
+          itemBuilder: (context, index) {
+            if (clashStore.filterByDay && events[index].value.isEmpty) {
+              return SizedBox.shrink();
+            }
+            return EventTile(
+              event: {
+                'title': events[index].key.tournamentName +
+                    events[index].key.tournamentDay,
+                'date': formatter.format(events[index].key.startTime),
+                'startTime': formatter.format(events[index].key.startTime),
+                'endTime': formatter.format(events[index].key.startTime),
+                'description': "Some description.",
+                'registrationOpenDateTime':
+                    formatter.format(events[index].key.startTime)
+              },
+              eventTeams: events[index].value,
+            );
+          },
+        ),
+      );
+    });
   }
 }
 
