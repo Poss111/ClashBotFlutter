@@ -83,125 +83,135 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 ),
               ],
             ),
-            GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7,
-                childAspectRatio: 1.5,
-              ),
-              itemCount:
-                  DateTime(_focusedDay.year, _focusedDay.month + 1, 0).day +
-                      DateTime(_focusedDay.year, _focusedDay.month, 1).weekday -
-                      1,
-              itemBuilder: (context, index) {
-                if (index <
-                    DateTime(_focusedDay.year, _focusedDay.month, 1).weekday -
-                        1) {
-                  return Container();
-                } else {
-                  int day = index -
-                      DateTime(_focusedDay.year, _focusedDay.month, 1).weekday +
-                      2;
-                  DateTime currentDay =
-                      DateTime(_focusedDay.year, _focusedDay.month, day);
-                  return Observer(builder: (_) {
-                    // Get all events for the selected day
-                    List<Event> dayEvents = clashStore.events
-                        .where((event) => isSameDay(event.date, currentDay))
-                        .toList();
-                    return MouseRegion(
-                      onEnter: (_) {
-                        setState(() {
-                          _hoveredDay = currentDay;
-                        });
-                      },
-                      onExit: (_) {
-                        setState(() {
-                          _hoveredDay = null;
-                        });
-                      },
-                      child: GestureDetector(
-                        onTap: () {
-                          onDaySelected(currentDay, clashStore);
-                        },
-                        child: Container(
-                          margin: EdgeInsets.all(4.0),
-                          decoration: BoxDecoration(
-                            color: isSameDay(
-                                    clashStore.filterByDay
-                                        ? clashStore.filterDate
-                                        : null,
-                                    currentDay)
-                                ? Colors.blue
-                                : _hoveredDay == currentDay
-                                    ? Colors.blue.withOpacity(0.2)
-                                    : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: Text(
-                                  '$day',
-                                  style: TextStyle(
-                                    color: isSameDay(
-                                            clashStore.filterByDay
-                                                ? clashStore.filterDate
-                                                : null,
-                                            currentDay)
-                                        ? Colors.white
-                                        : isDarkMode
-                                            ? Colors.white
-                                            : Colors.black,
-                                  ),
-                                ),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return GridView.builder(
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7,
+                    childAspectRatio: constraints.maxWidth < 500 ? 1.0 : 1.5,
+                  ),
+                  itemCount:
+                      DateTime(_focusedDay.year, _focusedDay.month + 1, 0).day +
+                          DateTime(_focusedDay.year, _focusedDay.month, 1)
+                              .weekday -
+                          1,
+                  itemBuilder: (context, index) {
+                    if (index <
+                        DateTime(_focusedDay.year, _focusedDay.month, 1)
+                                .weekday -
+                            1) {
+                      return Container();
+                    } else {
+                      int day = index -
+                          DateTime(_focusedDay.year, _focusedDay.month, 1)
+                              .weekday +
+                          2;
+                      DateTime currentDay =
+                          DateTime(_focusedDay.year, _focusedDay.month, day);
+                      return Observer(builder: (_) {
+                        // Get all events for the selected day
+                        List<Event> dayEvents = clashStore.events
+                            .where((event) => isSameDay(event.date, currentDay))
+                            .toList();
+                        return MouseRegion(
+                          onEnter: (_) {
+                            setState(() {
+                              _hoveredDay = currentDay;
+                            });
+                          },
+                          onExit: (_) {
+                            setState(() {
+                              _hoveredDay = null;
+                            });
+                          },
+                          child: GestureDetector(
+                            onTap: () {
+                              onDaySelected(currentDay, clashStore);
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(4.0),
+                              decoration: BoxDecoration(
+                                color: isSameDay(
+                                        clashStore.filterByDay
+                                            ? clashStore.filterDate
+                                            : null,
+                                        currentDay)
+                                    ? Colors.blue
+                                    : _hoveredDay == currentDay
+                                        ? Colors.blue.withOpacity(0.2)
+                                        : Colors.transparent,
+                                borderRadius: BorderRadius.circular(8.0),
                               ),
-                              if (dayEvents.isNotEmpty)
-                                Positioned(
-                                  right: 4.0,
-                                  top: 4.0,
-                                  child: Row(
-                                    children: [
-                                      ...dayEvents.take(5).map((event) {
-                                        return Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 2.0),
-                                          child: Observer(
-                                              builder: (_) => CircleAvatar(
-                                                    backgroundImage:
-                                                        NetworkImage(appStore
-                                                            .discordDetailsStore
-                                                            .discordGuildMap[
-                                                                event.team
-                                                                    .serverId]!
-                                                            .iconURL),
-                                                    radius: 8.0,
-                                                  )),
-                                        );
-                                      }).toList(),
-                                      if (dayEvents.length > 5)
-                                        const Padding(
-                                          padding: EdgeInsets.only(left: 2.0),
-                                          child: Text('...'),
-                                        ),
-                                    ],
+                              child: Stack(
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      '$day',
+                                      style: TextStyle(
+                                        color: isSameDay(
+                                                clashStore.filterByDay
+                                                    ? clashStore.filterDate
+                                                    : null,
+                                                currentDay)
+                                            ? Colors.white
+                                            : isDarkMode
+                                                ? Colors.white
+                                                : Colors.black,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              if (clashStore.tournaments.any((tournament) =>
-                                  isSameDay(tournament.startTime, currentDay)))
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.withOpacity(0.3),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                ),
-                            ],
+                                  if (dayEvents.isNotEmpty)
+                                    Positioned(
+                                      right: 4.0,
+                                      top: 4.0,
+                                      child: Row(
+                                        children: [
+                                          ...dayEvents.take(5).map((event) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 2.0),
+                                              child: Observer(
+                                                  builder: (_) => CircleAvatar(
+                                                        backgroundImage:
+                                                            NetworkImage(appStore
+                                                                .discordDetailsStore
+                                                                .discordGuildMap[
+                                                                    event.team
+                                                                        .serverId]!
+                                                                .iconURL),
+                                                        radius: 8.0,
+                                                      )),
+                                            );
+                                          }).toList(),
+                                          if (dayEvents.length > 5)
+                                            const Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 2.0),
+                                              child: Text('...'),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  if (clashStore.tournaments.any((tournament) =>
+                                      isSameDay(
+                                          tournament.startTime, currentDay)))
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue.withOpacity(0.3),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    );
-                  });
-                }
+                        );
+                      });
+                    }
+                  },
+                );
               },
             ),
           ],

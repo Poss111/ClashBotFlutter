@@ -1,5 +1,4 @@
 import 'package:clashbot_flutter/models/clash_team.dart';
-import 'package:clashbot_flutter/models/clash_tournament.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:flutter/material.dart';
