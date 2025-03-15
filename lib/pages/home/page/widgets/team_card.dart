@@ -3,7 +3,11 @@ import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
 import 'package:clashbot_flutter/snackbars/join_team_snackbar.dart';
 import 'package:clashbot_flutter/snackbars/remove_team_snackbar.dart';
+import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
 
 class TeamCard extends StatelessWidget {
   TeamCard({
@@ -11,7 +15,7 @@ class TeamCard extends StatelessWidget {
     required this.team,
   });
 
-  final CalendarTeam team;
+  final ClashTeam team;
   final Map<Role, String> roleToImage = {
     Role.TOP: 'images/TopIcon.webp',
     Role.BOT: 'images/BotIcon.webp',
@@ -22,6 +26,8 @@ class TeamCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ApplicationDetailsStore applicationDetailsStore =
+        context.read<ApplicationDetailsStore>();
     return Card(
       surfaceTintColor: Theme.of(context).brightness == Brightness.dark
           ? const Color.fromARGB(
@@ -39,14 +45,19 @@ class TeamCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(team.iconURL),
-                      ),
+                      Observer(builder: (_) {
+                        return CircleAvatar(
+                          backgroundImage: NetworkImage(applicationDetailsStore
+                              .discordDetailsStore
+                              .discordGuildMap[team.serverId]!
+                              .iconURL),
+                        );
+                      }),
                       SizedBox(width: 5),
                       Text(
-                        team.teamName.length > 20
-                            ? '${team.teamName.substring(0, 20)}...'
-                            : team.teamName,
+                        team.name.length > 20
+                            ? '${team.name.substring(0, 20)}...'
+                            : team.name,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ],
@@ -63,7 +74,7 @@ class TeamCard extends StatelessWidget {
                             image: roleToImage[role] ?? 'Unknown',
                             role: role,
                             player: team.members[role],
-                            teamId: team.teamId);
+                            teamId: team.id);
                       }).toList())
                 ],
               ),

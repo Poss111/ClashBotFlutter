@@ -48,4 +48,4 @@ app.*.map.json
 
 .env.local
 .env.prod
-.env.g.dart
+**/*.g.dart

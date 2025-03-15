@@ -4,9 +4,8 @@ import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/core/config/env.dart';
 import 'package:clashbot_flutter/globals/color_schemes.dart';
 import 'package:clashbot_flutter/models/model_first_time.dart';
-import 'package:clashbot_flutter/pages/home/home_v2_service.dart';
+import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
 import 'package:clashbot_flutter/pages/intro/welcome_page.dart';
-import 'package:clashbot_flutter/pages/settings/settings_page.dart';
 import 'package:clashbot_flutter/routes.dart';
 import 'package:clashbot_flutter/services/clashbot_service.dart';
 import 'package:clashbot_flutter/services/clashbot_service_impl.dart';
@@ -16,6 +15,7 @@ import 'package:clashbot_flutter/services/discord_service_mock_impl.dart';
 import 'package:clashbot_flutter/services/riot_resources_service.dart';
 import 'package:clashbot_flutter/services/riot_resources_service_impl.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:clashbot_flutter/styles.dart';
 import 'package:clashbot_flutter/utils/reusable_widgets.dart';
 import 'package:flutter/material.dart';
@@ -65,15 +65,8 @@ GoRouter router = GoRouter(
                 name: 'home',
                 path: HOME_ROUTE,
                 builder: (BuildContext context, GoRouterState state) {
-                  return const HomeV2Data();
+                  return HomeV2();
                 }),
-            GoRoute(
-              name: 'settings',
-              path: SETTINGS_ROUTE,
-              builder: (BuildContext context, GoRouterState state) {
-                return const SettingsPage();
-              },
-            ),
           ]),
     ],
     errorBuilder: (context, state) => Scaffold(
@@ -143,6 +136,9 @@ class _MyAppState extends State<MyApp> {
                       clashBotEventService, __) =>
                   ApplicationDetailsStore(discordService, clashBotService,
                       riotResourceService, clashBotEventService)),
+          ProxyProvider2<ApplicationDetailsStore, ClashBotService, ClashStore>(
+              update: (_, applicationDetailsStore, clashBotService, __) =>
+                  ClashStore(clashBotService, applicationDetailsStore))
         ],
         child: Consumer2<ApplicationDetailsStore, ModelFirstTime>(builder:
             (context, ApplicationDetailsStore appStore,
@@ -343,6 +339,7 @@ class MainContainer extends StatelessWidget {
                           child: ListTile(
                               leading: Icon(Icons.settings),
                               title: Text('Settings')),
+                          enabled: false,
                         ),
                       ],
                   onSelected: (value) {

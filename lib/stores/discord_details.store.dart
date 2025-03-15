@@ -20,7 +20,14 @@ class DiscordDetailsStore = _DiscordDetailsStore with _$DiscordDetailsStore;
 abstract class _DiscordDetailsStore with Store {
   final DiscordService _discordService;
   final ApplicationDetailsStore _applicationDetailsStore;
-  _DiscordDetailsStore(this._discordService, this._applicationDetailsStore);
+  _DiscordDetailsStore(this._discordService, this._applicationDetailsStore) {
+    reaction(
+        (_) =>
+            _applicationDetailsStore.id != '0' ||
+            _applicationDetailsStore.id.isNotEmpty, (_) {
+      loadEverything();
+    });
+  }
 
   @observable
   DiscordUser discordUser = DiscordUser('0', 'Not Logged In', 'N/A', '');
@@ -37,7 +44,7 @@ abstract class _DiscordDetailsStore with Store {
   @computed
   bool get detailsLoaded => discordUser.id != '0';
 
-  @computed 
+  @computed
   bool get guildDetailsLoaded => discordGuildMap.isNotEmpty;
 
   @computed
@@ -50,9 +57,7 @@ abstract class _DiscordDetailsStore with Store {
     try {
       foundUser = await _discordService.fetchUserDetails(discordId);
       discordIdToName.putIfAbsent(discordId, () => foundUser.username);
-    } on Exception catch (error) {
-
-    }
+    } on Exception catch (error) {}
     return foundUser;
   }
 
@@ -92,11 +97,8 @@ abstract class _DiscordDetailsStore with Store {
   Future<void> loadEverything() async {
     status = 'LOADING';
     try {
-      await _discordService.loginToDiscord();
-      await Future.wait([
-        fetchCurrentUserDetails(),
-        fetchUserGuilds()
-      ]);
+      // await _discordService.loginToDiscord();
+      await Future.wait([fetchCurrentUserDetails(), fetchUserGuilds()]);
 
       _applicationDetailsStore.id = discordUser.id;
 

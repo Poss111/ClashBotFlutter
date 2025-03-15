@@ -3,27 +3,26 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i12;
+import 'dart:async' as _i11;
 
-import 'package:clash_bot_api/api.dart' as _i13;
-import 'package:clashbot_flutter/models/clash_notification.dart' as _i17;
+import 'package:clash_bot_api/api.dart' as _i12;
+import 'package:clashbot_flutter/models/clash_notification.dart' as _i16;
 import 'package:clashbot_flutter/models/clash_team.dart' as _i3;
-import 'package:clashbot_flutter/models/clash_tournament.dart' as _i14;
+import 'package:clashbot_flutter/models/clash_tournament.dart' as _i13;
 import 'package:clashbot_flutter/models/clashbot_user.dart' as _i2;
-import 'package:clashbot_flutter/models/discord_guild.dart' as _i19;
-import 'package:clashbot_flutter/models/discord_user.dart' as _i9;
-import 'package:clashbot_flutter/models/lol_champion.dart' as _i10;
+import 'package:clashbot_flutter/models/discord_guild.dart' as _i18;
+import 'package:clashbot_flutter/models/discord_user.dart' as _i8;
+import 'package:clashbot_flutter/models/lol_champion.dart' as _i9;
 import 'package:clashbot_flutter/models/tentative_queue.dart' as _i4;
-import 'package:clashbot_flutter/services/clashbot_service.dart' as _i11;
-import 'package:clashbot_flutter/stores/application_details.store.dart' as _i15;
-import 'package:clashbot_flutter/stores/clashbot_player.store.dart' as _i6;
+import 'package:clashbot_flutter/services/clashbot_service.dart' as _i10;
+import 'package:clashbot_flutter/stores/application_details.store.dart' as _i14;
 import 'package:clashbot_flutter/stores/discord_details.store.dart' as _i5;
-import 'package:clashbot_flutter/stores/riot_champion.store.dart' as _i7;
-import 'package:mobx/mobx.dart' as _i8;
+import 'package:clashbot_flutter/stores/riot_champion.store.dart' as _i6;
+import 'package:mobx/mobx.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i16;
+import 'package:mockito/src/dummies.dart' as _i15;
 
-import 'clashbot_player_store_test.dart' as _i18;
+import 'clashbot_player_store_test.dart' as _i17;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -81,9 +80,9 @@ class _FakeDiscordDetailsStore_3 extends _i1.SmartFake
         );
 }
 
-class _FakeClashPlayerStore_4 extends _i1.SmartFake
-    implements _i6.ClashPlayerStore {
-  _FakeClashPlayerStore_4(
+class _FakeRiotChampionStore_4 extends _i1.SmartFake
+    implements _i6.RiotChampionStore {
+  _FakeRiotChampionStore_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -92,9 +91,9 @@ class _FakeClashPlayerStore_4 extends _i1.SmartFake
         );
 }
 
-class _FakeRiotChampionStore_5 extends _i1.SmartFake
-    implements _i7.RiotChampionStore {
-  _FakeRiotChampionStore_5(
+class _FakeObservableList_5<T> extends _i1.SmartFake
+    implements _i7.ObservableList<T> {
+  _FakeObservableList_5(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -103,9 +102,9 @@ class _FakeRiotChampionStore_5 extends _i1.SmartFake
         );
 }
 
-class _FakeObservableList_6<T> extends _i1.SmartFake
-    implements _i8.ObservableList<T> {
-  _FakeObservableList_6(
+class _FakeObservableMap_6<K, V> extends _i1.SmartFake
+    implements _i7.ObservableMap<K, V> {
+  _FakeObservableMap_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -115,7 +114,7 @@ class _FakeObservableList_6<T> extends _i1.SmartFake
 }
 
 class _FakeReactiveContext_7 extends _i1.SmartFake
-    implements _i8.ReactiveContext {
+    implements _i7.ReactiveContext {
   _FakeReactiveContext_7(
     Object parent,
     Invocation parentInvocation,
@@ -125,7 +124,7 @@ class _FakeReactiveContext_7 extends _i1.SmartFake
         );
 }
 
-class _FakeDiscordUser_8 extends _i1.SmartFake implements _i9.DiscordUser {
+class _FakeDiscordUser_8 extends _i1.SmartFake implements _i8.DiscordUser {
   _FakeDiscordUser_8(
     Object parent,
     Invocation parentInvocation,
@@ -136,7 +135,7 @@ class _FakeDiscordUser_8 extends _i1.SmartFake implements _i9.DiscordUser {
 }
 
 class _FakeLoLChampionsData_9 extends _i1.SmartFake
-    implements _i10.LoLChampionsData {
+    implements _i9.LoLChampionsData {
   _FakeLoLChampionsData_9(
     Object parent,
     Invocation parentInvocation,
@@ -149,28 +148,28 @@ class _FakeLoLChampionsData_9 extends _i1.SmartFake
 /// A class which mocks [ClashBotService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
+class MockClashBotService extends _i1.Mock implements _i10.ClashBotService {
   MockClashBotService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i12.Future<_i2.ClashBotUser> getPlayer(String? id) => (super.noSuchMethod(
+  _i11.Future<_i2.ClashBotUser> getPlayer(String? id) => (super.noSuchMethod(
         Invocation.method(
           #getPlayer,
           [id],
         ),
-        returnValue: _i12.Future<_i2.ClashBotUser>.value(_FakeClashBotUser_0(
+        returnValue: _i11.Future<_i2.ClashBotUser>.value(_FakeClashBotUser_0(
           this,
           Invocation.method(
             #getPlayer,
             [id],
           ),
         )),
-      ) as _i12.Future<_i2.ClashBotUser>);
+      ) as _i11.Future<_i2.ClashBotUser>);
 
   @override
-  _i12.Future<_i2.ClashBotUser> createPlayer(
+  _i11.Future<_i2.ClashBotUser> createPlayer(
     String? id,
     String? name,
     String? defaultServerId,
@@ -184,7 +183,7 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             defaultServerId,
           ],
         ),
-        returnValue: _i12.Future<_i2.ClashBotUser>.value(_FakeClashBotUser_0(
+        returnValue: _i11.Future<_i2.ClashBotUser>.value(_FakeClashBotUser_0(
           this,
           Invocation.method(
             #createPlayer,
@@ -195,10 +194,10 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             ],
           ),
         )),
-      ) as _i12.Future<_i2.ClashBotUser>);
+      ) as _i11.Future<_i2.ClashBotUser>);
 
   @override
-  _i12.Future<List<String>> createSelectedServers(
+  _i11.Future<List<String>> createSelectedServers(
     String? id,
     List<String>? selectedServers,
   ) =>
@@ -210,11 +209,11 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             selectedServers,
           ],
         ),
-        returnValue: _i12.Future<List<String>>.value(<String>[]),
-      ) as _i12.Future<List<String>>);
+        returnValue: _i11.Future<List<String>>.value(<String>[]),
+      ) as _i11.Future<List<String>>);
 
   @override
-  _i12.Future<List<String>> updateSelectedServers(
+  _i11.Future<List<String>> updateSelectedServers(
     String? id,
     List<String>? selectedServers,
   ) =>
@@ -226,11 +225,11 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             selectedServers,
           ],
         ),
-        returnValue: _i12.Future<List<String>>.value(<String>[]),
-      ) as _i12.Future<List<String>>);
+        returnValue: _i11.Future<List<String>>.value(<String>[]),
+      ) as _i11.Future<List<String>>);
 
   @override
-  _i12.Future<List<String>> removeSelectedServers(
+  _i11.Future<List<String>> removeSelectedServers(
     String? id,
     List<String>? selectedServers,
   ) =>
@@ -242,20 +241,20 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             selectedServers,
           ],
         ),
-        returnValue: _i12.Future<List<String>>.value(<String>[]),
-      ) as _i12.Future<List<String>>);
+        returnValue: _i11.Future<List<String>>.value(<String>[]),
+      ) as _i11.Future<List<String>>);
 
   @override
-  _i12.Future<List<String>> getChampions(String? id) => (super.noSuchMethod(
+  _i11.Future<List<String>> getChampions(String? id) => (super.noSuchMethod(
         Invocation.method(
           #getChampions,
           [id],
         ),
-        returnValue: _i12.Future<List<String>>.value(<String>[]),
-      ) as _i12.Future<List<String>>);
+        returnValue: _i11.Future<List<String>>.value(<String>[]),
+      ) as _i11.Future<List<String>>);
 
   @override
-  _i12.Future<List<String>> updateChampions(
+  _i11.Future<List<String>> updateChampions(
     String? id,
     String? champion,
   ) =>
@@ -267,11 +266,11 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             champion,
           ],
         ),
-        returnValue: _i12.Future<List<String>>.value(<String>[]),
-      ) as _i12.Future<List<String>>);
+        returnValue: _i11.Future<List<String>>.value(<String>[]),
+      ) as _i11.Future<List<String>>);
 
   @override
-  _i12.Future<List<String>> overwriteChampions(
+  _i11.Future<List<String>> overwriteChampions(
     String? id,
     List<String>? champions,
   ) =>
@@ -283,11 +282,11 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             champions,
           ],
         ),
-        returnValue: _i12.Future<List<String>>.value(<String>[]),
-      ) as _i12.Future<List<String>>);
+        returnValue: _i11.Future<List<String>>.value(<String>[]),
+      ) as _i11.Future<List<String>>);
 
   @override
-  _i12.Future<List<String>> removeChampion(
+  _i11.Future<List<String>> removeChampion(
     String? id,
     String? champion,
   ) =>
@@ -299,23 +298,23 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             champion,
           ],
         ),
-        returnValue: _i12.Future<List<String>>.value(<String>[]),
-      ) as _i12.Future<List<String>>);
+        returnValue: _i11.Future<List<String>>.value(<String>[]),
+      ) as _i11.Future<List<String>>);
 
   @override
-  _i12.Future<Map<String, bool>> getSubscriptions(String? id) =>
+  _i11.Future<Map<String, bool>> getSubscriptions(String? id) =>
       (super.noSuchMethod(
         Invocation.method(
           #getSubscriptions,
           [id],
         ),
-        returnValue: _i12.Future<Map<String, bool>>.value(<String, bool>{}),
-      ) as _i12.Future<Map<String, bool>>);
+        returnValue: _i11.Future<Map<String, bool>>.value(<String, bool>{}),
+      ) as _i11.Future<Map<String, bool>>);
 
   @override
-  _i12.Future<_i13.Subscription?> unsubscribe(
+  _i11.Future<_i12.Subscription?> unsubscribe(
     String? id,
-    _i13.SubscriptionType? type,
+    _i12.SubscriptionType? type,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -325,13 +324,13 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             type,
           ],
         ),
-        returnValue: _i12.Future<_i13.Subscription?>.value(),
-      ) as _i12.Future<_i13.Subscription?>);
+        returnValue: _i11.Future<_i12.Subscription?>.value(),
+      ) as _i11.Future<_i12.Subscription?>);
 
   @override
-  _i12.Future<_i13.Subscription?> subscribe(
+  _i11.Future<_i12.Subscription?> subscribe(
     String? id,
-    _i13.SubscriptionType? type,
+    _i12.SubscriptionType? type,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -341,11 +340,11 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             type,
           ],
         ),
-        returnValue: _i12.Future<_i13.Subscription?>.value(),
-      ) as _i12.Future<_i13.Subscription?>);
+        returnValue: _i11.Future<_i12.Subscription?>.value(),
+      ) as _i11.Future<_i12.Subscription?>);
 
   @override
-  _i12.Future<List<_i3.ClashTeam>> getClashTeams(
+  _i11.Future<List<_i3.ClashTeam>> getClashTeams(
     String? id,
     List<String>? selectedServerIds,
   ) =>
@@ -357,14 +356,14 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             selectedServerIds,
           ],
         ),
-        returnValue: _i12.Future<List<_i3.ClashTeam>>.value(<_i3.ClashTeam>[]),
-      ) as _i12.Future<List<_i3.ClashTeam>>);
+        returnValue: _i11.Future<List<_i3.ClashTeam>>.value(<_i3.ClashTeam>[]),
+      ) as _i11.Future<List<_i3.ClashTeam>>);
 
   @override
-  _i12.Future<_i3.ClashTeam> createClashTeam(
+  _i11.Future<_i3.ClashTeam> createClashTeam(
     String? discordId,
     String? name,
-    _i13.Role? role,
+    _i12.Role? role,
     String? serverId,
     String? tournamentName,
     String? tournamentDay,
@@ -381,7 +380,7 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             tournamentDay,
           ],
         ),
-        returnValue: _i12.Future<_i3.ClashTeam>.value(_FakeClashTeam_1(
+        returnValue: _i11.Future<_i3.ClashTeam>.value(_FakeClashTeam_1(
           this,
           Invocation.method(
             #createClashTeam,
@@ -395,12 +394,12 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             ],
           ),
         )),
-      ) as _i12.Future<_i3.ClashTeam>);
+      ) as _i11.Future<_i3.ClashTeam>);
 
   @override
-  _i12.Future<_i3.ClashTeam> addToTeam(
+  _i11.Future<_i3.ClashTeam> addToTeam(
     String? id,
-    _i13.Role? role,
+    _i12.Role? role,
     String? teamId,
   ) =>
       (super.noSuchMethod(
@@ -412,7 +411,7 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             teamId,
           ],
         ),
-        returnValue: _i12.Future<_i3.ClashTeam>.value(_FakeClashTeam_1(
+        returnValue: _i11.Future<_i3.ClashTeam>.value(_FakeClashTeam_1(
           this,
           Invocation.method(
             #addToTeam,
@@ -423,10 +422,10 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             ],
           ),
         )),
-      ) as _i12.Future<_i3.ClashTeam>);
+      ) as _i11.Future<_i3.ClashTeam>);
 
   @override
-  _i12.Future<_i3.ClashTeam> removeFromTeam(
+  _i11.Future<_i3.ClashTeam> removeFromTeam(
     String? id,
     String? teamId,
   ) =>
@@ -438,7 +437,7 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             teamId,
           ],
         ),
-        returnValue: _i12.Future<_i3.ClashTeam>.value(_FakeClashTeam_1(
+        returnValue: _i11.Future<_i3.ClashTeam>.value(_FakeClashTeam_1(
           this,
           Invocation.method(
             #removeFromTeam,
@@ -448,10 +447,10 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             ],
           ),
         )),
-      ) as _i12.Future<_i3.ClashTeam>);
+      ) as _i11.Future<_i3.ClashTeam>);
 
   @override
-  _i12.Future<List<_i4.TentativeQueue>> getTentativeQueues(
+  _i11.Future<List<_i4.TentativeQueue>> getTentativeQueues(
     String? id,
     List<String>? selectedServerIds,
   ) =>
@@ -464,11 +463,11 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
           ],
         ),
         returnValue:
-            _i12.Future<List<_i4.TentativeQueue>>.value(<_i4.TentativeQueue>[]),
-      ) as _i12.Future<List<_i4.TentativeQueue>>);
+            _i11.Future<List<_i4.TentativeQueue>>.value(<_i4.TentativeQueue>[]),
+      ) as _i11.Future<List<_i4.TentativeQueue>>);
 
   @override
-  _i12.Future<_i4.TentativeQueue> createTentativeQueue(
+  _i11.Future<_i4.TentativeQueue> createTentativeQueue(
     String? discordId,
     String? serverId,
     String? tournamentName,
@@ -485,7 +484,7 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
           ],
         ),
         returnValue:
-            _i12.Future<_i4.TentativeQueue>.value(_FakeTentativeQueue_2(
+            _i11.Future<_i4.TentativeQueue>.value(_FakeTentativeQueue_2(
           this,
           Invocation.method(
             #createTentativeQueue,
@@ -497,10 +496,10 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             ],
           ),
         )),
-      ) as _i12.Future<_i4.TentativeQueue>);
+      ) as _i11.Future<_i4.TentativeQueue>);
 
   @override
-  _i12.Future<_i4.TentativeQueue> addToTentativeQueue(
+  _i11.Future<_i4.TentativeQueue> addToTentativeQueue(
     String? id,
     String? tentativeId,
   ) =>
@@ -513,7 +512,7 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
           ],
         ),
         returnValue:
-            _i12.Future<_i4.TentativeQueue>.value(_FakeTentativeQueue_2(
+            _i11.Future<_i4.TentativeQueue>.value(_FakeTentativeQueue_2(
           this,
           Invocation.method(
             #addToTentativeQueue,
@@ -523,10 +522,10 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             ],
           ),
         )),
-      ) as _i12.Future<_i4.TentativeQueue>);
+      ) as _i11.Future<_i4.TentativeQueue>);
 
   @override
-  _i12.Future<_i4.TentativeQueue> removeFromTentativeQueue(
+  _i11.Future<_i4.TentativeQueue> removeFromTentativeQueue(
     String? id,
     String? tentativeId,
   ) =>
@@ -539,7 +538,7 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
           ],
         ),
         returnValue:
-            _i12.Future<_i4.TentativeQueue>.value(_FakeTentativeQueue_2(
+            _i11.Future<_i4.TentativeQueue>.value(_FakeTentativeQueue_2(
           this,
           Invocation.method(
             #removeFromTentativeQueue,
@@ -549,25 +548,25 @@ class MockClashBotService extends _i1.Mock implements _i11.ClashBotService {
             ],
           ),
         )),
-      ) as _i12.Future<_i4.TentativeQueue>);
+      ) as _i11.Future<_i4.TentativeQueue>);
 
   @override
-  _i12.Future<List<_i14.ClashTournament>> retrieveTournaments(String? id) =>
+  _i11.Future<List<_i13.ClashTournament>> retrieveTournaments(String? id) =>
       (super.noSuchMethod(
         Invocation.method(
           #retrieveTournaments,
           [id],
         ),
-        returnValue: _i12.Future<List<_i14.ClashTournament>>.value(
-            <_i14.ClashTournament>[]),
-      ) as _i12.Future<List<_i14.ClashTournament>>);
+        returnValue: _i11.Future<List<_i13.ClashTournament>>.value(
+            <_i13.ClashTournament>[]),
+      ) as _i11.Future<List<_i13.ClashTournament>>);
 }
 
 /// A class which mocks [ApplicationDetailsStore].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockApplicationDetailsStore extends _i1.Mock
-    implements _i15.ApplicationDetailsStore {
+    implements _i14.ApplicationDetailsStore {
   MockApplicationDetailsStore() {
     _i1.throwOnMissingStub(this);
   }
@@ -592,35 +591,16 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  _i6.ClashPlayerStore get loggedInClashUser => (super.noSuchMethod(
-        Invocation.getter(#loggedInClashUser),
-        returnValue: _FakeClashPlayerStore_4(
-          this,
-          Invocation.getter(#loggedInClashUser),
-        ),
-      ) as _i6.ClashPlayerStore);
-
-  @override
-  set loggedInClashUser(_i6.ClashPlayerStore? _loggedInClashUser) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #loggedInClashUser,
-          _loggedInClashUser,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i7.RiotChampionStore get riotChampionStore => (super.noSuchMethod(
+  _i6.RiotChampionStore get riotChampionStore => (super.noSuchMethod(
         Invocation.getter(#riotChampionStore),
-        returnValue: _FakeRiotChampionStore_5(
+        returnValue: _FakeRiotChampionStore_4(
           this,
           Invocation.getter(#riotChampionStore),
         ),
-      ) as _i7.RiotChampionStore);
+      ) as _i6.RiotChampionStore);
 
   @override
-  set riotChampionStore(_i7.RiotChampionStore? _riotChampionStore) =>
+  set riotChampionStore(_i6.RiotChampionStore? _riotChampionStore) =>
       super.noSuchMethod(
         Invocation.setter(
           #riotChampionStore,
@@ -632,7 +612,7 @@ class MockApplicationDetailsStore extends _i1.Mock
   @override
   String get id => (super.noSuchMethod(
         Invocation.getter(#id),
-        returnValue: _i16.dummyValue<String>(
+        returnValue: _i15.dummyValue<String>(
           this,
           Invocation.getter(#id),
         ),
@@ -648,20 +628,36 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  _i8.ObservableList<_i14.ClashTournament> get tournaments =>
-      (super.noSuchMethod(
-        Invocation.getter(#tournaments),
-        returnValue: _FakeObservableList_6<_i14.ClashTournament>(
+  _i2.ClashBotUser get clashBotUser => (super.noSuchMethod(
+        Invocation.getter(#clashBotUser),
+        returnValue: _FakeClashBotUser_0(
           this,
-          Invocation.getter(#tournaments),
+          Invocation.getter(#clashBotUser),
         ),
-      ) as _i8.ObservableList<_i14.ClashTournament>);
+      ) as _i2.ClashBotUser);
 
   @override
-  set tournaments(_i8.ObservableList<_i14.ClashTournament>? value) =>
-      super.noSuchMethod(
+  set clashBotUser(_i2.ClashBotUser? value) => super.noSuchMethod(
         Invocation.setter(
-          #tournaments,
+          #clashBotUser,
+          value,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i7.ObservableList<String> get preferredServers => (super.noSuchMethod(
+        Invocation.getter(#preferredServers),
+        returnValue: _FakeObservableList_5<String>(
+          this,
+          Invocation.getter(#preferredServers),
+        ),
+      ) as _i7.ObservableList<String>);
+
+  @override
+  set preferredServers(_i7.ObservableList<String>? value) => super.noSuchMethod(
+        Invocation.setter(
+          #preferredServers,
           value,
         ),
         returnValueForMissingStub: null,
@@ -670,7 +666,7 @@ class MockApplicationDetailsStore extends _i1.Mock
   @override
   String get error => (super.noSuchMethod(
         Invocation.getter(#error),
-        returnValue: _i16.dummyValue<String>(
+        returnValue: _i15.dummyValue<String>(
           this,
           Invocation.getter(#error),
         ),
@@ -686,17 +682,17 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  _i8.ObservableList<_i17.ClashNotification> get notifications =>
+  _i7.ObservableList<_i16.ClashNotification> get notifications =>
       (super.noSuchMethod(
         Invocation.getter(#notifications),
-        returnValue: _FakeObservableList_6<_i17.ClashNotification>(
+        returnValue: _FakeObservableList_5<_i16.ClashNotification>(
           this,
           Invocation.getter(#notifications),
         ),
-      ) as _i8.ObservableList<_i17.ClashNotification>);
+      ) as _i7.ObservableList<_i16.ClashNotification>);
 
   @override
-  set notifications(_i8.ObservableList<_i17.ClashNotification>? value) =>
+  set notifications(_i7.ObservableList<_i16.ClashNotification>? value) =>
       super.noSuchMethod(
         Invocation.setter(
           #notifications,
@@ -706,16 +702,35 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  List<_i17.ClashNotification> get sortedNotifications => (super.noSuchMethod(
-        Invocation.getter(#sortedNotifications),
-        returnValue: <_i17.ClashNotification>[],
-      ) as List<_i17.ClashNotification>);
+  _i7.ObservableMap<String, _i12.Subscription> get subscription =>
+      (super.noSuchMethod(
+        Invocation.getter(#subscription),
+        returnValue: _FakeObservableMap_6<String, _i12.Subscription>(
+          this,
+          Invocation.getter(#subscription),
+        ),
+      ) as _i7.ObservableMap<String, _i12.Subscription>);
 
   @override
-  List<_i17.ClashNotification> get unreadNotifications => (super.noSuchMethod(
+  _i7.ObservableList<String> get sortedSelectedServers => (super.noSuchMethod(
+        Invocation.getter(#sortedSelectedServers),
+        returnValue: _FakeObservableList_5<String>(
+          this,
+          Invocation.getter(#sortedSelectedServers),
+        ),
+      ) as _i7.ObservableList<String>);
+
+  @override
+  List<_i16.ClashNotification> get sortedNotifications => (super.noSuchMethod(
+        Invocation.getter(#sortedNotifications),
+        returnValue: <_i16.ClashNotification>[],
+      ) as List<_i16.ClashNotification>);
+
+  @override
+  List<_i16.ClashNotification> get unreadNotifications => (super.noSuchMethod(
         Invocation.getter(#unreadNotifications),
-        returnValue: <_i17.ClashNotification>[],
-      ) as List<_i17.ClashNotification>);
+        returnValue: <_i16.ClashNotification>[],
+      ) as List<_i16.ClashNotification>);
 
   @override
   bool get isLoggedIn => (super.noSuchMethod(
@@ -724,23 +739,33 @@ class MockApplicationDetailsStore extends _i1.Mock
       ) as bool);
 
   @override
-  _i8.ReactiveContext get context => (super.noSuchMethod(
+  _i7.ReactiveContext get context => (super.noSuchMethod(
         Invocation.getter(#context),
         returnValue: _FakeReactiveContext_7(
           this,
           Invocation.getter(#context),
         ),
-      ) as _i8.ReactiveContext);
+      ) as _i7.ReactiveContext);
 
   @override
-  _i12.Future<void> getTournaments() => (super.noSuchMethod(
+  _i11.Future<void> refreshSelectedServers() => (super.noSuchMethod(
         Invocation.method(
-          #getTournaments,
+          #refreshSelectedServers,
           [],
         ),
-        returnValue: _i12.Future<void>.value(),
-        returnValueForMissingStub: _i12.Future<void>.value(),
-      ) as _i12.Future<void>);
+        returnValue: _i11.Future<void>.value(),
+        returnValueForMissingStub: _i11.Future<void>.value(),
+      ) as _i11.Future<void>);
+
+  @override
+  _i11.Future<void> refreshClashBotUser() => (super.noSuchMethod(
+        Invocation.method(
+          #refreshClashBotUser,
+          [],
+        ),
+        returnValue: _i11.Future<void>.value(),
+        returnValueForMissingStub: _i11.Future<void>.value(),
+      ) as _i11.Future<void>);
 
   @override
   void triggerError(String? errorMessage) => super.noSuchMethod(
@@ -752,7 +777,7 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  void notifyUser(_i17.ClashNotification? clashNotification) =>
+  void notifyUser(_i16.ClashNotification? clashNotification) =>
       super.noSuchMethod(
         Invocation.method(
           #notifyUser,
@@ -789,115 +814,139 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  _i12.Future<void> loadUserDetails() => (super.noSuchMethod(
+  _i11.Future<void> loadUserDetails() => (super.noSuchMethod(
         Invocation.method(
           #loadUserDetails,
           [],
         ),
-        returnValue: _i12.Future<void>.value(),
-        returnValueForMissingStub: _i12.Future<void>.value(),
-      ) as _i12.Future<void>);
+        returnValue: _i11.Future<void>.value(),
+        returnValueForMissingStub: _i11.Future<void>.value(),
+      ) as _i11.Future<void>);
+
+  @override
+  _i11.Future<_i2.ClashBotUser> createUser(
+    String? defaultServerId,
+    List<String>? selectedServersToUse,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createUser,
+          [
+            defaultServerId,
+            selectedServersToUse,
+          ],
+        ),
+        returnValue: _i11.Future<_i2.ClashBotUser>.value(_FakeClashBotUser_0(
+          this,
+          Invocation.method(
+            #createUser,
+            [
+              defaultServerId,
+              selectedServersToUse,
+            ],
+          ),
+        )),
+      ) as _i11.Future<_i2.ClashBotUser>);
 }
 
 /// A class which mocks [DiscordServiceMock].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockDiscordServiceMock extends _i1.Mock
-    implements _i18.DiscordServiceMock {
+    implements _i17.DiscordServiceMock {
   MockDiscordServiceMock() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i12.Future<_i9.DiscordUser> fetchCurrentUserDetails() => (super.noSuchMethod(
+  _i11.Future<_i8.DiscordUser> fetchCurrentUserDetails() => (super.noSuchMethod(
         Invocation.method(
           #fetchCurrentUserDetails,
           [],
         ),
-        returnValue: _i12.Future<_i9.DiscordUser>.value(_FakeDiscordUser_8(
+        returnValue: _i11.Future<_i8.DiscordUser>.value(_FakeDiscordUser_8(
           this,
           Invocation.method(
             #fetchCurrentUserDetails,
             [],
           ),
         )),
-      ) as _i12.Future<_i9.DiscordUser>);
+      ) as _i11.Future<_i8.DiscordUser>);
 
   @override
-  _i12.Future<List<_i19.DiscordGuild>> fetchUserGuilds() => (super.noSuchMethod(
+  _i11.Future<List<_i18.DiscordGuild>> fetchUserGuilds() => (super.noSuchMethod(
         Invocation.method(
           #fetchUserGuilds,
           [],
         ),
         returnValue:
-            _i12.Future<List<_i19.DiscordGuild>>.value(<_i19.DiscordGuild>[]),
-      ) as _i12.Future<List<_i19.DiscordGuild>>);
+            _i11.Future<List<_i18.DiscordGuild>>.value(<_i18.DiscordGuild>[]),
+      ) as _i11.Future<List<_i18.DiscordGuild>>);
 
   @override
-  _i12.Future<_i9.DiscordUser> fetchUserDetails(String? discordId) =>
+  _i11.Future<_i8.DiscordUser> fetchUserDetails(String? discordId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchUserDetails,
           [discordId],
         ),
-        returnValue: _i12.Future<_i9.DiscordUser>.value(_FakeDiscordUser_8(
+        returnValue: _i11.Future<_i8.DiscordUser>.value(_FakeDiscordUser_8(
           this,
           Invocation.method(
             #fetchUserDetails,
             [discordId],
           ),
         )),
-      ) as _i12.Future<_i9.DiscordUser>);
+      ) as _i11.Future<_i8.DiscordUser>);
 
   @override
-  _i12.Future<void> loginToDiscord() => (super.noSuchMethod(
+  _i11.Future<void> loginToDiscord() => (super.noSuchMethod(
         Invocation.method(
           #loginToDiscord,
           [],
         ),
-        returnValue: _i12.Future<void>.value(),
-        returnValueForMissingStub: _i12.Future<void>.value(),
-      ) as _i12.Future<void>);
+        returnValue: _i11.Future<void>.value(),
+        returnValueForMissingStub: _i11.Future<void>.value(),
+      ) as _i11.Future<void>);
 }
 
 /// A class which mocks [RiotResourcesServiceMock].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockRiotResourcesServiceMock extends _i1.Mock
-    implements _i18.RiotResourcesServiceMock {
+    implements _i17.RiotResourcesServiceMock {
   MockRiotResourcesServiceMock() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i12.Future<String> getLatestApiVersion() => (super.noSuchMethod(
+  _i11.Future<String> getLatestApiVersion() => (super.noSuchMethod(
         Invocation.method(
           #getLatestApiVersion,
           [],
         ),
-        returnValue: _i12.Future<String>.value(_i16.dummyValue<String>(
+        returnValue: _i11.Future<String>.value(_i15.dummyValue<String>(
           this,
           Invocation.method(
             #getLatestApiVersion,
             [],
           ),
         )),
-      ) as _i12.Future<String>);
+      ) as _i11.Future<String>);
 
   @override
-  _i12.Future<_i10.LoLChampionsData> getChampionDetails() =>
-      (super.noSuchMethod(
+  _i11.Future<_i9.LoLChampionsData> getChampionDetails() => (super.noSuchMethod(
         Invocation.method(
           #getChampionDetails,
           [],
         ),
         returnValue:
-            _i12.Future<_i10.LoLChampionsData>.value(_FakeLoLChampionsData_9(
+            _i11.Future<_i9.LoLChampionsData>.value(_FakeLoLChampionsData_9(
           this,
           Invocation.method(
             #getChampionDetails,
             [],
           ),
         )),
-      ) as _i12.Future<_i10.LoLChampionsData>);
+      ) as _i11.Future<_i9.LoLChampionsData>);
 }

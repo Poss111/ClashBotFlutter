@@ -9,7 +9,6 @@ import 'package:clashbot_flutter/models/clashbot_user.dart';
 import 'package:clashbot_flutter/models/discord_guild.dart';
 import 'package:clashbot_flutter/models/discord_user.dart';
 import 'package:clashbot_flutter/models/model_first_time.dart';
-import 'package:clashbot_flutter/pages/home/home.dart';
 import 'package:clashbot_flutter/services/clashbot_events_service.dart';
 import 'package:clashbot_flutter/services/clashbot_service.dart';
 import 'package:clashbot_flutter/services/discord_service.dart';
@@ -24,16 +23,18 @@ import 'package:oauth2_client/oauth2_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 
-import 'clashbot_player.store.dart';
 part 'application_details.store.g.dart';
 
 class ApplicationDetailsStore extends _ApplicationDetailsStore
     with _$ApplicationDetailsStore {
   ApplicationDetailsStore(
-      DiscordService discordService, ClashBotService clashBotService, RiotResourcesService riotResourcesService, ClashBotEventsService clashBotEventsService)
-      : super(discordService, clashBotService, riotResourcesService, clashBotEventsService) {
+      DiscordService discordService,
+      ClashBotService clashBotService,
+      RiotResourcesService riotResourcesService,
+      ClashBotEventsService clashBotEventsService)
+      : super(discordService, clashBotService, riotResourcesService,
+            clashBotEventsService) {
     discordDetailsStore = DiscordDetailsStore(_discordService, this);
-    loggedInClashUser = ClashPlayerStore(_clashBotService, this);
     riotChampionStore = RiotChampionStore(_riotResourcesService, this);
   }
 }
@@ -41,24 +42,53 @@ class ApplicationDetailsStore extends _ApplicationDetailsStore
 abstract class _ApplicationDetailsStore with Store {
   late DiscordDetailsStore discordDetailsStore;
   final DiscordService _discordService;
-  late ClashPlayerStore loggedInClashUser;
   final ClashBotService _clashBotService;
   late RiotChampionStore riotChampionStore;
   final RiotResourcesService _riotResourcesService;
   final ClashBotEventsService _clashBotEventsService;
-  _ApplicationDetailsStore(
-    this._discordService,
-    this._clashBotService,
-    this._riotResourcesService,
-    this._clashBotEventsService
-  ) {}
+  _ApplicationDetailsStore(this._discordService, this._clashBotService,
+      this._riotResourcesService, this._clashBotEventsService) {
+    reaction((_) => id, (_) {
+      refreshClashBotUser();
+      refreshSelectedServers();
+    });
+  }
 
   @observable
   String id = '0';
 
   @observable
-  ObservableList<ClashTournament> tournaments =
-      ObservableList<ClashTournament>();
+  ClashBotUser clashBotUser = ClashBotUser();
+
+  // Create map of String to subscription
+  @computed
+  ObservableMap<String, Subscription> get subscription =>
+      ObservableMap.of(Map<String, Subscription>.fromIterable(
+        clashBotUser.subscriptions,
+        key: (e) => e.key,
+        value: (e) => e as Subscription,
+      ));
+
+  @observable
+  ObservableList<String> preferredServers = ObservableList();
+
+  @computed
+  ObservableList<String> get sortedSelectedServers =>
+      ObservableList.of(clashBotUser.selectedServers.sorted());
+
+  @action
+  Future<void> refreshSelectedServers() async {
+    preferredServers.clear();
+    var userDetails = await _clashBotService.getPlayer(id);
+    developer.log(userDetails.selectedServers.toString());
+    preferredServers = ObservableList.of(userDetails.selectedServers);
+    developer.log("Preferred: " + preferredServers.toString());
+  }
+
+  @action
+  Future<void> refreshClashBotUser() async {
+    clashBotUser = await _clashBotService.getPlayer(id);
+  }
 
   @observable
   String error = '';
@@ -67,20 +97,16 @@ abstract class _ApplicationDetailsStore with Store {
   ObservableList<ClashNotification> notifications = ObservableList();
 
   @computed
-  List<ClashNotification> get sortedNotifications => notifications.sortedBy((element) => element.timestamp);
+  List<ClashNotification> get sortedNotifications =>
+      notifications.sortedBy((element) => element.timestamp);
 
   @computed
-  List<ClashNotification> get unreadNotifications => notifications.where((notification) => !notification.read).toList();
+  List<ClashNotification> get unreadNotifications =>
+      notifications.where((notification) => !notification.read).toList();
 
   @computed
-  bool get isLoggedIn => discordDetailsStore.detailsLoaded && loggedInClashUser.clashBotUserDetailsLoaded;
-
-  @action
-  Future<void> getTournaments() async {
-    var updatedTournaments = await _clashBotService.retrieveTournaments(id);
-    tournaments.clear();
-    tournaments.addAll(updatedTournaments);
-  }
+  bool get isLoggedIn =>
+      discordDetailsStore.detailsLoaded && clashBotUser.discordId != '0';
 
   @action
   void triggerError(String errorMessage) {
@@ -94,7 +120,8 @@ abstract class _ApplicationDetailsStore with Store {
 
   @action
   void readNotification(String uuid) {
-    var notification = notifications.firstWhere((element) => element.uuid == uuid);
+    var notification =
+        notifications.firstWhere((element) => element.uuid == uuid);
     notification.read = true;
     notifications.removeWhere((element) => element.uuid == uuid);
     notifications.add(notification);
@@ -102,12 +129,13 @@ abstract class _ApplicationDetailsStore with Store {
 
   @action
   void unsubscribeFromServer(String serverId) {
-    _clashBotEventsService.removeSubscription(serverId);
+    // _clashBotEventsService.removeSubscription(serverId);
   }
 
   @action
   void subscribeToServer(String serverId) {
-    _clashBotEventsService.setupSubscription(id, serverId, notifyUser, loggedInClashUser, discordDetailsStore);
+    // _clashBotEventsService.setupSubscription(
+    //     id, serverId, notifyUser, loggedInClashUser, discordDetailsStore);
   }
 
   @action
@@ -115,28 +143,39 @@ abstract class _ApplicationDetailsStore with Store {
     try {
       await Future.wait([
         discordDetailsStore.loadEverything(),
-        riotChampionStore.refreshChampionData(),
-        getTournaments()
+        riotChampionStore.refreshChampionData()
       ]);
-      await loggedInClashUser.refreshClashBotUserDetails();
-      await Future.wait([
-        loggedInClashUser.refreshTeamList(),
-        loggedInClashUser.refreshTentativeQueue()
-      ]);
-      _clashBotEventsService.connectClient(() {
-        for (var serverId in loggedInClashUser.selectedServers) { 
-          _clashBotEventsService.setupSubscription(id, serverId, notifyUser, loggedInClashUser, discordDetailsStore);
-        }
-      },
-      (dynamic error) {
-        developer.log("Websocket connection failure.", error: error);
-        error = "Failed to connect to Server events.";
-      });
-      
-    } catch(error) {
+      // _clashBotEventsService.connectClient(() {
+      //   for (var serverId in loggedInClashUser.preferredServers) {
+      //     _clashBotEventsService.setupSubscription(
+      //         id, serverId, notifyUser, loggedInClashUser, discordDetailsStore);
+      //   }
+      // }, (dynamic error) {
+      //   developer.log("Websocket connection failure.", error: error);
+      //   error = "Failed to connect to Server events.";
+      // });
+    } catch (error) {
       developer.log("Failed to load user.", error: error);
       this.error = 'Failed to load :(, please try again later.';
     }
   }
 
+  @action
+  Future<ClashBotUser> createUser(
+      String defaultServerId, List<String> selectedServersToUse) async {
+    try {
+      clashBotUser = await _clashBotService.createPlayer(
+          id, discordDetailsStore.discordUser.username, defaultServerId);
+      var updatedSelectedServers = await _clashBotService.createSelectedServers(
+          id, selectedServersToUse);
+      clashBotUser.selectedServers = updatedSelectedServers;
+      preferredServers.clear();
+      preferredServers.addAll(updatedSelectedServers);
+      return clashBotUser;
+    } on Exception catch (issue) {
+      error = 'Failed to create new Clash Bot User, please try again.';
+      developer.log('Failed to create new Clash Bot User', error: issue);
+      rethrow;
+    }
+  }
 }

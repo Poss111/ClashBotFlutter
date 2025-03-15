@@ -18,7 +18,8 @@ class ClashBotServiceImpl implements ClashBotService {
       this.subscriptionApi, this.tentativeApi, this.tournamentApi);
 
   @override
-  Future<ClashBotUser> createPlayer(String id, String name, String defaultServerId) {
+  Future<ClashBotUser> createPlayer(
+      String id, String name, String defaultServerId) {
     CreateUserRequest createUserRequest =
         CreateUserRequest(discordId: id, name: name, serverId: defaultServerId);
     return userApi
@@ -35,7 +36,13 @@ class ClashBotServiceImpl implements ClashBotService {
 
   @override
   Future<ClashBotUser> getPlayer(String id) {
-    return userApi.getUser(id, discordId: id).then(playerToClashBotUser);
+    return userApi
+        .getUser(id, discordId: id)
+        .then(playerToClashBotUser)
+        .catchError((error) {
+      print('Error getting player: $error');
+      throw error;
+    });
   }
 
   @override
@@ -48,7 +55,11 @@ class ClashBotServiceImpl implements ClashBotService {
         }
       }
       return subscriptions;
+    }).catchError((error) {
+      print('Error getting player subscriptions: $error');
+      throw error;
     });
+    ;
   }
 
   @override
@@ -127,31 +138,31 @@ class ClashBotServiceImpl implements ClashBotService {
   }
 
   @override
-  Future<List<ClashTeam>> getClashTeams(String id, List<String> selectedServerIds) {
+  Future<List<ClashTeam>> getClashTeams(
+      String id, List<String> selectedServerIds) {
     List<Future<Teams?>> futures = [];
     for (String serverId in selectedServerIds) {
-      futures.add(teamApi.retrieveTeams(id, archived: false, serverId: serverId));
+      futures
+          .add(teamApi.retrieveTeams(id, archived: false, serverId: serverId));
     }
     return Future.wait(futures).then((responses) {
       List<ClashTeam> teams = [];
       for (var teamsObject in responses) {
-          if (null != teamsObject) {
-            var items = teamsObject.teams.map(teamToClashTeamMapper).toList();
-            teams.addAll([...items]);
-          }
+        if (null != teamsObject) {
+          var items = teamsObject.teams.map(teamToClashTeamMapper).toList();
+          teams.addAll([...items]);
         }
+      }
       return teams;
     });
   }
 
   @override
   Future<List<TentativeQueue>> getTentativeQueues(
-      String id,
-      List<String> selectedServerIds) {
+      String id, List<String> selectedServerIds) {
     List<Future<Tentatives?>> futures = [];
     for (String serverId in selectedServerIds) {
-      futures.add(tentativeApi.retrieveTentativeQueues(
-          id,
+      futures.add(tentativeApi.retrieveTentativeQueues(id,
           archived: false, serverId: serverId));
     }
     return Future.wait(futures).then((responses) {
@@ -159,7 +170,8 @@ class ClashBotServiceImpl implements ClashBotService {
       for (var tentativeQueue in responses) {
         if (null != tentativeQueue) {
           for (var tentative in tentativeQueue.queues) {
-            tentativeQueues.add(TentativeQueue.tentativeToTentativeQueue(tentative)!);
+            tentativeQueues
+                .add(TentativeQueue.tentativeToTentativeQueue(tentative)!);
           }
         }
       }
@@ -169,7 +181,9 @@ class ClashBotServiceImpl implements ClashBotService {
 
   @override
   Future<ClashTeam> removeFromTeam(String id, String teamId) {
-    return teamApi.removeUserFromTeam(id, teamId, id).then((team) => teamToClashTeam(team ?? Team()));
+    return teamApi
+        .removeUserFromTeam(id, teamId, id)
+        .then((team) => teamToClashTeam(team ?? Team()));
   }
 
   @override
@@ -210,15 +224,16 @@ class ClashBotServiceImpl implements ClashBotService {
         serverId: serverId,
         tournament: BaseTournament(
             tournamentName: tournamentName, tournamentDay: tournamentDay));
-    return teamApi.createTeam(discordId, teamRequired).then((team) => teamToClashTeam(team ?? Team()));
+    return teamApi
+        .createTeam(discordId, teamRequired)
+        .then((team) => teamToClashTeam(team ?? Team()));
   }
 
   @override
   Future<TentativeQueue> createTentativeQueue(String discordId, String serverId,
       String tournamentName, String tournamentDay) {
     return tentativeApi
-        .createTentativeQueue(
-            discordId,
+        .createTentativeQueue(discordId,
             tentativeRequired: TentativeRequired(
                 serverId: serverId,
                 id: discordId,
@@ -246,15 +261,15 @@ class ClashBotServiceImpl implements ClashBotService {
       return [];
     });
   }
-  
+
   @override
   Future<Subscription?> subscribe(String id, SubscriptionType type) {
     return subscriptionApi.subscribeUser(id, id, type);
   }
-  
+
   @override
   Future<Subscription?> unsubscribe(String id, SubscriptionType type) {
-        return subscriptionApi.unsubscribeUser(id, id, type);
+    return subscriptionApi.unsubscribeUser(id, id, type);
   }
 
   ClashBotUser playerToClashBotUser(Player? value) {
@@ -418,5 +433,4 @@ class ClashBotServiceImpl implements ClashBotService {
   FutureOr<TentativeQueue> tentativeToTentativeQueue(response) {
     return TentativeQueue.tentativeToTentativeQueue(response)!;
   }
-
 }

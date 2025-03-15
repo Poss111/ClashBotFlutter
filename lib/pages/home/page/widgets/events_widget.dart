@@ -1,37 +1,36 @@
-import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/models/clash_team.dart';
-import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
+import 'package:clashbot_flutter/models/clash_tournament.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
-import 'package:clashbot_flutter/snackbars/join_team_snackbar.dart';
-import 'package:clashbot_flutter/snackbars/remove_team_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class EventsListWidget extends StatelessWidget {
-  final List<EventWTeams> upcomingEvents;
+  final Map<ClashTournament, List<ClashTeam>> upcomingEvents;
 
   const EventsListWidget({required this.upcomingEvents});
 
   @override
   Widget build(BuildContext context) {
+    var events = upcomingEvents.entries.toList();
+    final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ssZ');
     return SingleChildScrollView(
       child: ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: upcomingEvents.length,
+        itemCount: events.length,
         itemBuilder: (context, index) {
           return EventTile(
             event: {
-              'title': upcomingEvents[index].title,
-              'date': upcomingEvents[index].startDate,
-              'startTime': upcomingEvents[index].startTime,
-              'endTime': upcomingEvents[index].endTime,
-              'description': upcomingEvents[index].description,
+              'title': events[index].key.tournamentName +
+                  events[index].key.tournamentDay,
+              'date': formatter.format(events[index].key.startTime),
+              'startTime': formatter.format(events[index].key.startTime),
+              'endTime': formatter.format(events[index].key.startTime),
+              'description': "Some description.",
               'registrationOpenDateTime':
-                  upcomingEvents[index].registrationOpenDateTime,
-              'serverId': upcomingEvents[index].teams.first.serverId,
+                  formatter.format(events[index].key.startTime)
             },
-            eventTeams: upcomingEvents[index].teams,
+            eventTeams: events[index].value,
           );
         },
       ),
@@ -47,7 +46,7 @@ class EventTile extends StatelessWidget {
   });
 
   final Map<String, String> event;
-  final List<CalendarTeam> eventTeams;
+  final List<ClashTeam> eventTeams;
 
   @override
   Widget build(BuildContext context) {
@@ -57,27 +56,36 @@ class EventTile extends StatelessWidget {
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         initiallyExpanded: true,
-        subtitle: Column(
+        subtitle: Wrap(
+          spacing: 10,
+          direction: Axis.horizontal,
+          crossAxisAlignment: WrapCrossAlignment.start,
           children: [
             Row(
               children: [
                 const Icon(Icons.calendar_today),
-                Text(
-                  DateFormat('MMMM dd, yyyy')
-                      .format(DateTime.parse(event['date']!)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    DateFormat('MMMM dd, yyyy')
+                        .format(DateTime.parse(event['date']!)),
+                  ),
                 ),
               ],
             ),
             Row(
               children: [
                 const Icon(Icons.access_time),
-                Text(
-                  DateFormat('hh:mm a Z')
-                      .format(DateTime.parse(event['startTime']!)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    DateFormat('h:mm a Z')
+                        .format(DateTime.parse(event['startTime']!)),
+                  ),
                 ),
                 const Text(' - '),
                 Text(
-                  DateFormat('hh:mm a Z')
+                  DateFormat('h:mm a Z')
                       .format(DateTime.parse(event['endTime']!)),
                 ),
               ],
@@ -85,8 +93,11 @@ class EventTile extends StatelessWidget {
             Row(
               children: [
                 const Icon(Icons.app_registration),
-                Text(DateFormat('hh:mm a Z').format(
-                    DateTime.parse(event['registrationOpenDateTime']!))),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(DateFormat('h:mm a Z').format(
+                      DateTime.parse(event['registrationOpenDateTime']!))),
+                ),
               ],
             )
           ],

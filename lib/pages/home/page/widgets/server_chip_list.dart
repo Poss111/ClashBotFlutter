@@ -1,51 +1,50 @@
-import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
+import 'package:clashbot_flutter/models/discord_guild.dart';
+import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
+import 'dart:developer' as developer;
 
 class ServerChipList extends StatelessWidget {
-  final List<DiscordGuildWColor> servers;
-  final List<String> selectedServers;
-  final ValueChanged<List<String>> onSelectionChanged;
-
-  const ServerChipList({
-    required this.servers,
-    required this.selectedServers,
-    required this.onSelectionChanged,
-  });
+  const ServerChipList({super.key});
 
   @override
   Widget build(BuildContext context) {
+    ApplicationDetailsStore appStore = context.read<ApplicationDetailsStore>();
+    ClashStore clashStore = context.read<ClashStore>();
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Row(
-          children: List<Widget>.generate(
-            servers.length > 5 ? 5 : servers.length,
-            (index) {
-              bool isSelected = selectedServers.contains(servers[index].id);
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: FilterChip(
-                  avatar: CircleAvatar(
-                    backgroundImage: NetworkImage(servers[index].iconURL),
-                    foregroundColor: isSelected ? Colors.white : Colors.black,
+        child: Observer(
+          builder: (_) {
+            return Row(
+              children: appStore.preferredServers.map((serverId) {
+                bool isSelected = clashStore.selectedServers.contains(serverId);
+                DiscordGuild discordGuild =
+                    appStore.discordDetailsStore.discordGuildMap[serverId]!;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: FilterChip(
+                    avatar: CircleAvatar(
+                      backgroundImage: NetworkImage(discordGuild.iconURL),
+                      foregroundColor: isSelected ? Colors.white : Colors.black,
+                    ),
+                    label: Text(discordGuild.name ?? 'Unknown'),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        clashStore.addSelectedServer(discordGuild.id);
+                      } else {
+                        clashStore.removeSelectedServer(discordGuild.id);
+                      }
+                    },
                   ),
-                  label: Text(servers[index].name ?? 'Unknown'),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    List<String> newSelectedServers =
-                        List.from(selectedServers);
-                    if (selected) {
-                      newSelectedServers.add(servers[index].id);
-                    } else {
-                      newSelectedServers.remove(servers[index].id);
-                    }
-                    onSelectionChanged(newSelectedServers);
-                  },
-                ),
-              );
-            },
-          ),
+                );
+              }).toList(),
+            );
+          },
         ),
       ),
     );

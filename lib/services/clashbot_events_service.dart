@@ -1,18 +1,10 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/models/clash_notification.dart';
-import 'package:clashbot_flutter/models/clash_team.dart';
-import 'package:clashbot_flutter/models/tentative_queue.dart';
-import 'package:clashbot_flutter/stores/application_details.store.dart';
-import 'package:clashbot_flutter/stores/clashbot_player.store.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
-import 'package:flutter/widgets.dart';
-import 'package:mobx/mobx.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
-import 'package:stomp_dart_client/stomp_frame.dart';
 import 'package:stomp_dart_client/stomp_handler.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:developer' as developer;
@@ -44,14 +36,10 @@ class ClashBotEventsService {
       );
       stompClient?.activate();
     }
-}
+  }
 
-  void setupSubscription(
-      String loggedInUserId,
-      String serverId,
-      Function notifyUser,
-      ClashPlayerStore clashPlayerStore,
-      DiscordDetailsStore detailsStore) {
+  void setupSubscription(String loggedInUserId, String serverId,
+      Function notifyUser, DiscordDetailsStore detailsStore) {
     developer.log("Subscribing to $serverId...");
     if (null != stompClient && stompClient!.connected) {
       openConnections.putIfAbsent(
@@ -72,14 +60,14 @@ class ClashBotEventsService {
                     developer.log("${result.teamEvent.eventType} triggered.");
                     String message = '';
                     if (null != result.teamEvent.team) {
-                      clashPlayerStore.updateClashTeam(
-                          ClashTeam.teamToClashTeam(result.teamEvent.team)!);
+                      // clashPlayerStore.updateClashTeam(
+                      //     ClashTeam.teamToClashTeam(result.teamEvent.team)!);
                       message =
                           'Team ${result.teamEvent.team?.name} has been created.';
                     } else if (null != result.teamEvent.tentative) {
-                      clashPlayerStore.updateTentativeQueue(
-                          TentativeQueue.tentativeToTentativeQueue(
-                              result.teamEvent.tentative)!);
+                      // clashPlayerStore.updateTentativeQueue(
+                      //     TentativeQueue.tentativeToTentativeQueue(
+                      //         result.teamEvent.tentative)!);
                       message = 'Tentative Queue has been created!';
                     } else {
                       throw Error(message: "Failed to handle create event.");
@@ -97,14 +85,14 @@ class ClashBotEventsService {
                         .log("Update ${result.teamEvent.eventType} triggered.");
                     String message = '';
                     if (null != result.teamEvent.team) {
-                      clashPlayerStore.updateClashTeam(
-                          ClashTeam.teamToClashTeam(result.teamEvent.team)!);
+                      // clashPlayerStore.updateClashTeam(
+                      //     ClashTeam.teamToClashTeam(result.teamEvent.team)!);
                       message =
                           'Team has been updated to ${result.teamEvent.team?.name}.';
                     } else if (null != result.teamEvent.tentative) {
-                      clashPlayerStore.updateTentativeQueue(
-                          TentativeQueue.tentativeToTentativeQueue(
-                              result.teamEvent.tentative)!);
+                      // clashPlayerStore.updateTentativeQueue(
+                      //     TentativeQueue.tentativeToTentativeQueue(
+                      //         result.teamEvent.tentative)!);
                       message = 'Tentative Queue has been updated or created!';
                     } else {
                       throw Error(message: "Failed to handle update event.");
@@ -121,14 +109,14 @@ class ClashBotEventsService {
                     developer.log("${result.teamEvent.eventType} triggered.");
                     String message = '';
                     if (null != result.teamEvent.team) {
-                      clashPlayerStore.updateClashTeam(
-                          ClashTeam.teamToClashTeam(result.teamEvent.team)!);
+                      // clashPlayerStore.updateClashTeam(
+                      //     ClashTeam.teamToClashTeam(result.teamEvent.team)!);
                       message =
                           '$username joined Team ${result.teamEvent.team?.name}.';
                     } else if (null != result.teamEvent.tentative) {
-                      clashPlayerStore.updateTentativeQueue(
-                          TentativeQueue.tentativeToTentativeQueue(
-                              result.teamEvent.tentative)!);
+                      // clashPlayerStore.updateTentativeQueue(
+                      //     TentativeQueue.tentativeToTentativeQueue(
+                      //         result.teamEvent.tentative)!);
                       message =
                           '$username joined Tentative Queue ${result.teamEvent.tentative?.tournamentDetails?.tournamentName} ${result.teamEvent.tentative?.tournamentDetails?.tournamentDay}.';
                     } else {
@@ -146,14 +134,14 @@ class ClashBotEventsService {
                     developer.log("${result.teamEvent.eventType} triggered.");
                     String message = '';
                     if (null != result.teamEvent.team) {
-                      clashPlayerStore.updateClashTeam(
-                          ClashTeam.teamToClashTeam(result.teamEvent.team)!);
+                      // clashPlayerStore.updateClashTeam(
+                      //     ClashTeam.teamToClashTeam(result.teamEvent.team)!);
                       message =
                           '$username left Team ${result.teamEvent.team?.name}.';
                     } else if (null != result.teamEvent.tentative) {
-                      clashPlayerStore.updateTentativeQueue(
-                          TentativeQueue.tentativeToTentativeQueue(
-                              result.teamEvent.tentative)!);
+                      // clashPlayerStore.updateTentativeQueue(
+                      //     TentativeQueue.tentativeToTentativeQueue(
+                      //         result.teamEvent.tentative)!);
                       message =
                           '$username left Tentative Queue ${result.teamEvent.tentative?.tournamentDetails?.tournamentName} ${result.teamEvent.tentative?.tournamentDetails?.tournamentDay}.';
                     } else {
@@ -171,14 +159,14 @@ class ClashBotEventsService {
                     developer.log("Delete Event triggered.");
                     String message = '';
                     if (null != result.teamEvent.team) {
-                      clashPlayerStore.removeClashTeams(
-                          ClashTeam.teamToClashTeam(result.teamEvent.team)!);
+                      // clashPlayerStore.removeClashTeams(
+                      //     ClashTeam.teamToClashTeam(result.teamEvent.team)!);
                       message =
                           'Team ${result.teamEvent.team?.name} has been deleted!';
                     } else if (null != result.teamEvent.tentative) {
-                      clashPlayerStore.removeTentativeQueue(
-                          TentativeQueue.tentativeToTentativeQueue(
-                              result.teamEvent.tentative)!);
+                      // clashPlayerStore.removeTentativeQueue(
+                      //     TentativeQueue.tentativeToTentativeQueue(
+                      //         result.teamEvent.tentative)!);
                       message = 'Tentative Queue has been deleted.';
                     } else {
                       throw Error(message: "Failed to handle delete event.");
@@ -207,5 +195,4 @@ class ClashBotEventsService {
       openConnections.remove(serverId);
     }
   }
-
 }
