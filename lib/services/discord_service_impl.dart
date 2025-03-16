@@ -69,7 +69,7 @@ class DiscordServiceImpl implements DiscordService {
   Future<void> loginToDiscord() async {
     await oAuth2Helper.getToken();
   }
-  
+
   @override
   Future<DiscordUser> fetchUserDetails(String discordId) {
     return retry(
