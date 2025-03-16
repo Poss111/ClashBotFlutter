@@ -5,14 +5,14 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i11;
 
-import 'package:clashbot_flutter/models/clash_notification.dart' as _i10;
-import 'package:clashbot_flutter/models/clash_tournament.dart' as _i9;
+import 'package:clash_bot_api/api.dart' as _i10;
+import 'package:clashbot_flutter/models/clash_notification.dart' as _i9;
+import 'package:clashbot_flutter/models/clashbot_user.dart' as _i4;
 import 'package:clashbot_flutter/models/discord_guild.dart' as _i12;
 import 'package:clashbot_flutter/models/discord_user.dart' as _i6;
 import 'package:clashbot_flutter/stores/application_details.store.dart' as _i7;
-import 'package:clashbot_flutter/stores/clashbot_player.store.dart' as _i3;
 import 'package:clashbot_flutter/stores/discord_details.store.dart' as _i2;
-import 'package:clashbot_flutter/stores/riot_champion.store.dart' as _i4;
+import 'package:clashbot_flutter/stores/riot_champion.store.dart' as _i3;
 import 'package:mobx/mobx.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i8;
@@ -42,9 +42,9 @@ class _FakeDiscordDetailsStore_0 extends _i1.SmartFake
         );
 }
 
-class _FakeClashPlayerStore_1 extends _i1.SmartFake
-    implements _i3.ClashPlayerStore {
-  _FakeClashPlayerStore_1(
+class _FakeRiotChampionStore_1 extends _i1.SmartFake
+    implements _i3.RiotChampionStore {
+  _FakeRiotChampionStore_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -53,9 +53,8 @@ class _FakeClashPlayerStore_1 extends _i1.SmartFake
         );
 }
 
-class _FakeRiotChampionStore_2 extends _i1.SmartFake
-    implements _i4.RiotChampionStore {
-  _FakeRiotChampionStore_2(
+class _FakeClashBotUser_2 extends _i1.SmartFake implements _i4.ClashBotUser {
+  _FakeClashBotUser_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -75,30 +74,30 @@ class _FakeObservableList_3<T> extends _i1.SmartFake
         );
 }
 
-class _FakeReactiveContext_4 extends _i1.SmartFake
-    implements _i5.ReactiveContext {
-  _FakeReactiveContext_4(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeDiscordUser_5 extends _i1.SmartFake implements _i6.DiscordUser {
-  _FakeDiscordUser_5(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeObservableMap_6<K, V> extends _i1.SmartFake
+class _FakeObservableMap_4<K, V> extends _i1.SmartFake
     implements _i5.ObservableMap<K, V> {
-  _FakeObservableMap_6(
+  _FakeObservableMap_4(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeReactiveContext_5 extends _i1.SmartFake
+    implements _i5.ReactiveContext {
+  _FakeReactiveContext_5(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeDiscordUser_6 extends _i1.SmartFake implements _i6.DiscordUser {
+  _FakeDiscordUser_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -136,35 +135,16 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  _i3.ClashPlayerStore get loggedInClashUser => (super.noSuchMethod(
-        Invocation.getter(#loggedInClashUser),
-        returnValue: _FakeClashPlayerStore_1(
-          this,
-          Invocation.getter(#loggedInClashUser),
-        ),
-      ) as _i3.ClashPlayerStore);
-
-  @override
-  set loggedInClashUser(_i3.ClashPlayerStore? _loggedInClashUser) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #loggedInClashUser,
-          _loggedInClashUser,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i4.RiotChampionStore get riotChampionStore => (super.noSuchMethod(
+  _i3.RiotChampionStore get riotChampionStore => (super.noSuchMethod(
         Invocation.getter(#riotChampionStore),
-        returnValue: _FakeRiotChampionStore_2(
+        returnValue: _FakeRiotChampionStore_1(
           this,
           Invocation.getter(#riotChampionStore),
         ),
-      ) as _i4.RiotChampionStore);
+      ) as _i3.RiotChampionStore);
 
   @override
-  set riotChampionStore(_i4.RiotChampionStore? _riotChampionStore) =>
+  set riotChampionStore(_i3.RiotChampionStore? _riotChampionStore) =>
       super.noSuchMethod(
         Invocation.setter(
           #riotChampionStore,
@@ -192,20 +172,36 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  _i5.ObservableList<_i9.ClashTournament> get tournaments =>
-      (super.noSuchMethod(
-        Invocation.getter(#tournaments),
-        returnValue: _FakeObservableList_3<_i9.ClashTournament>(
+  _i4.ClashBotUser get clashBotUser => (super.noSuchMethod(
+        Invocation.getter(#clashBotUser),
+        returnValue: _FakeClashBotUser_2(
           this,
-          Invocation.getter(#tournaments),
+          Invocation.getter(#clashBotUser),
         ),
-      ) as _i5.ObservableList<_i9.ClashTournament>);
+      ) as _i4.ClashBotUser);
 
   @override
-  set tournaments(_i5.ObservableList<_i9.ClashTournament>? value) =>
-      super.noSuchMethod(
+  set clashBotUser(_i4.ClashBotUser? value) => super.noSuchMethod(
         Invocation.setter(
-          #tournaments,
+          #clashBotUser,
+          value,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i5.ObservableList<String> get preferredServers => (super.noSuchMethod(
+        Invocation.getter(#preferredServers),
+        returnValue: _FakeObservableList_3<String>(
+          this,
+          Invocation.getter(#preferredServers),
+        ),
+      ) as _i5.ObservableList<String>);
+
+  @override
+  set preferredServers(_i5.ObservableList<String>? value) => super.noSuchMethod(
+        Invocation.setter(
+          #preferredServers,
           value,
         ),
         returnValueForMissingStub: null,
@@ -230,17 +226,17 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  _i5.ObservableList<_i10.ClashNotification> get notifications =>
+  _i5.ObservableList<_i9.ClashNotification> get notifications =>
       (super.noSuchMethod(
         Invocation.getter(#notifications),
-        returnValue: _FakeObservableList_3<_i10.ClashNotification>(
+        returnValue: _FakeObservableList_3<_i9.ClashNotification>(
           this,
           Invocation.getter(#notifications),
         ),
-      ) as _i5.ObservableList<_i10.ClashNotification>);
+      ) as _i5.ObservableList<_i9.ClashNotification>);
 
   @override
-  set notifications(_i5.ObservableList<_i10.ClashNotification>? value) =>
+  set notifications(_i5.ObservableList<_i9.ClashNotification>? value) =>
       super.noSuchMethod(
         Invocation.setter(
           #notifications,
@@ -250,16 +246,35 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  List<_i10.ClashNotification> get sortedNotifications => (super.noSuchMethod(
-        Invocation.getter(#sortedNotifications),
-        returnValue: <_i10.ClashNotification>[],
-      ) as List<_i10.ClashNotification>);
+  _i5.ObservableMap<String, _i10.Subscription> get subscription =>
+      (super.noSuchMethod(
+        Invocation.getter(#subscription),
+        returnValue: _FakeObservableMap_4<String, _i10.Subscription>(
+          this,
+          Invocation.getter(#subscription),
+        ),
+      ) as _i5.ObservableMap<String, _i10.Subscription>);
 
   @override
-  List<_i10.ClashNotification> get unreadNotifications => (super.noSuchMethod(
+  _i5.ObservableList<String> get sortedSelectedServers => (super.noSuchMethod(
+        Invocation.getter(#sortedSelectedServers),
+        returnValue: _FakeObservableList_3<String>(
+          this,
+          Invocation.getter(#sortedSelectedServers),
+        ),
+      ) as _i5.ObservableList<String>);
+
+  @override
+  List<_i9.ClashNotification> get sortedNotifications => (super.noSuchMethod(
+        Invocation.getter(#sortedNotifications),
+        returnValue: <_i9.ClashNotification>[],
+      ) as List<_i9.ClashNotification>);
+
+  @override
+  List<_i9.ClashNotification> get unreadNotifications => (super.noSuchMethod(
         Invocation.getter(#unreadNotifications),
-        returnValue: <_i10.ClashNotification>[],
-      ) as List<_i10.ClashNotification>);
+        returnValue: <_i9.ClashNotification>[],
+      ) as List<_i9.ClashNotification>);
 
   @override
   bool get isLoggedIn => (super.noSuchMethod(
@@ -270,16 +285,26 @@ class MockApplicationDetailsStore extends _i1.Mock
   @override
   _i5.ReactiveContext get context => (super.noSuchMethod(
         Invocation.getter(#context),
-        returnValue: _FakeReactiveContext_4(
+        returnValue: _FakeReactiveContext_5(
           this,
           Invocation.getter(#context),
         ),
       ) as _i5.ReactiveContext);
 
   @override
-  _i11.Future<void> getTournaments() => (super.noSuchMethod(
+  _i11.Future<void> refreshSelectedServers() => (super.noSuchMethod(
         Invocation.method(
-          #getTournaments,
+          #refreshSelectedServers,
+          [],
+        ),
+        returnValue: _i11.Future<void>.value(),
+        returnValueForMissingStub: _i11.Future<void>.value(),
+      ) as _i11.Future<void>);
+
+  @override
+  _i11.Future<void> refreshClashBotUser() => (super.noSuchMethod(
+        Invocation.method(
+          #refreshClashBotUser,
           [],
         ),
         returnValue: _i11.Future<void>.value(),
@@ -296,7 +321,7 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  void notifyUser(_i10.ClashNotification? clashNotification) =>
+  void notifyUser(_i9.ClashNotification? clashNotification) =>
       super.noSuchMethod(
         Invocation.method(
           #notifyUser,
@@ -341,6 +366,31 @@ class MockApplicationDetailsStore extends _i1.Mock
         returnValue: _i11.Future<void>.value(),
         returnValueForMissingStub: _i11.Future<void>.value(),
       ) as _i11.Future<void>);
+
+  @override
+  _i11.Future<_i4.ClashBotUser> createUser(
+    String? defaultServerId,
+    List<String>? selectedServersToUse,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createUser,
+          [
+            defaultServerId,
+            selectedServersToUse,
+          ],
+        ),
+        returnValue: _i11.Future<_i4.ClashBotUser>.value(_FakeClashBotUser_2(
+          this,
+          Invocation.method(
+            #createUser,
+            [
+              defaultServerId,
+              selectedServersToUse,
+            ],
+          ),
+        )),
+      ) as _i11.Future<_i4.ClashBotUser>);
 }
 
 /// A class which mocks [DiscordDetailsStore].
@@ -355,7 +405,7 @@ class MockDiscordDetailsStore extends _i1.Mock
   @override
   _i6.DiscordUser get discordUser => (super.noSuchMethod(
         Invocation.getter(#discordUser),
-        returnValue: _FakeDiscordUser_5(
+        returnValue: _FakeDiscordUser_6(
           this,
           Invocation.getter(#discordUser),
         ),
@@ -393,7 +443,7 @@ class MockDiscordDetailsStore extends _i1.Mock
   @override
   _i5.ObservableMap<String, String> get discordIdToName => (super.noSuchMethod(
         Invocation.getter(#discordIdToName),
-        returnValue: _FakeObservableMap_6<String, String>(
+        returnValue: _FakeObservableMap_4<String, String>(
           this,
           Invocation.getter(#discordIdToName),
         ),
@@ -448,7 +498,7 @@ class MockDiscordDetailsStore extends _i1.Mock
   @override
   _i5.ReactiveContext get context => (super.noSuchMethod(
         Invocation.getter(#context),
-        returnValue: _FakeReactiveContext_4(
+        returnValue: _FakeReactiveContext_5(
           this,
           Invocation.getter(#context),
         ),
@@ -461,7 +511,7 @@ class MockDiscordDetailsStore extends _i1.Mock
           #fetchUserDetails,
           [discordId],
         ),
-        returnValue: _i11.Future<_i6.DiscordUser>.value(_FakeDiscordUser_5(
+        returnValue: _i11.Future<_i6.DiscordUser>.value(_FakeDiscordUser_6(
           this,
           Invocation.method(
             #fetchUserDetails,

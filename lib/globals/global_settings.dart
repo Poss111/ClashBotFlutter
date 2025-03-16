@@ -1,4 +1,5 @@
 import 'package:clashbot_flutter/clients/discord_client.dart';
+import 'package:clashbot_flutter/clients/mock_discord_client.dart';
 import 'package:clashbot_flutter/globals/credentials.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
 
@@ -32,7 +33,7 @@ abstract class AppGlobalSettings {
 }
 
 OAuth2Helper setupOauth2Helper() {
-  var client = DiscordOauth2Client(
+  var client = MockDiscordOauth2Client(
     redirectUri: "${Uri.base.origin}/login/index.html",
     customUriScheme: '',
   );

@@ -9,6 +9,22 @@ part of 'application_details.store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ApplicationDetailsStore on _ApplicationDetailsStore, Store {
+  Computed<ObservableMap<String, Subscription>>? _$subscriptionComputed;
+
+  @override
+  ObservableMap<String, Subscription> get subscription =>
+      (_$subscriptionComputed ??= Computed<ObservableMap<String, Subscription>>(
+              () => super.subscription,
+              name: '_ApplicationDetailsStore.subscription'))
+          .value;
+  Computed<ObservableList<String>>? _$sortedSelectedServersComputed;
+
+  @override
+  ObservableList<String> get sortedSelectedServers =>
+      (_$sortedSelectedServersComputed ??= Computed<ObservableList<String>>(
+              () => super.sortedSelectedServers,
+              name: '_ApplicationDetailsStore.sortedSelectedServers'))
+          .value;
   Computed<List<ClashNotification>>? _$sortedNotificationsComputed;
 
   @override
@@ -49,19 +65,35 @@ mixin _$ApplicationDetailsStore on _ApplicationDetailsStore, Store {
     });
   }
 
-  late final _$tournamentsAtom =
-      Atom(name: '_ApplicationDetailsStore.tournaments', context: context);
+  late final _$clashBotUserAtom =
+      Atom(name: '_ApplicationDetailsStore.clashBotUser', context: context);
 
   @override
-  ObservableList<ClashTournament> get tournaments {
-    _$tournamentsAtom.reportRead();
-    return super.tournaments;
+  ClashBotUser get clashBotUser {
+    _$clashBotUserAtom.reportRead();
+    return super.clashBotUser;
   }
 
   @override
-  set tournaments(ObservableList<ClashTournament> value) {
-    _$tournamentsAtom.reportWrite(value, super.tournaments, () {
-      super.tournaments = value;
+  set clashBotUser(ClashBotUser value) {
+    _$clashBotUserAtom.reportWrite(value, super.clashBotUser, () {
+      super.clashBotUser = value;
+    });
+  }
+
+  late final _$preferredServersAtom =
+      Atom(name: '_ApplicationDetailsStore.preferredServers', context: context);
+
+  @override
+  ObservableList<String> get preferredServers {
+    _$preferredServersAtom.reportRead();
+    return super.preferredServers;
+  }
+
+  @override
+  set preferredServers(ObservableList<String> value) {
+    _$preferredServersAtom.reportWrite(value, super.preferredServers, () {
+      super.preferredServers = value;
     });
   }
 
@@ -97,12 +129,24 @@ mixin _$ApplicationDetailsStore on _ApplicationDetailsStore, Store {
     });
   }
 
-  late final _$getTournamentsAsyncAction =
-      AsyncAction('_ApplicationDetailsStore.getTournaments', context: context);
+  late final _$refreshSelectedServersAsyncAction = AsyncAction(
+      '_ApplicationDetailsStore.refreshSelectedServers',
+      context: context);
 
   @override
-  Future<void> getTournaments() {
-    return _$getTournamentsAsyncAction.run(() => super.getTournaments());
+  Future<void> refreshSelectedServers() {
+    return _$refreshSelectedServersAsyncAction
+        .run(() => super.refreshSelectedServers());
+  }
+
+  late final _$refreshClashBotUserAsyncAction = AsyncAction(
+      '_ApplicationDetailsStore.refreshClashBotUser',
+      context: context);
+
+  @override
+  Future<void> refreshClashBotUser() {
+    return _$refreshClashBotUserAsyncAction
+        .run(() => super.refreshClashBotUser());
   }
 
   late final _$loadUserDetailsAsyncAction =
@@ -111,6 +155,16 @@ mixin _$ApplicationDetailsStore on _ApplicationDetailsStore, Store {
   @override
   Future<void> loadUserDetails() {
     return _$loadUserDetailsAsyncAction.run(() => super.loadUserDetails());
+  }
+
+  late final _$createUserAsyncAction =
+      AsyncAction('_ApplicationDetailsStore.createUser', context: context);
+
+  @override
+  Future<ClashBotUser> createUser(
+      String defaultServerId, List<String> selectedServersToUse) {
+    return _$createUserAsyncAction
+        .run(() => super.createUser(defaultServerId, selectedServersToUse));
   }
 
   late final _$_ApplicationDetailsStoreActionController =
@@ -175,9 +229,12 @@ mixin _$ApplicationDetailsStore on _ApplicationDetailsStore, Store {
   String toString() {
     return '''
 id: ${id},
-tournaments: ${tournaments},
+clashBotUser: ${clashBotUser},
+preferredServers: ${preferredServers},
 error: ${error},
 notifications: ${notifications},
+subscription: ${subscription},
+sortedSelectedServers: ${sortedSelectedServers},
 sortedNotifications: ${sortedNotifications},
 unreadNotifications: ${unreadNotifications},
 isLoggedIn: ${isLoggedIn}

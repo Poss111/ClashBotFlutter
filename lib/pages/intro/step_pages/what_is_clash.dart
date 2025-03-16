@@ -1,4 +1,4 @@
-import 'package:clashbot_flutter/pages/settings/settings_page.dart';
+import 'package:clashbot_flutter/pages/shimmer_loading_page.dart';
 import 'package:clashbot_flutter/styles.dart';
 import 'package:flutter/widgets.dart';
 

@@ -1,5 +1,3 @@
-
-import 'package:clashbot_flutter/pages/settings/settings_page.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -246,6 +244,15 @@ class LoadingPage extends StatelessWidget {
   }
 }
 
+class SmallBreak extends StatelessWidget {
+  const SmallBreak({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 10);
+  }
+}
+
 class ShimmyShimmer extends StatelessWidget {
   const ShimmyShimmer({
     super.key,
@@ -264,12 +271,13 @@ class ShimmyShimmer extends StatelessWidget {
 }
 
 class ShowLoadingPageUntilLoggedIn extends StatelessWidget {
-const ShowLoadingPageUntilLoggedIn({ super.key, required this.child });
+  const ShowLoadingPageUntilLoggedIn({super.key, required this.child});
   final Widget child;
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     final appStore = context.read<ApplicationDetailsStore>();
-    return Observer(builder: (context) => appStore.isLoggedIn ? child : LoadingPage());
+    return Observer(
+        builder: (context) => appStore.isLoggedIn ? child : LoadingPage());
   }
 }

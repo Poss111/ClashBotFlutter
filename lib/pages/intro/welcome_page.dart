@@ -8,7 +8,6 @@ import 'package:clashbot_flutter/pages/intro/step_pages/welcome.dart';
 import 'package:clashbot_flutter/pages/intro/step_pages/what_is_clash.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
 import 'package:clashbot_flutter/stores/short-lived/selected_server_form.store.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
@@ -60,8 +59,6 @@ class _WelcomeDashboard extends State<WelcomeDashboard> {
       showDisclaimer = false;
     }
 
-    final appStore = context.read<ApplicationDetailsStore>();
-
     List<Widget> welcomeWidgetsOrder = List.empty(growable: true);
     welcomeWidgetsOrder.add(const WelcomeWidget());
     welcomeWidgetsOrder.add(const WhatIsClashBotWidget());
@@ -104,8 +101,8 @@ class _WelcomeDashboard extends State<WelcomeDashboard> {
                       : ElevatedButton(
                           onPressed: enableNavigation
                               ? () async {
-                                  await FirebaseAnalytics.instance.logEvent(
-                                      name: 'welcome_page_next_button');
+                                  // await FirebaseAnalytics.instance.logEvent(
+                                  //     name: 'welcome_page_next_button');
                                   if (index + 1 < welcomeWidgetsOrder.length) {
                                     setState(() {
                                       index = index + 1;
@@ -144,15 +141,12 @@ class EndWelcomePageSessionButton extends StatelessWidget {
                 ? null
                 : () {
                     selectedServerFormStore.submittingForm();
-                    appStore.loggedInClashUser
+                    appStore
                         .createUser(
                             selectedServerFormStore.listOfSelectedServers.first
                                 .toString(),
                             selectedServerFormStore.listOfSelectedServers)
                         .then((value) {
-                      appStore.riotChampionStore.refreshChampionData();
-                      appStore.loggedInClashUser.refreshTeamList();
-                      appStore.loggedInClashUser.refreshTentativeQueue();
                       modelFirstTime.visited = true;
                       context.goNamed('teams');
                     }).catchError((error) {
