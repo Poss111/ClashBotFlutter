@@ -113,9 +113,7 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider(create: (context) => widget.modelFirstTime),
           ChangeNotifierProvider(create: (context) => widget.modelTheme),
           Provider<DiscordService>(
-              create: (_) => Env.mockDiscordService == 'true'
-                  ? DiscordServiceMockImpl()
-                  : DiscordServiceImpl(setupOauth2Helper())),
+              create: (_) => DiscordServiceImpl(setupOauth2Helper())),
           Provider<ApiClient>(
               create: (_) => ApiClient(basePath: Env.clashbotServiceUrl)),
           ProxyProvider<ApiClient, ClashBotService>(
