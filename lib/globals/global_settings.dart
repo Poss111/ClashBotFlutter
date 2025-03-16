@@ -1,5 +1,4 @@
 import 'package:clashbot_flutter/clients/discord_client.dart';
-import 'package:clashbot_flutter/clients/mock_discord_client.dart';
 import 'package:clashbot_flutter/globals/credentials.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
 

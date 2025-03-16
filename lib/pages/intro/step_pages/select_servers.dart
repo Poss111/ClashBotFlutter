@@ -21,7 +21,6 @@ class ServerFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final applicationDetailsStore = context.read<ApplicationDetailsStore>();
-    applicationDetailsStore.discordDetailsStore.loadEverything();
     return Observer(
         builder: (_) => ServerFormContent(
               guilds: applicationDetailsStore.discordDetailsStore.discordGuilds,
@@ -87,6 +86,7 @@ class ServerChoiceChip extends StatefulWidget {
 class _ServerChoiceChipState extends State<ServerChoiceChip> {
   @override
   Widget build(BuildContext context) {
+    ApplicationDetailsStore appStore = context.read<ApplicationDetailsStore>();
     return ChoiceChip(
       avatar: CircleAvatar(
         backgroundImage: NetworkImage(widget.guild.iconURL),
@@ -104,24 +104,17 @@ class _ServerChoiceChipState extends State<ServerChoiceChip> {
       onSelected: !widget.selectedServerFormStore.maxServersReached
           ? (bool selected) {
               setState(() {
-                developer.log("Selected: $selected");
-                developer.log(
-                    "Max Servers Reached: ${widget.selectedServerFormStore.maxServersReached}");
-                developer.log("widget.guild.id: ${widget.guild.id}");
-                developer.log(
-                    "listOfSelectedServers: ${widget.selectedServerFormStore.listOfSelectedServers}");
-                developer.log(
-                    "Does it contain? ${widget.selectedServerFormStore.listOfSelectedServers.contains(widget.guild.id)}");
                 if (selected &&
                     !widget.selectedServerFormStore.maxServersReached) {
-                  developer.log("Adding server to list ${widget.guild.id}...");
                   widget.selectedServerFormStore.addServer(widget.guild.id);
+                  appStore.setPreferredServers(
+                      widget.selectedServerFormStore.listOfSelectedServers);
                 } else if (!selected &&
                     widget.selectedServerFormStore.listOfSelectedServers
                         .contains(widget.guild.id)) {
-                  developer
-                      .log("Removing server from list ${widget.guild.id}...");
                   widget.selectedServerFormStore.removeServer(widget.guild.id);
+                  appStore.setPreferredServers(
+                      widget.selectedServerFormStore.listOfSelectedServers);
                 }
               });
             }

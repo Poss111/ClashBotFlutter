@@ -49,8 +49,10 @@ abstract class _ApplicationDetailsStore with Store {
   _ApplicationDetailsStore(this._discordService, this._clashBotService,
       this._riotResourcesService, this._clashBotEventsService) {
     reaction((_) => id, (_) {
-      refreshClashBotUser();
-      refreshSelectedServers();
+      if (id != '0') {
+        refreshClashBotUser();
+        refreshSelectedServers();
+      }
     });
   }
 
@@ -77,12 +79,15 @@ abstract class _ApplicationDetailsStore with Store {
       ObservableList.of(clashBotUser.selectedServers.sorted());
 
   @action
+  void setPreferredServers(List<String> servers) {
+    preferredServers = ObservableList.of(servers);
+  }
+
+  @action
   Future<void> refreshSelectedServers() async {
     preferredServers.clear();
     var userDetails = await _clashBotService.getPlayer(id);
-    developer.log(userDetails.selectedServers.toString());
     preferredServers = ObservableList.of(userDetails.selectedServers);
-    developer.log("Preferred: " + preferredServers.toString());
   }
 
   @action
@@ -106,7 +111,7 @@ abstract class _ApplicationDetailsStore with Store {
 
   @computed
   bool get isLoggedIn =>
-      discordDetailsStore.detailsLoaded && clashBotUser.discordId != '0';
+      discordDetailsStore.userHasLoggedIn && clashBotUser.discordId != '0';
 
   @action
   void triggerError(String errorMessage) {
@@ -139,38 +144,13 @@ abstract class _ApplicationDetailsStore with Store {
   }
 
   @action
-  Future<void> loadUserDetails() async {
-    try {
-      await Future.wait([
-        discordDetailsStore.loadEverything(),
-        riotChampionStore.refreshChampionData()
-      ]);
-      // _clashBotEventsService.connectClient(() {
-      //   for (var serverId in loggedInClashUser.preferredServers) {
-      //     _clashBotEventsService.setupSubscription(
-      //         id, serverId, notifyUser, loggedInClashUser, discordDetailsStore);
-      //   }
-      // }, (dynamic error) {
-      //   developer.log("Websocket connection failure.", error: error);
-      //   error = "Failed to connect to Server events.";
-      // });
-    } catch (error) {
-      developer.log("Failed to load user.", error: error);
-      this.error = 'Failed to load :(, please try again later.';
-    }
-  }
-
-  @action
-  Future<ClashBotUser> createUser(
-      String defaultServerId, List<String> selectedServersToUse) async {
+  Future<ClashBotUser> createUser() async {
     try {
       clashBotUser = await _clashBotService.createPlayer(
-          id, discordDetailsStore.discordUser.username, defaultServerId);
-      var updatedSelectedServers = await _clashBotService.createSelectedServers(
-          id, selectedServersToUse);
+          id, discordDetailsStore.discordUser.username, preferredServers.first);
+      var updatedSelectedServers =
+          await _clashBotService.createSelectedServers(id, preferredServers);
       clashBotUser.selectedServers = updatedSelectedServers;
-      preferredServers.clear();
-      preferredServers.addAll(updatedSelectedServers);
       return clashBotUser;
     } on Exception catch (issue) {
       error = 'Failed to create new Clash Bot User, please try again.';

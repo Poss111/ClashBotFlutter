@@ -100,11 +100,11 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/markdown/privacy-policy.md
-    - assets/images/TopIcon.webp
-    - assets/images/BotIcon.webp
-    - assets/images/MidIcon.webp
-    - assets/images/JGIcon.webp
-    - assets/images/SuppIcon.webp
+    - images/TopIcon.webp
+    - images/BotIcon.webp
+    - images/MidIcon.webp
+    - images/JGIcon.webp
+    - images/SuppIcon.webp
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

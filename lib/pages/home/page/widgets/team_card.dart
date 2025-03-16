@@ -1,10 +1,8 @@
 import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/models/clash_team.dart';
-import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
 import 'package:clashbot_flutter/snackbars/join_team_snackbar.dart';
 import 'package:clashbot_flutter/snackbars/remove_team_snackbar.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
-import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
@@ -54,11 +52,14 @@ class TeamCard extends StatelessWidget {
                         );
                       }),
                       SizedBox(width: 5),
-                      Text(
-                        team.name.length > 20
-                            ? '${team.name.substring(0, 20)}...'
-                            : team.name,
-                        style: Theme.of(context).textTheme.titleLarge,
+                      Expanded(
+                        child: Text(
+                          team.name.length > 20
+                              ? '${team.name.substring(0, 20)}...'
+                              : team.name,
+                          style: Theme.of(context).textTheme.titleLarge,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ],
                   ),

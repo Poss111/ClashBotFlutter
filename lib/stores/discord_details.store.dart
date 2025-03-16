@@ -14,11 +14,11 @@ abstract class _DiscordDetailsStore with Store {
   final DiscordService _discordService;
   final ApplicationDetailsStore _applicationDetailsStore;
   _DiscordDetailsStore(this._discordService, this._applicationDetailsStore) {
-    reaction(
-        (_) =>
-            _applicationDetailsStore.id != '0' ||
-            _applicationDetailsStore.id.isNotEmpty, (_) {
-      loadEverything();
+    reaction((_) => _applicationDetailsStore.id, (_) {
+      if (_applicationDetailsStore.id != '0' ||
+          _applicationDetailsStore.id.isNotEmpty) {
+        fetchUserGuilds();
+      }
     });
   }
 
@@ -32,10 +32,13 @@ abstract class _DiscordDetailsStore with Store {
   ObservableMap<String, String> discordIdToName = ObservableMap();
 
   @observable
-  String status = 'NOT_LOADED';
+  ObservableList<String> callsInProgress = ObservableList();
 
   @computed
-  bool get detailsLoaded => discordUser.id != '0';
+  bool get loadingData => callsInProgress.isNotEmpty;
+
+  @computed
+  bool get userHasLoggedIn => discordUser.id != '0';
 
   @computed
   bool get guildDetailsLoaded => discordGuildMap.isNotEmpty;
@@ -46,59 +49,46 @@ abstract class _DiscordDetailsStore with Store {
 
   @action
   Future<DiscordUser> fetchUserDetails(String discordId) async {
+    callsInProgress.add('fetchUserDetails');
     var foundUser;
     try {
       foundUser = await _discordService.fetchUserDetails(discordId);
       discordIdToName.putIfAbsent(discordId, () => foundUser.username);
-    } on Exception catch (error) {}
+    } on Exception catch (error) {
+      _applicationDetailsStore.error =
+          'Failed to fetch Discord User details due to ${error.toString()}';
+    }
+    callsInProgress.remove('fetchUserDetails');
     return foundUser;
   }
 
   @action
   Future<void> fetchCurrentUserDetails() async {
-    status = 'LOADING';
+    callsInProgress.add('fetchCurrentUserDetails');
     final future = _discordService.fetchCurrentUserDetails();
     try {
       DiscordUser updatedUser = await future;
       discordUser = updatedUser;
       _applicationDetailsStore.id = discordUser.id;
       discordIdToName.putIfAbsent(updatedUser.id, () => updatedUser.username);
-      status = 'LOADED';
     } on Exception catch (error) {
       _applicationDetailsStore.error =
           'Failed to fetch Discord User details due to ${error.toString()}';
-      status = 'NOT LOADED';
     }
+    callsInProgress.remove('fetchCurrentUserDetails');
   }
 
   @action
   Future<void> fetchUserGuilds() async {
-    status = 'LOADING';
+    callsInProgress.add('fetchUserGuilds');
     final future = _discordService.fetchUserGuilds();
     try {
       List<DiscordGuild> guilds = await future;
       discordGuilds.clear();
       discordGuilds.addAll(guilds);
-      status = 'LOADED';
     } on Exception catch (error) {
       _applicationDetailsStore.error = error.toString();
-      status = 'NOT LOADED';
     }
-  }
-
-  @action
-  Future<void> loadEverything() async {
-    status = 'LOADING';
-    try {
-      // await _discordService.loginToDiscord();
-      await Future.wait([fetchCurrentUserDetails(), fetchUserGuilds()]);
-
-      _applicationDetailsStore.id = discordUser.id;
-
-      status = 'LOADED';
-    } on Exception catch (error) {
-      _applicationDetailsStore.error = error.toString();
-      status = 'NOT LOADED';
-    }
+    callsInProgress.remove('fetchUserGuilds');
   }
 }

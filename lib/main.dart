@@ -141,8 +141,8 @@ class _MyAppState extends State<MyApp> {
         child: Consumer2<ApplicationDetailsStore, ModelFirstTime>(builder:
             (context, ApplicationDetailsStore appStore,
                 ModelFirstTime modelFirstTime, child) {
-          if (modelFirstTime.visited) {
-            appStore.loadUserDetails();
+          if (modelFirstTime.visited && !appStore.isLoggedIn) {
+            appStore.discordDetailsStore.fetchCurrentUserDetails();
           }
           return Observer(builder: (_) {
             return const MainApp();

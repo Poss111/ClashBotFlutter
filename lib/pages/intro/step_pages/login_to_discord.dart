@@ -17,12 +17,14 @@ class LoginToDiscordWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appStore = context.read<ApplicationDetailsStore>();
-    var dispose =
-        when((_) => appStore.discordDetailsStore.detailsLoaded == true, () {
+    var dispose = when(
+        (_) =>
+            appStore.discordDetailsStore.userHasLoggedIn == true &&
+            appStore.discordDetailsStore.discordGuilds.isNotEmpty, () {
       callback(true);
     });
     return Observer(builder: (_) {
-      return !appStore.discordDetailsStore.detailsLoaded
+      return !appStore.discordDetailsStore.userHasLoggedIn
           ? const AskToLogin()
           : Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -66,7 +68,7 @@ class AskToLogin extends StatelessWidget {
         children: [
           const Text("Lets log you in to Discord!", style: subHeaderStyle),
           const SizedBox(height: 10),
-          appStore.discordDetailsStore.status == "NOT_LOADED"
+          !appStore.discordDetailsStore.loadingData
               ? const LoginToDiscord()
               : ElevatedButton.icon(
                   onPressed: null,
@@ -89,7 +91,7 @@ class LoginToDiscord extends StatelessWidget {
     return Consumer<ApplicationDetailsStore>(
         builder: (context, appStore, child) => ElevatedButton(
             onPressed: () {
-              appStore.discordDetailsStore.loadEverything();
+              appStore.discordDetailsStore.fetchCurrentUserDetails();
             },
             child: const Text("Login to Discord")));
   }

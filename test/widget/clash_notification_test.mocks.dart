@@ -292,6 +292,15 @@ class MockApplicationDetailsStore extends _i1.Mock
       ) as _i5.ReactiveContext);
 
   @override
+  void setPreferredServers(List<String>? servers) => super.noSuchMethod(
+        Invocation.method(
+          #setPreferredServers,
+          [servers],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   _i11.Future<void> refreshSelectedServers() => (super.noSuchMethod(
         Invocation.method(
           #refreshSelectedServers,
@@ -358,36 +367,16 @@ class MockApplicationDetailsStore extends _i1.Mock
       );
 
   @override
-  _i11.Future<void> loadUserDetails() => (super.noSuchMethod(
-        Invocation.method(
-          #loadUserDetails,
-          [],
-        ),
-        returnValue: _i11.Future<void>.value(),
-        returnValueForMissingStub: _i11.Future<void>.value(),
-      ) as _i11.Future<void>);
-
-  @override
-  _i11.Future<_i4.ClashBotUser> createUser(
-    String? defaultServerId,
-    List<String>? selectedServersToUse,
-  ) =>
-      (super.noSuchMethod(
+  _i11.Future<_i4.ClashBotUser> createUser() => (super.noSuchMethod(
         Invocation.method(
           #createUser,
-          [
-            defaultServerId,
-            selectedServersToUse,
-          ],
+          [],
         ),
         returnValue: _i11.Future<_i4.ClashBotUser>.value(_FakeClashBotUser_2(
           this,
           Invocation.method(
             #createUser,
-            [
-              defaultServerId,
-              selectedServersToUse,
-            ],
+            [],
           ),
         )),
       ) as _i11.Future<_i4.ClashBotUser>);
@@ -460,26 +449,32 @@ class MockDiscordDetailsStore extends _i1.Mock
       );
 
   @override
-  String get status => (super.noSuchMethod(
-        Invocation.getter(#status),
-        returnValue: _i8.dummyValue<String>(
+  _i5.ObservableList<String> get callsInProgress => (super.noSuchMethod(
+        Invocation.getter(#callsInProgress),
+        returnValue: _FakeObservableList_3<String>(
           this,
-          Invocation.getter(#status),
+          Invocation.getter(#callsInProgress),
         ),
-      ) as String);
+      ) as _i5.ObservableList<String>);
 
   @override
-  set status(String? value) => super.noSuchMethod(
+  set callsInProgress(_i5.ObservableList<String>? value) => super.noSuchMethod(
         Invocation.setter(
-          #status,
+          #callsInProgress,
           value,
         ),
         returnValueForMissingStub: null,
       );
 
   @override
-  bool get detailsLoaded => (super.noSuchMethod(
-        Invocation.getter(#detailsLoaded),
+  bool get loadingData => (super.noSuchMethod(
+        Invocation.getter(#loadingData),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  bool get userHasLoggedIn => (super.noSuchMethod(
+        Invocation.getter(#userHasLoggedIn),
         returnValue: false,
       ) as bool);
 
@@ -534,16 +529,6 @@ class MockDiscordDetailsStore extends _i1.Mock
   _i11.Future<void> fetchUserGuilds() => (super.noSuchMethod(
         Invocation.method(
           #fetchUserGuilds,
-          [],
-        ),
-        returnValue: _i11.Future<void>.value(),
-        returnValueForMissingStub: _i11.Future<void>.value(),
-      ) as _i11.Future<void>);
-
-  @override
-  _i11.Future<void> loadEverything() => (super.noSuchMethod(
-        Invocation.method(
-          #loadEverything,
           [],
         ),
         returnValue: _i11.Future<void>.value(),

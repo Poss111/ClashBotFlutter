@@ -21,43 +21,48 @@ class DiscordServiceImpl implements DiscordService {
   @override
   Future<DiscordUser> fetchCurrentUserDetails() {
     return retry(
-        () => oAuth2Helper
-                .get(
-                    AppGlobalSettings.apiEndpointURL +
-                        AppGlobalSettings.API_DISCORD_GET_CURRENT_USER,
-                    headers: baseHeaders)
-                .then((response) {
-              if (response.statusCode != 200) {
-                throw ApiException(response.statusCode, response.reasonPhrase);
-              }
-              return response;
-            }).timeout(const Duration(seconds: 5)),
-        retryIf: (e) =>
-            e is SocketException ||
-            e is TimeoutException ||
-            (e is ApiException && e.code == HttpStatus.tooManyRequests)).then(
-        (value) => DiscordUser.fromJson(value.body));
+            () => oAuth2Helper
+                    .get(
+                        AppGlobalSettings.apiEndpointURL +
+                            AppGlobalSettings.API_DISCORD_GET_CURRENT_USER,
+                        headers: baseHeaders)
+                    .then((response) {
+                  if (response.statusCode != 200) {
+                    throw ApiException(
+                        response.statusCode, response.reasonPhrase);
+                  }
+                  return response;
+                }).timeout(const Duration(seconds: 5)),
+            retryIf: (e) =>
+                e is SocketException ||
+                e is TimeoutException ||
+                (e is ApiException && e.code == HttpStatus.tooManyRequests),
+            delayFactor: const Duration(seconds: 2))
+        .then((value) => DiscordUser.fromJson(value.body));
   }
 
   @override
   Future<List<DiscordGuild>> fetchUserGuilds() {
     return retry(
-        () => oAuth2Helper
-                .get(
-                    AppGlobalSettings.apiEndpointURL +
-                        AppGlobalSettings.API_DISCORD_GET_CURRENT_USER_GUILDS,
-                    headers: baseHeaders)
-                .then((response) {
-              if (response.statusCode != 200) {
-                throw ApiException(response.statusCode, response.reasonPhrase);
-              }
-              return response;
-            }).timeout(const Duration(seconds: 5)),
-        retryIf: (e) =>
-            e is SocketException ||
-            e is TimeoutException ||
-            (e is ApiException && e.code == HttpStatus.tooManyRequests)).then(
-        (value) {
+            () => oAuth2Helper
+                    .get(
+                        AppGlobalSettings.apiEndpointURL +
+                            AppGlobalSettings
+                                .API_DISCORD_GET_CURRENT_USER_GUILDS,
+                        headers: baseHeaders)
+                    .then((response) {
+                  if (response.statusCode != 200) {
+                    throw ApiException(
+                        response.statusCode, response.reasonPhrase);
+                  }
+                  return response;
+                }).timeout(const Duration(seconds: 5)),
+            retryIf: (e) =>
+                e is SocketException ||
+                e is TimeoutException ||
+                (e is ApiException && e.code == HttpStatus.tooManyRequests),
+            delayFactor: const Duration(seconds: 2))
+        .then((value) {
       Iterable l = jsonDecode(value.body);
       return List<DiscordGuild>.from(l.map((model) {
         return DiscordGuild.fromMap(model);
@@ -73,22 +78,24 @@ class DiscordServiceImpl implements DiscordService {
   @override
   Future<DiscordUser> fetchUserDetails(String discordId) {
     return retry(
-        () => oAuth2Helper
-                .get(
-                    AppGlobalSettings.apiEndpointURL +
-                        AppGlobalSettings.API_DISCORD_GET_USER +
-                        discordId,
-                    headers: baseHeaders)
-                .then((response) {
-              if (response.statusCode != 200) {
-                throw ApiException(response.statusCode, response.reasonPhrase);
-              }
-              return response;
-            }).timeout(const Duration(seconds: 5)),
-        retryIf: (e) =>
-            e is SocketException ||
-            e is TimeoutException ||
-            (e is ApiException && e.code == HttpStatus.tooManyRequests)).then(
-        (value) => DiscordUser.fromJson(value.body));
+            () => oAuth2Helper
+                    .get(
+                        AppGlobalSettings.apiEndpointURL +
+                            AppGlobalSettings.API_DISCORD_GET_USER +
+                            discordId,
+                        headers: baseHeaders)
+                    .then((response) {
+                  if (response.statusCode != 200) {
+                    throw ApiException(
+                        response.statusCode, response.reasonPhrase);
+                  }
+                  return response;
+                }).timeout(const Duration(seconds: 5)),
+            retryIf: (e) =>
+                e is SocketException ||
+                e is TimeoutException ||
+                (e is ApiException && e.code == HttpStatus.tooManyRequests),
+            delayFactor: const Duration(seconds: 2))
+        .then((value) => DiscordUser.fromJson(value.body));
   }
 }

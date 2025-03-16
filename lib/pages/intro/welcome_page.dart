@@ -141,14 +141,9 @@ class EndWelcomePageSessionButton extends StatelessWidget {
                 ? null
                 : () {
                     selectedServerFormStore.submittingForm();
-                    appStore
-                        .createUser(
-                            selectedServerFormStore.listOfSelectedServers.first
-                                .toString(),
-                            selectedServerFormStore.listOfSelectedServers)
-                        .then((value) {
+                    appStore.createUser().then((value) {
                       modelFirstTime.visited = true;
-                      context.goNamed('teams');
+                      context.goNamed('home');
                     }).catchError((error) {
                       selectedServerFormStore.callFailed = true;
                       selectedServerFormStore.submitting = false;
