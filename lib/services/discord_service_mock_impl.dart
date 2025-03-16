@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+
 import 'package:clash_bot_api/api.dart';
-import 'package:clashbot_flutter/core/config/env.dart';
 import 'package:clashbot_flutter/globals/global_settings.dart';
-import 'package:http/http.dart' as http;
-import 'package:oauth2_client/oauth2_helper.dart';
-import 'package:clashbot_flutter/models/discord_user.dart';
 import 'package:clashbot_flutter/models/discord_guild.dart';
-import 'package:retry/retry.dart';
+import 'package:clashbot_flutter/models/discord_user.dart';
+import 'package:http/http.dart' as http;
+
 import 'discord_service.dart';
 
 class DiscordServiceMockImpl implements DiscordService {
