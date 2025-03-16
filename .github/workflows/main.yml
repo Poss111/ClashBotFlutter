@@ -32,14 +32,11 @@ jobs:
 
         - name: Create environment file          
           env:
-            CLASHBOT_SERVICE_URL: http://localhost:8080/api/v2
+            CLASHBOT_SERVICE_URL: ${{ vars.CLASHBOT_SERVICE_URL }}
             MOCK_DISCORD_SERVICE: false
           run: ./ciScripts/build-env-file.sh CLASHBOT_SERVICE_URL ${CLASHBOT_SERVICE_URL} MOCK_DISCORD_SERVICE ${MOCK_DISCORD_SERVICE}
 
         - name: Generate Envied Files
-          env:
-            CLASHBOT_SERVICE_URL: ${{ vars.CLASHBOT_SERVICE_URL }}
-            MOCK_DISCORD_SERVICE: false
           run: |
             dart run build_runner clean
             dart scripts/generate_git_info.dart >> $GITHUB_STEP_SUMMARY
