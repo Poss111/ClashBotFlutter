@@ -33,7 +33,7 @@ abstract class AppGlobalSettings {
 }
 
 OAuth2Helper setupOauth2Helper() {
-  var client = MockDiscordOauth2Client(
+  var client = DiscordOauth2Client(
     redirectUri: "${Uri.base.origin}/login/index.html",
     customUriScheme: '',
   );
