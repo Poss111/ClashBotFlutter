@@ -306,7 +306,7 @@ class MainContainer extends StatelessWidget {
                 },
               ),
               const Text(
-                "${GitInfo.branchName} - ${GitInfo.commitHash}",
+                GitInfo.commitDetails,
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w100,
