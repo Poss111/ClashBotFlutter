@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'dart:developer' as developer;
 
 class EventsListWidget extends StatelessWidget {
   const EventsListWidget({super.key});
@@ -17,7 +16,6 @@ class EventsListWidget extends StatelessWidget {
     return Observer(builder: (_) {
       var events =
           clashStore.tournamentsToTeamsFilteredToADayIfActive.entries.toList();
-      developer.log("Events: $events");
       return SingleChildScrollView(
         child: ListView.builder(
           shrinkWrap: true,

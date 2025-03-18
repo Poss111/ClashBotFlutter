@@ -24,7 +24,8 @@ class DiscordUser {
   late String discriminator;
 
   String get userDiscr => "$username#$discriminator";
-  String get avatarURL => "${AppGlobalSettings.CND_DISCORD_AVATAR_URL}$id/$avatar.png";
+  String get avatarURL =>
+      "${AppGlobalSettings.CND_DISCORD_AVATAR_URL}$id/$avatar.png";
 
   DiscordUser(
     this.id,
@@ -89,5 +90,9 @@ class DiscordUser {
         username.hashCode ^
         avatar.hashCode ^
         discriminator.hashCode;
+  }
+
+  DiscordUser copy() {
+    return DiscordUser(id, username, avatar, discriminator);
   }
 }

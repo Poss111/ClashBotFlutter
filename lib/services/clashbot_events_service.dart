@@ -25,12 +25,8 @@ class ClashBotEventsService {
           onConnect: (p0) => onConnect(),
           connectionTimeout: const Duration(seconds: 20),
           beforeConnect: () async {
-            developer.log('waiting to connect...');
             await Future.delayed(Duration(milliseconds: 200));
-            developer.log('connecting...');
           },
-          onDebugMessage: (p0) => developer.log("Debug $p0"),
-          onStompError: (p0) => developer.log("Error $p0"),
           onWebSocketError: (error) => onError(error),
         ),
       );
@@ -40,7 +36,6 @@ class ClashBotEventsService {
 
   void setupSubscription(String loggedInUserId, String serverId,
       Function notifyUser, DiscordDetailsStore detailsStore) {
-    developer.log("Subscribing to $serverId...");
     if (null != stompClient && stompClient!.connected) {
       openConnections.putIfAbsent(
           serverId,
@@ -48,7 +43,6 @@ class ClashBotEventsService {
               destination: '/topic/server/$serverId',
               callback: (frame) {
                 Event? result = Event.fromJson(json.decode(frame.body!));
-                developer.log("Event recieved $result");
                 var discordId = result?.causedBy ?? '';
                 var username = detailsStore.discordIdToName[discordId];
                 if (isNull(username)) {
@@ -57,7 +51,6 @@ class ClashBotEventsService {
                 }
                 switch (result!.teamEvent.eventType) {
                   case EventType.CREATED:
-                    developer.log("${result.teamEvent.eventType} triggered.");
                     String message = '';
                     if (null != result.teamEvent.team) {
                       // clashPlayerStore.updateClashTeam(
@@ -106,7 +99,6 @@ class ClashBotEventsService {
                         DateTime.now()));
                     break;
                   case EventType.JOINED:
-                    developer.log("${result.teamEvent.eventType} triggered.");
                     String message = '';
                     if (null != result.teamEvent.team) {
                       // clashPlayerStore.updateClashTeam(
@@ -131,7 +123,6 @@ class ClashBotEventsService {
                         DateTime.now()));
                     break;
                   case EventType.REMOVED:
-                    developer.log("${result.teamEvent.eventType} triggered.");
                     String message = '';
                     if (null != result.teamEvent.team) {
                       // clashPlayerStore.updateClashTeam(
@@ -156,7 +147,6 @@ class ClashBotEventsService {
                         DateTime.now()));
                     break;
                   case EventType.DELETED:
-                    developer.log("Delete Event triggered.");
                     String message = '';
                     if (null != result.teamEvent.team) {
                       // clashPlayerStore.removeClashTeams(
@@ -180,7 +170,6 @@ class ClashBotEventsService {
                         DateTime.now()));
                     break;
                   default:
-                    developer.log("Unknown event type occurred.");
                     throw Error(message: "Unknown event type occurred.");
                 }
               }));
@@ -191,7 +180,6 @@ class ClashBotEventsService {
     var unsubscribe = openConnections[serverId];
     if (null != unsubscribe) {
       unsubscribe(unsubscribeHeaders: {});
-      developer.log("Unsubscribed from $serverId.");
       openConnections.remove(serverId);
     }
   }

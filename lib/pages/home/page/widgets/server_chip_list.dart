@@ -1,5 +1,6 @@
 import 'package:clashbot_flutter/models/discord_guild.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -12,6 +13,8 @@ class ServerChipList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ApplicationDetailsStore appStore = context.read<ApplicationDetailsStore>();
+    DiscordDetailsStore discordDetailsStore =
+        context.read<DiscordDetailsStore>();
     ClashStore clashStore = context.read<ClashStore>();
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -23,7 +26,7 @@ class ServerChipList extends StatelessWidget {
               children: appStore.preferredServers.map((serverId) {
                 bool isSelected = clashStore.selectedServers.contains(serverId);
                 DiscordGuild discordGuild =
-                    appStore.discordDetailsStore.discordGuildMap[serverId]!;
+                    discordDetailsStore.discordGuildMap[serverId]!;
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: FilterChip(

@@ -1,25 +1,16 @@
 import 'package:clashbot_flutter/models/lol_champion.dart';
 import 'package:clashbot_flutter/services/riot_resources_service.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
 import 'package:mobx/mobx.dart';
 part 'riot_champion.store.g.dart';
 
-class RiotChampionStore extends _RiotChampionStoreBase
-    with _$RiotChampionStore {
-  RiotChampionStore(RiotResourcesService riotResourcesService,
-      ApplicationDetailsStore applicationDetailsStore)
-      : super(riotResourcesService, applicationDetailsStore);
-}
+class RiotChampionStore = _RiotChampionStore with _$RiotChampionStore;
 
-abstract class _RiotChampionStoreBase with Store {
-  ApplicationDetailsStore _applicationDetailsStore;
+abstract class _RiotChampionStore with Store {
   RiotResourcesService _riotResourcesService;
-  _RiotChampionStoreBase(
-      this._riotResourcesService, this._applicationDetailsStore) {
-    reaction((_) => _applicationDetailsStore.id, (_) {
-      refreshChampionData();
-    });
-  }
+  ErrorHandlerStore _errorHandlerStore;
+  _RiotChampionStore(this._riotResourcesService, this._errorHandlerStore);
 
   @observable
   LoLChampionsData lChampionsData = LoLChampionsData();

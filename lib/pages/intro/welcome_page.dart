@@ -7,6 +7,7 @@ import 'package:clashbot_flutter/pages/intro/step_pages/select_servers.dart';
 import 'package:clashbot_flutter/pages/intro/step_pages/welcome.dart';
 import 'package:clashbot_flutter/pages/intro/step_pages/what_is_clash.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/short-lived/selected_server_form.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -131,17 +132,23 @@ class EndWelcomePageSessionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ModelFirstTime, ApplicationDetailsStore>(builder: (context,
-        ModelFirstTime modelFirstTime,
-        ApplicationDetailsStore appStore,
-        consChild) {
+    return Consumer3<ModelFirstTime, ApplicationDetailsStore,
+            DiscordDetailsStore>(
+        builder: (context,
+            ModelFirstTime modelFirstTime,
+            ApplicationDetailsStore appStore,
+            DiscordDetailsStore discordDetailsStore,
+            consChild) {
       return Observer(builder: (context) {
         return ElevatedButton.icon(
             onPressed: !selectedServerFormStore.ableToSubmit
                 ? null
                 : () {
                     selectedServerFormStore.submittingForm();
-                    appStore.createUser().then((value) {
+                    appStore
+                        .createUser(discordDetailsStore.discordUser.id,
+                            selectedServerFormStore.listOfSelectedServers)
+                        .then((value) {
                       modelFirstTime.visited = true;
                       context.goNamed('home');
                     }).catchError((error) {

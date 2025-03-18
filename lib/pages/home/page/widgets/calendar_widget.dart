@@ -1,7 +1,4 @@
-import 'package:clashbot_flutter/models/clash_team.dart';
-import 'package:clashbot_flutter/models/clash_tournament.dart';
 import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
-import 'package:clashbot_flutter/stores/application_details.store.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +50,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    ApplicationDetailsStore appStore = context.read<ApplicationDetailsStore>();
+    DiscordDetailsStore discordDetailsStore =
+        context.read<DiscordDetailsStore>();
     ClashStore clashStore = context.read<ClashStore>();
     return SizedBox(
       width: 1000.0,
@@ -69,7 +67,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
               focusedDay: _focusedDay,
               hoveredDay: _hoveredDay,
               isDarkMode: isDarkMode,
-              appStore: appStore,
+              discordDetailsStore: discordDetailsStore,
               clashStore: clashStore,
               onDaySelected: onDaySelected,
               onHoveredDayChanged: (day) {
@@ -125,7 +123,7 @@ class CalendarBody extends StatelessWidget {
   final DateTime focusedDay;
   final DateTime? hoveredDay;
   final bool isDarkMode;
-  final ApplicationDetailsStore appStore;
+  final DiscordDetailsStore discordDetailsStore;
   final ClashStore clashStore;
   final Function onDaySelected;
   final ValueChanged<DateTime?> onHoveredDayChanged;
@@ -135,7 +133,7 @@ class CalendarBody extends StatelessWidget {
     required this.focusedDay,
     required this.hoveredDay,
     required this.isDarkMode,
-    required this.appStore,
+    required this.discordDetailsStore,
     required this.clashStore,
     required this.onDaySelected,
     required this.onHoveredDayChanged,
@@ -165,7 +163,7 @@ class CalendarBody extends StatelessWidget {
               DateTime currentDay =
                   DateTime(focusedDay.year, focusedDay.month, day);
               return Observer(builder: (_) {
-                List<Event> dayEvents = clashStore.events
+                List<HomeEvent> dayEvents = clashStore.events
                     .where((event) => isSameDay(event.date, currentDay))
                     .toList();
                 return MouseRegion(
@@ -223,8 +221,7 @@ class CalendarBody extends StatelessWidget {
                                       child: Observer(
                                           builder: (_) => CircleAvatar(
                                                 backgroundImage: NetworkImage(
-                                                    appStore
-                                                        .discordDetailsStore
+                                                    discordDetailsStore
                                                         .discordGuildMap[event
                                                             .team.serverId]!
                                                         .iconURL),
