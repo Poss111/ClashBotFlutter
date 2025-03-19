@@ -97,12 +97,30 @@ class _HomeV2State extends State<HomeV2> {
                 Flexible(
                   flex: 1,
                   child: Flex(direction: Axis.vertical, children: [
-                    ServerChipList(),
+                    const ServerChipList(),
                     CalendarWidget(
                         focusedDay: _focusedDay, selectedDay: _selectedDay),
+                    Expanded(
+                      child: Card.filled(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.blueGrey
+                            : Colors.blueAccent,
+                        margin: const EdgeInsets.all(16.0),
+                        child: const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+                            'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                            'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris '
+                            'nisi ut aliquip ex ea commodo consequat.',
+                            style: TextStyle(fontSize: 16.0),
+                          ),
+                        ),
+                      ),
+                    ),
                   ]),
                 ),
-                Flexible(
+                const Flexible(
                   flex: 2,
                   child: EventsListWidget(),
                 ),
@@ -124,7 +142,7 @@ class _HomeV2State extends State<HomeV2> {
         builder: (_) => clashStore.canCreateTeam
             ? FloatingActionButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: const Text('Creating team coming soon.'),
                   ));
                 },
