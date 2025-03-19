@@ -22,25 +22,39 @@ class ServerChipList extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Observer(
           builder: (_) {
+            developer.log("Preferred servers: ${appStore.preferredServers}");
             return Row(
               children: appStore.preferredServers.map((serverId) {
                 bool isSelected = clashStore.selectedServers.contains(serverId);
-                DiscordGuild discordGuild =
-                    discordDetailsStore.discordGuildMap[serverId]!;
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: FilterChip(
                     avatar: CircleAvatar(
-                      backgroundImage: NetworkImage(discordGuild.iconURL),
+                      backgroundImage: discordDetailsStore
+                                  .discordGuildMap[serverId]?.iconURL !=
+                              null
+                          ? NetworkImage(discordDetailsStore
+                              .discordGuildMap[serverId]!.iconURL)
+                          : null,
                       foregroundColor: isSelected ? Colors.white : Colors.black,
                     ),
-                    label: Text(discordGuild.name ?? 'Unknown'),
+                    label: Text(
+                        discordDetailsStore.discordGuildMap[serverId]?.name ??
+                            'Unknown'),
                     selected: isSelected,
                     onSelected: (selected) {
                       if (selected) {
-                        clashStore.addSelectedServer(discordGuild.id);
+                        clashStore.addSelectedServer(discordDetailsStore
+                                    .discordGuildMap[serverId] !=
+                                null
+                            ? discordDetailsStore.discordGuildMap[serverId]!.id
+                            : "");
                       } else {
-                        clashStore.removeSelectedServer(discordGuild.id);
+                        clashStore.removeSelectedServer(discordDetailsStore
+                                    .discordGuildMap[serverId] !=
+                                null
+                            ? discordDetailsStore.discordGuildMap[serverId]!.id
+                            : "");
                       }
                     },
                   ),

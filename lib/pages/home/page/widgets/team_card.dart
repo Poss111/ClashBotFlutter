@@ -51,8 +51,13 @@ class TeamCard extends StatelessWidget {
                 children: [
                   Observer(builder: (_) {
                     return CircleAvatar(
-                        backgroundImage: NetworkImage(discordDetailsStore
-                            .discordGuildMap[team.serverId]!.iconURL));
+                      backgroundImage: discordDetailsStore
+                                  .discordGuildMap[team.serverId]?.iconURL !=
+                              null
+                          ? NetworkImage(discordDetailsStore
+                              .discordGuildMap[team.serverId]!.iconURL)
+                          : null,
+                    );
                   }),
                   Text(
                     team.name.length > 20

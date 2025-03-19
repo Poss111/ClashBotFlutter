@@ -23,8 +23,11 @@ abstract class _ApplicationDetailsStore with Store {
   _ApplicationDetailsStore(this._clashStore, this._discordDetailsStore,
       this._riotChampionStore, this._errorHandlerStore) {
     reaction((_) => _discordDetailsStore.discordUser, (_) {
+      developer.log("reaction: _discordDetailsStore.discordUser");
       if (_discordDetailsStore.discordUser.id != '0') {
+        developer.log("Refreshing clash bot user");
         _clashStore.refreshClashBotUser(_discordDetailsStore.discordUser.id);
+        _clashStore.refreshSelectedServers();
         _discordDetailsStore.fetchUserGuilds();
       }
     });
@@ -64,7 +67,7 @@ abstract class _ApplicationDetailsStore with Store {
 
   @computed
   ObservableList<String> get preferredServers =>
-      ObservableList.of(clashBotUser.selectedServers);
+      ObservableList.of(_clashStore.selectedServers);
 
   @computed
   List<ClashNotification> get sortedNotifications =>

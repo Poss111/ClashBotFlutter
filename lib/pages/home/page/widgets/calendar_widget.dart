@@ -220,11 +220,18 @@ class CalendarBody extends StatelessWidget {
                                       padding: const EdgeInsets.only(left: 2.0),
                                       child: Observer(
                                           builder: (_) => CircleAvatar(
-                                                backgroundImage: NetworkImage(
-                                                    discordDetailsStore
-                                                        .discordGuildMap[event
-                                                            .team.serverId]!
-                                                        .iconURL),
+                                                backgroundImage: discordDetailsStore
+                                                                .discordGuildMap[
+                                                            event.team
+                                                                .serverId] !=
+                                                        null
+                                                    ? NetworkImage(
+                                                        discordDetailsStore
+                                                            .discordGuildMap[
+                                                                event.team
+                                                                    .serverId]!
+                                                            .iconURL)
+                                                    : null,
                                                 radius: 8.0,
                                               )),
                                     );

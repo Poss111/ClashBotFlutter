@@ -96,8 +96,11 @@ class _HomeV2State extends State<HomeV2> {
               children: [
                 Flexible(
                   flex: 1,
-                  child: CalendarWidget(
-                      focusedDay: _focusedDay, selectedDay: _selectedDay),
+                  child: Flex(direction: Axis.vertical, children: [
+                    ServerChipList(),
+                    CalendarWidget(
+                        focusedDay: _focusedDay, selectedDay: _selectedDay),
+                  ]),
                 ),
                 Flexible(
                   flex: 2,
@@ -108,6 +111,7 @@ class _HomeV2State extends State<HomeV2> {
           } else {
             return Column(
               children: [
+                ServerChipList(),
                 CalendarWidget(
                     focusedDay: _focusedDay, selectedDay: _selectedDay),
                 EventsListWidget(),

@@ -45,14 +45,22 @@ abstract class _ClashStore with Store {
   @action
   Future<void> refreshClashBotUser(String id) async {
     refreshingUser = true;
+    developer.log("Refreshing clash bot user");
     clashBotUser = await _clashService.getPlayer(id);
     setSelectedServer(clashBotUser.selectedServers);
     refreshingUser = false;
   }
 
   @action
+  void refreshSelectedServers() {
+    selectedServers = ObservableList.of(clashBotUser.selectedServers);
+  }
+
+  @action
   void setSelectedServer(List<String> servers) {
+    developer.log("Setting selected servers: $servers");
     selectedServers = ObservableList.of(servers);
+    developer.log("Selected servers: $selectedServers");
   }
 
   @action
