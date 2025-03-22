@@ -6,9 +6,11 @@ import 'package:clashbot_flutter/models/discord_guild.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/calendar_widget.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/events_widget.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/server_chip_list.dart';
+import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class HomeEvent {
@@ -88,6 +90,8 @@ class _HomeV2State extends State<HomeV2> {
   @override
   Widget build(BuildContext context) {
     ClashStore clashStore = context.read<ClashStore>();
+    DiscordDetailsStore discordDetailsStore =
+        context.read<DiscordDetailsStore>();
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -99,21 +103,23 @@ class _HomeV2State extends State<HomeV2> {
                   child: Flex(direction: Axis.vertical, children: [
                     const ServerChipList(),
                     CalendarWidget(
-                        focusedDay: _focusedDay, selectedDay: _selectedDay),
+                        focusedDay: _focusedDay,
+                        selectedDay: _selectedDay,
+                        clashStore: clashStore,
+                        discordDetailsStore: discordDetailsStore),
                     Expanded(
                       child: Card.filled(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.blueGrey
                             : Colors.blueAccent,
                         margin: const EdgeInsets.all(16.0),
-                        child: const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
-                            'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
-                            'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris '
-                            'nisi ut aliquip ex ea commodo consequat.',
-                            style: TextStyle(fontSize: 16.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: SvgPicture.asset(
+                            'svgs/ClashBot-HomePage.svg',
+                            semanticsLabel: 'Clash Bot Home Page',
+                            width: 100,
+                            height: 600,
                           ),
                         ),
                       ),
@@ -131,7 +137,10 @@ class _HomeV2State extends State<HomeV2> {
               children: [
                 ServerChipList(),
                 CalendarWidget(
-                    focusedDay: _focusedDay, selectedDay: _selectedDay),
+                    focusedDay: _focusedDay,
+                    selectedDay: _selectedDay,
+                    clashStore: clashStore,
+                    discordDetailsStore: discordDetailsStore),
                 EventsListWidget(),
               ],
             );

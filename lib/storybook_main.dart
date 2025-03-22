@@ -5,6 +5,7 @@ import 'package:clashbot_flutter/models/clash_tournament.dart';
 import 'package:clashbot_flutter/models/clashbot_user.dart';
 import 'package:clashbot_flutter/models/discord_guild.dart';
 import 'package:clashbot_flutter/models/discord_user.dart';
+import 'package:clashbot_flutter/pages/home/page/widgets/calendar_widget.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
 import 'package:clashbot_flutter/services/clashbot_service_impl.dart';
 import 'package:clashbot_flutter/services/discord_service_impl.dart';
@@ -146,80 +147,194 @@ class ClashBotStorybookApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Storybook(initialStory: "4Filled", stories: [
-      Story(
-          name: "4Filled",
-          description: "A card for displaying team information",
-          builder: (context) {
-            return TeamCard(
-                team: ClashTeam(
-              '1',
-              'Mock Team',
-              'Tournament 1',
-              '1',
-              () {
-                switch (context.knobs
-                    .text(label: '# of missing roles', initial: '0')) {
-                  case '0':
-                    return {
-                      Role.TOP: PlayerDetails('123456789', 'Player 1', []),
-                      Role.JG: PlayerDetails('2', 'Player 2', []),
-                      Role.MID: PlayerDetails('3', 'Player 3', []),
-                      Role.BOT: PlayerDetails('5', 'Player 4', []),
-                      Role.SUPP: PlayerDetails('5', 'Player 5', []),
-                    };
-                  case '1':
-                    return {
-                      Role.TOP: PlayerDetails('1', 'Player 1', []),
-                      Role.JG: PlayerDetails('2', 'Player 2', []),
-                      Role.MID: PlayerDetails('3', 'Player 3', []),
-                      Role.BOT: PlayerDetails('5', 'Player 4', []),
-                      Role.SUPP: null,
-                    };
-                  case '2':
-                    return {
-                      Role.TOP: PlayerDetails('1', 'Player 1', []),
-                      Role.JG: PlayerDetails('2', 'Player 2', []),
-                      Role.MID: PlayerDetails('3', 'Player 3', []),
-                      Role.BOT: null,
-                      Role.SUPP: null,
-                    };
-                  case '3':
-                    return {
-                      Role.TOP: PlayerDetails('1', 'Player 1', []),
-                      Role.MID: PlayerDetails('3', 'Player 3', []),
-                      Role.JG: null,
-                      Role.BOT: null,
-                      Role.SUPP: null,
-                    };
-                  case '4':
-                    return {
-                      Role.TOP: PlayerDetails('1', 'Player 1', []),
-                      Role.JG: null,
-                      Role.MID: null,
-                      Role.BOT: null,
-                      Role.SUPP: null,
-                    };
-                  case '5':
-                    return {
-                      Role.TOP: null,
-                      Role.JG: null,
-                      Role.MID: null,
-                      Role.BOT: null,
-                      Role.SUPP: null,
-                    };
-                  default:
-                    return {
-                      Role.TOP: PlayerDetails('1', 'Player 1', []),
-                      Role.JG: PlayerDetails('2', 'Player 2', []),
-                      Role.MID: PlayerDetails('3', 'Player 3', []),
-                      Role.SUPP: PlayerDetails('5', 'Player 5', []),
-                    };
-                }
-              }(),
-              '123456789',
-              DateTime.now(),
-            ));
-          })
+      StoryCalendarWidgetWTournaments(context),
+      StoryCalendarWidgetWTournamentsLoading(context),
+      StoryTeamCard()
     ]);
   }
+
+  Story StoryTeamCard() {
+    return Story(
+        name: "4Filled",
+        description: "A card for displaying team information",
+        builder: (context) {
+          return TeamCard(
+              team: ClashTeam(
+            '1',
+            'Mock Team',
+            'Tournament 1',
+            '1',
+            () {
+              switch (context.knobs
+                  .text(label: '# of missing roles', initial: '0')) {
+                case '0':
+                  return {
+                    Role.TOP: PlayerDetails('123456789', 'Player 1', []),
+                    Role.JG: PlayerDetails('2', 'Player 2', []),
+                    Role.MID: PlayerDetails('3', 'Player 3', []),
+                    Role.BOT: PlayerDetails('5', 'Player 4', []),
+                    Role.SUPP: PlayerDetails('5', 'Player 5', []),
+                  };
+                case '1':
+                  return {
+                    Role.TOP: PlayerDetails('1', 'Player 1', []),
+                    Role.JG: PlayerDetails('2', 'Player 2', []),
+                    Role.MID: PlayerDetails('3', 'Player 3', []),
+                    Role.BOT: PlayerDetails('5', 'Player 4', []),
+                    Role.SUPP: null,
+                  };
+                case '2':
+                  return {
+                    Role.TOP: PlayerDetails('1', 'Player 1', []),
+                    Role.JG: PlayerDetails('2', 'Player 2', []),
+                    Role.MID: PlayerDetails('3', 'Player 3', []),
+                    Role.BOT: null,
+                    Role.SUPP: null,
+                  };
+                case '3':
+                  return {
+                    Role.TOP: PlayerDetails('1', 'Player 1', []),
+                    Role.MID: PlayerDetails('3', 'Player 3', []),
+                    Role.JG: null,
+                    Role.BOT: null,
+                    Role.SUPP: null,
+                  };
+                case '4':
+                  return {
+                    Role.TOP: PlayerDetails('1', 'Player 1', []),
+                    Role.JG: null,
+                    Role.MID: null,
+                    Role.BOT: null,
+                    Role.SUPP: null,
+                  };
+                case '5':
+                  return {
+                    Role.TOP: null,
+                    Role.JG: null,
+                    Role.MID: null,
+                    Role.BOT: null,
+                    Role.SUPP: null,
+                  };
+                default:
+                  return {
+                    Role.TOP: PlayerDetails('1', 'Player 1', []),
+                    Role.JG: PlayerDetails('2', 'Player 2', []),
+                    Role.MID: PlayerDetails('3', 'Player 3', []),
+                    Role.SUPP: PlayerDetails('5', 'Player 5', []),
+                  };
+              }
+            }(),
+            '123456789',
+            DateTime.now(),
+          ));
+        });
+  }
+
+  Story StoryCalendarWidgetWTournamentsLoading(BuildContext context) {
+    DiscordDetailsStore discordDetailsStore =
+        context.read<DiscordDetailsStore>();
+    ClashStore clashStoreW5Tournies = new MockClashStore(
+        context.read<ApplicationDetailsStore>().clashBotUser,
+        [
+          ClashTournament('1', 'Mock Tournament 1', DateTime.now(),
+              DateTime.now().add(Duration(days: 1))),
+          ClashTournament('2', 'Mock Tournament 2', DateTime.now(),
+              DateTime.now().add(Duration(days: 1))),
+          ClashTournament('3', 'Mock Tournament 3', DateTime.now(),
+              DateTime.now().add(Duration(days: 1))),
+          ClashTournament('4', 'Mock Tournament 4', DateTime.now(),
+              DateTime.now().add(Duration(days: 1))),
+          ClashTournament('5', 'Mock Tournament 5', DateTime.now(),
+              DateTime.now().add(Duration(days: 1))),
+        ],
+        [
+          ClashTeam(
+            '1',
+            'Mock Team 1',
+            'Mock Tournament 1',
+            '1',
+            {
+              Role.TOP: PlayerDetails('1', 'Player 1', []),
+              Role.JG: PlayerDetails('2', 'Player 2', []),
+              Role.MID: PlayerDetails('3', 'Player 3', []),
+              Role.SUPP: PlayerDetails('5', 'Player 5', []),
+            },
+            '123456789',
+            DateTime.now(),
+          )
+        ],
+        new ClashBotServiceImpl(
+            new UserApi(context.read<ApiClient>()),
+            new TeamApi(context.read<ApiClient>()),
+            new ChampionsApi(context.read<ApiClient>()),
+            new SubscriptionApi(context.read<ApiClient>()),
+            new TentativeApi(context.read<ApiClient>()),
+            new TournamentApi(context.read<ApiClient>())),
+        context.read<ErrorHandlerStore>());
+    clashStoreW5Tournies.addCallInProgress('getTournaments');
+    return Story(
+      name: "Widgets/Calendar/loading",
+      description: "ClashBot's main calendar widget loading",
+      builder: (context) {
+        return CalendarWidget(
+            focusedDay: DateTime.now(),
+            selectedDay: DateTime.now(),
+            clashStore: clashStoreW5Tournies,
+            discordDetailsStore: discordDetailsStore);
+      },
+    );
+  }
+}
+
+Story StoryCalendarWidgetWTournaments(BuildContext context) {
+  DiscordDetailsStore discordDetailsStore = context.read<DiscordDetailsStore>();
+  ClashStore clashStoreW5Tournies = new MockClashStore(
+      context.read<ApplicationDetailsStore>().clashBotUser,
+      [
+        ClashTournament('1', 'Mock Tournament 1', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('2', 'Mock Tournament 2', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('3', 'Mock Tournament 3', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('4', 'Mock Tournament 4', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('5', 'Mock Tournament 5', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+      ],
+      [
+        ClashTeam(
+          '1',
+          'Mock Team 1',
+          'Mock Tournament 1',
+          '1',
+          {
+            Role.TOP: PlayerDetails('1', 'Player 1', []),
+            Role.JG: PlayerDetails('2', 'Player 2', []),
+            Role.MID: PlayerDetails('3', 'Player 3', []),
+            Role.SUPP: PlayerDetails('5', 'Player 5', []),
+          },
+          '460520499680641035',
+          DateTime.now(),
+        )
+      ],
+      new ClashBotServiceImpl(
+          new UserApi(context.read<ApiClient>()),
+          new TeamApi(context.read<ApiClient>()),
+          new ChampionsApi(context.read<ApiClient>()),
+          new SubscriptionApi(context.read<ApiClient>()),
+          new TentativeApi(context.read<ApiClient>()),
+          new TournamentApi(context.read<ApiClient>())),
+      context.read<ErrorHandlerStore>());
+  return Story(
+    name: "Widgets/Calendar/filled",
+    description: "ClashBot's main calendar widget filled",
+    builder: (context) {
+      return CalendarWidget(
+          focusedDay: DateTime.now(),
+          selectedDay: DateTime.now(),
+          clashStore: clashStoreW5Tournies,
+          discordDetailsStore: discordDetailsStore);
+    },
+  );
 }
