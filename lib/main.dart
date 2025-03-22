@@ -3,8 +3,10 @@ import 'dart:developer' as developer;
 import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/core/config/env.dart';
 import 'package:clashbot_flutter/globals/color_schemes.dart';
+import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/models/model_first_time.dart';
 import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
+import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
 import 'package:clashbot_flutter/pages/intro/welcome_page.dart';
 import 'package:clashbot_flutter/routes.dart';
 import 'package:clashbot_flutter/services/clashbot_service.dart';
@@ -15,7 +17,10 @@ import 'package:clashbot_flutter/services/discord_service_mock_impl.dart';
 import 'package:clashbot_flutter/services/riot_resources_service.dart';
 import 'package:clashbot_flutter/services/riot_resources_service_impl.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/discord_details.store.dart';
+import 'package:clashbot_flutter/stores/riot_champion.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
 import 'package:clashbot_flutter/styles.dart';
 import 'package:clashbot_flutter/utils/reusable_widgets.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +31,7 @@ import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
+import 'package:storybook_flutter/storybook_flutter.dart';
 
 import 'generated/git_info.dart';
 import 'globals/global_settings.dart';
@@ -128,25 +134,33 @@ class _MyAppState extends State<MyApp> {
               create: (_) => RiotResourceServiceImpl()),
           Provider<ClashBotEventsService>(
               create: (_) => ClashBotEventsService()),
-          ProxyProvider4<DiscordService, ClashBotService, RiotResourcesService,
-                  ClashBotEventsService, ApplicationDetailsStore>(
-              update: (_, discordService, clashBotService, riotResourceService,
-                      clashBotEventService, __) =>
-                  ApplicationDetailsStore(discordService, clashBotService,
-                      riotResourceService, clashBotEventService)),
-          ProxyProvider2<ApplicationDetailsStore, ClashBotService, ClashStore>(
-              update: (_, applicationDetailsStore, clashBotService, __) =>
-                  ClashStore(clashBotService, applicationDetailsStore))
+          Provider<ErrorHandlerStore>(create: (_) => ErrorHandlerStore()),
+          ProxyProvider2<ClashBotService, ErrorHandlerStore, ClashStore>(
+              update: (_, clashBotService, errorHandlerStore, __) =>
+                  ClashStore(clashBotService, errorHandlerStore)),
+          ProxyProvider2<DiscordService, ErrorHandlerStore,
+                  DiscordDetailsStore>(
+              update: (_, discordService, errorHandlerStore, __) =>
+                  DiscordDetailsStore(discordService, errorHandlerStore)),
+          ProxyProvider2<RiotResourcesService, ErrorHandlerStore,
+                  RiotChampionStore>(
+              update: (_, riotResourceService, errorHandlerStore, __) =>
+                  RiotChampionStore(riotResourceService, errorHandlerStore)),
+          // Depends on ClashStore, DiscordDetailsStore, RiotChampionStore, ErrorHandlerStore
+          ProxyProvider4<ClashStore, DiscordDetailsStore, RiotChampionStore,
+                  ErrorHandlerStore, ApplicationDetailsStore>(
+              update: (_, clashStore, discordDetailsStore, riotChampionStore,
+                      errorHandlerStore, __) =>
+                  ApplicationDetailsStore(clashStore, discordDetailsStore,
+                      riotChampionStore, errorHandlerStore)),
         ],
         child: Consumer2<ApplicationDetailsStore, ModelFirstTime>(builder:
             (context, ApplicationDetailsStore appStore,
                 ModelFirstTime modelFirstTime, child) {
-          if (modelFirstTime.visited) {
-            appStore.loadUserDetails();
+          if (modelFirstTime.visited && !appStore.isLoggedIn) {
+            appStore.refreshDiscordUser();
           }
-          return Observer(builder: (_) {
-            return const MainApp();
-          });
+          return const MainApp();
         }));
   }
 }
@@ -270,28 +284,27 @@ class MainContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appStore = context.read<ApplicationDetailsStore>();
+    final discordDetailsStore = context.read<DiscordDetailsStore>();
+    final errorStore = context.read<ErrorHandlerStore>();
     autorun((_) {
-      if ('' != appStore.error) {
+      if ('' != errorStore.errorMessage) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Colors.redAccent, content: Text(appStore.error)));
-        appStore.error = '';
+            backgroundColor: Colors.redAccent,
+            content: Text(errorStore.errorMessage)));
+        errorStore.errorMessage = '';
       }
-      appStore.discordDetailsStore.discordIdToName.forEach((key, value) {
-        developer.log("$key => $value");
-      });
     });
     return Consumer<ModelTheme>(
         builder: (context, ModelTheme themeNotifier, consChild) {
       return Scaffold(
         appBar: AppBar(title: const Text('ClashBot 2.0'), actions: <Widget>[
-          Observer(
-              builder: (_) => Badge.count(
-                    count: appStore.unreadNotifications.length,
-                    alignment: AlignmentDirectional.bottomStart,
-                    isLabelVisible: appStore.unreadNotifications.isNotEmpty,
-                    child: const ClashBotNotificationsWidget(),
-                  )),
+          // Observer(
+          //     builder: (_) => Badge.count(
+          //           count: appStore.unreadNotifications.length,
+          //           alignment: AlignmentDirectional.bottomStart,
+          //           isLabelVisible: appStore.unreadNotifications.isNotEmpty,
+          //           child: const ClashBotNotificationsWidget(),
+          //         )),
           Column(
             mainAxisSize: MainAxisSize.min,
             // spacing: 1.0,
@@ -322,11 +335,11 @@ class MainContainer extends StatelessWidget {
                     : themeNotifier.isDark = true;
               }),
           Observer(builder: (_) {
-            if (appStore.isLoggedIn) {
+            if (discordDetailsStore.userHasLoggedIn) {
               return PopupMenuButton(
                   icon: CircleAvatar(
-                          backgroundImage: NetworkImage(appStore
-                              .discordDetailsStore.discordUser.avatarURL))
+                          backgroundImage: NetworkImage(
+                              discordDetailsStore.discordUser.avatarURL))
                       .animate()
                       .shake(duration: const Duration(seconds: 1)),
                   offset: const Offset(0, 50),
@@ -354,39 +367,39 @@ class MainContainer extends StatelessWidget {
   }
 }
 
-class ClashBotNotificationsWidget extends StatelessWidget {
-  const ClashBotNotificationsWidget({super.key});
+// class ClashBotNotificationsWidget extends StatelessWidget {
+//   const ClashBotNotificationsWidget({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final appStore = context.read<ApplicationDetailsStore>();
-    return Observer(builder: (_) {
-      return PopupMenuButton(
-        icon: const Icon(Icons.add_alert),
-        tooltip: 'Notifications',
-        position: PopupMenuPosition.under,
-        itemBuilder: (BuildContext context) {
-          return appStore.sortedNotifications.map((notification) {
-            var discordGuild = appStore
-                .discordDetailsStore.discordGuildMap[notification.serverId];
-            return PopupMenuItem<String>(
-                value: notification.uuid,
-                enabled: !notification.read,
-                padding: const EdgeInsets.all(2.0),
-                child: ClashBotNotificationBody(
-                  serverName: discordGuild?.name ?? '',
-                  message: notification.message,
-                  causedBy: notification.causedBy,
-                  timestamp: notification.timestamp,
-                  iconUrl: discordGuild?.iconURL ?? '',
-                ));
-          }).toList();
-        },
-        onSelected: (value) => appStore.readNotification(value),
-      );
-    });
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     final discordDetailsStore = context.read<DiscordDetailsStore>();
+//     return Observer(builder: (_) {
+//       return PopupMenuButton(
+//         icon: const Icon(Icons.add_alert),
+//         tooltip: 'Notifications',
+//         position: PopupMenuPosition.under,
+//         itemBuilder: (BuildContext context) {
+//           return appStore.sortedNotifications.map((notification) {
+//             var discordGuild = appStore
+//                 .discordDetailsStore.discordGuildMap[notification.serverId];
+//             return PopupMenuItem<String>(
+//                 value: notification.uuid,
+//                 enabled: !notification.read,
+//                 padding: const EdgeInsets.all(2.0),
+//                 child: ClashBotNotificationBody(
+//                   serverName: discordGuild?.name ?? '',
+//                   message: notification.message,
+//                   causedBy: notification.causedBy,
+//                   timestamp: notification.timestamp,
+//                   iconUrl: discordGuild?.iconURL ?? '',
+//                 ));
+//           }).toList();
+//         },
+//         onSelected: (value) => appStore.readNotification(value),
+//       );
+//     });
+//   }
+// }
 
 class ClashBotNotificationBody extends StatelessWidget {
   ClashBotNotificationBody({
@@ -474,6 +487,7 @@ class DrawerHeaderContentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final applicationDetailsStore = context.read<ApplicationDetailsStore>();
+    final discordDetailsStore = context.read<DiscordDetailsStore>();
     return Column(
       children: [
         Observer(
@@ -482,13 +496,12 @@ class DrawerHeaderContentWidget extends StatelessWidget {
               return Row(children: [
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(applicationDetailsStore
-                        .discordDetailsStore.discordUser.avatarURL),
+                    backgroundImage:
+                        NetworkImage(discordDetailsStore.discordUser.avatarURL),
                     radius: 20,
                   ),
                   title: Text(
-                    applicationDetailsStore
-                        .discordDetailsStore.discordUser.username,
+                    discordDetailsStore.discordUser.username,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -500,7 +513,7 @@ class DrawerHeaderContentWidget extends StatelessWidget {
                   children: [
                     ListTile(
                         leading: const Icon(Icons.discord),
-                        title: Text(applicationDetailsStore.id,
+                        title: Text(discordDetailsStore.discordUser.id,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 14,

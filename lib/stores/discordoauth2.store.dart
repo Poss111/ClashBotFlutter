@@ -19,10 +19,9 @@ part 'discordoauth2.store.g.dart';
 class DiscordOAuth2Store = _DiscordOAuth2Store with _$DiscordOAuth2Store;
 
 abstract class _DiscordOAuth2Store with Store {
-
   @observable
   DiscordUser currentUser = new DiscordUser('0', 'Not Logged In', 'N/A', '');
-  
+
   @observable
   List<DiscordGuild> usersGuilds = [];
 
@@ -42,46 +41,50 @@ abstract class _DiscordOAuth2Store with Store {
 
   @action
   void setOAuth2Helper(OAuth2Helper oAuth2Helper) {
-    developer.log("SettingOAuth2Helper...");
     this.oAuth2Helper = oAuth2Helper;
   }
 
   @observable
-  ObservableFuture<DiscordUser> discordUserFuture = ObservableFuture.value(new DiscordUser('0', 'Not Logged In', 'N/A', ''));
+  ObservableFuture<DiscordUser> discordUserFuture =
+      ObservableFuture.value(new DiscordUser('0', 'Not Logged In', 'N/A', ''));
 
   @observable
-  ObservableFuture<List<DiscordGuild>> discordGuildsFuture = ObservableFuture.value([]);
+  ObservableFuture<List<DiscordGuild>> discordGuildsFuture =
+      ObservableFuture.value([]);
 
   @computed
   bool get userDetailsReady =>
-      discordUserFuture != ObservableFuture.value(new DiscordUser('0', 'Not Logged In', 'N/A', '')) &&
+      discordUserFuture !=
+          ObservableFuture.value(
+              new DiscordUser('0', 'Not Logged In', 'N/A', '')) &&
       discordUserFuture.status == FutureStatus.fulfilled;
 
   @action
   Future<DiscordUser> fetchCurrentUserDetails() async {
     final future = oAuth2Helper?.get(
-      AppGlobalSettings.apiEndpointURL + AppGlobalSettings.API_DISCORD_GET_CURRENT_USER,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    ).then((value) => DiscordUser.fromJson(value.body));
+        AppGlobalSettings.apiEndpointURL +
+            AppGlobalSettings.API_DISCORD_GET_CURRENT_USER,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }).then((value) => DiscordUser.fromJson(value.body));
 
     if (future != null) {
       discordUserFuture = ObservableFuture(future);
 
       return currentUser = await future;
     }
-    return ObservableFuture.value(new DiscordUser('0', 'Not Logged In', 'N/A', ''));
+    return ObservableFuture.value(
+        new DiscordUser('0', 'Not Logged In', 'N/A', ''));
   }
 
   @action
   Future<List<DiscordGuild>> fetchUserGuilds() async {
     final future = oAuth2Helper?.get(
-      AppGlobalSettings.apiEndpointURL + AppGlobalSettings.API_DISCORD_GET_CURRENT_USER_GUILDS,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    ).then((value) {
+        AppGlobalSettings.apiEndpointURL +
+            AppGlobalSettings.API_DISCORD_GET_CURRENT_USER_GUILDS,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }).then((value) {
       Iterable l = jsonDecode(value.body);
       return List<DiscordGuild>.from(l.map((model) {
         return DiscordGuild.fromMap(model);

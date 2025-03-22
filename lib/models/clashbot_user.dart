@@ -46,4 +46,15 @@ class ClashBotUser {
 
   /// The list of preferred Discord Servers for the player to filter by.
   List<String> preferredServers;
+
+  ClashBotUser copy() {
+    return ClashBotUser(
+        discordId: discordId,
+        role: role,
+        champions: champions,
+        subscriptions: subscriptions,
+        serverId: serverId,
+        selectedServers: selectedServers,
+        preferredServers: preferredServers);
+  }
 }

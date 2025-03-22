@@ -1,22 +1,29 @@
-import 'package:clashbot_flutter/models/clash_team.dart';
-import 'package:clashbot_flutter/models/clash_tournament.dart';
 import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
-import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/pages/shimmer_loading_page.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'dart:developer' as developer;
 
+/// This widget requires the following providers:
+///
+/// - ClashStore
+/// - DiscordDetailsStore
 class CalendarWidget extends StatefulWidget {
   final DateTime focusedDay;
   final DateTime? selectedDay;
+  // Define all required providers
+  final ClashStore clashStore;
+  final DiscordDetailsStore discordDetailsStore;
 
   const CalendarWidget(
-      {super.key, required this.focusedDay, required this.selectedDay});
+      {super.key,
+      required this.focusedDay,
+      required this.selectedDay,
+      required this.clashStore,
+      required this.discordDetailsStore});
 
   @override
   _CalendarWidgetState createState() => _CalendarWidgetState();
@@ -53,35 +60,82 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    ApplicationDetailsStore appStore = context.read<ApplicationDetailsStore>();
-    ClashStore clashStore = context.read<ClashStore>();
-    return SizedBox(
-      width: 1000.0,
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            CalendarHeader(
-              focusedDay: _focusedDay,
-              onMonthChanged: onMonthChanged,
-            ),
-            CalendarBody(
-              focusedDay: _focusedDay,
-              hoveredDay: _hoveredDay,
-              isDarkMode: isDarkMode,
-              appStore: appStore,
-              clashStore: clashStore,
-              onDaySelected: onDaySelected,
-              onHoveredDayChanged: (day) {
-                setState(() {
-                  _hoveredDay = day;
-                });
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+    return Observer(
+        builder: (_) => widget.clashStore.isRefreshingData
+            ? SizedBox(
+                width: 1000.0, child: LoadingCalendar(focusedDay: _focusedDay))
+            : SizedBox(
+                width: 1000.0,
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      CalendarHeader(
+                        focusedDay: _focusedDay,
+                        onMonthChanged: onMonthChanged,
+                      ),
+                      CalendarBody(
+                        focusedDay: _focusedDay,
+                        hoveredDay: _hoveredDay,
+                        isDarkMode: isDarkMode,
+                        discordDetailsStore: widget.discordDetailsStore,
+                        clashStore: widget.clashStore,
+                        onDaySelected: onDaySelected,
+                        onHoveredDayChanged: (day) {
+                          setState(() {
+                            _hoveredDay = day;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ));
+  }
+}
+
+class LoadingCalendar extends StatelessWidget {
+  const LoadingCalendar({
+    super.key,
+    required DateTime focusedDay,
+  }) : _focusedDay = focusedDay;
+
+  final DateTime _focusedDay;
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmyShimmer(child: LayoutBuilder(builder: (context, constraints) {
+      return Column(
+        children: [
+          Center(
+              child: Container(
+            width: constraints.maxWidth < 500 ? 200.0 : 400.0,
+            height: 50.0,
+            child: Card(),
+          )),
+          GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7,
+                childAspectRatio: constraints.maxWidth < 500 ? 1.0 : 1.5,
+              ),
+              itemCount:
+                  DateTime(_focusedDay.year, _focusedDay.month + 1, 0).day +
+                      DateTime(_focusedDay.year, _focusedDay.month, 1).weekday -
+                      1,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.all(4.0),
+                  child: const SizedBox(
+                    width: 20.0,
+                    height: 20.0,
+                    child: Card(),
+                  ),
+                );
+              }),
+        ],
+      );
+    }));
   }
 }
 
@@ -125,7 +179,7 @@ class CalendarBody extends StatelessWidget {
   final DateTime focusedDay;
   final DateTime? hoveredDay;
   final bool isDarkMode;
-  final ApplicationDetailsStore appStore;
+  final DiscordDetailsStore discordDetailsStore;
   final ClashStore clashStore;
   final Function onDaySelected;
   final ValueChanged<DateTime?> onHoveredDayChanged;
@@ -135,7 +189,7 @@ class CalendarBody extends StatelessWidget {
     required this.focusedDay,
     required this.hoveredDay,
     required this.isDarkMode,
-    required this.appStore,
+    required this.discordDetailsStore,
     required this.clashStore,
     required this.onDaySelected,
     required this.onHoveredDayChanged,
@@ -165,7 +219,7 @@ class CalendarBody extends StatelessWidget {
               DateTime currentDay =
                   DateTime(focusedDay.year, focusedDay.month, day);
               return Observer(builder: (_) {
-                List<Event> dayEvents = clashStore.events
+                List<HomeEvent> dayEvents = clashStore.events
                     .where((event) => isSameDay(event.date, currentDay))
                     .toList();
                 return MouseRegion(
@@ -222,12 +276,18 @@ class CalendarBody extends StatelessWidget {
                                       padding: const EdgeInsets.only(left: 2.0),
                                       child: Observer(
                                           builder: (_) => CircleAvatar(
-                                                backgroundImage: NetworkImage(
-                                                    appStore
-                                                        .discordDetailsStore
-                                                        .discordGuildMap[event
-                                                            .team.serverId]!
-                                                        .iconURL),
+                                                backgroundImage: discordDetailsStore
+                                                                .discordGuildMap[
+                                                            event.team
+                                                                .serverId] !=
+                                                        null
+                                                    ? NetworkImage(
+                                                        discordDetailsStore
+                                                            .discordGuildMap[
+                                                                event.team
+                                                                    .serverId]!
+                                                            .iconURL)
+                                                    : null,
                                                 radius: 8.0,
                                               )),
                                     );

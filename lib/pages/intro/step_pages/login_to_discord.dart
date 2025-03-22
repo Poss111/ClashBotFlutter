@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -16,27 +17,29 @@ class LoginToDiscordWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appStore = context.read<ApplicationDetailsStore>();
-    var dispose =
-        when((_) => appStore.discordDetailsStore.detailsLoaded == true, () {
+    final discordDetailsStore = context.read<DiscordDetailsStore>();
+    var dispose = when(
+        (_) =>
+            discordDetailsStore.userHasLoggedIn == true &&
+            discordDetailsStore.discordGuilds.isNotEmpty, () {
       callback(true);
     });
     return Observer(builder: (_) {
-      return !appStore.discordDetailsStore.detailsLoaded
+      return !discordDetailsStore.userHasLoggedIn
           ? const AskToLogin()
           : Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      appStore.discordDetailsStore.discordUser.avatarURL),
+                  backgroundImage:
+                      NetworkImage(discordDetailsStore.discordUser.avatarURL),
                   radius: 50,
                 ),
                 const SizedBox(height: 10),
                 AnimatedTextKit(
                   animatedTexts: [
                     TypewriterAnimatedText(
-                      'Welcome ${appStore.discordDetailsStore.discordUser.username}!',
+                      'Welcome ${discordDetailsStore.discordUser.username}!',
                       textStyle: subHeaderStyle,
                       speed: const Duration(milliseconds: 150),
                     ),
@@ -59,14 +62,14 @@ class AskToLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appStore = context.read<ApplicationDetailsStore>();
+    final discordDetailsStore = context.read<DiscordDetailsStore>();
     return Observer(builder: (_) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text("Lets log you in to Discord!", style: subHeaderStyle),
           const SizedBox(height: 10),
-          appStore.discordDetailsStore.status == "NOT_LOADED"
+          !discordDetailsStore.loadingData
               ? const LoginToDiscord()
               : ElevatedButton.icon(
                   onPressed: null,
@@ -86,10 +89,10 @@ class LoginToDiscord extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ApplicationDetailsStore>(
-        builder: (context, appStore, child) => ElevatedButton(
+    return Consumer<DiscordDetailsStore>(
+        builder: (context, discordDetailsStore, child) => ElevatedButton(
             onPressed: () {
-              appStore.discordDetailsStore.loadEverything();
+              discordDetailsStore.fetchCurrentUserDetails();
             },
             child: const Text("Login to Discord")));
   }

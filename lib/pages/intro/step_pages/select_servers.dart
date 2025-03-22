@@ -1,7 +1,5 @@
-import 'dart:developer' as developer;
-
 import 'package:clashbot_flutter/models/discord_guild.dart';
-import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/short-lived/selected_server_form.store.dart';
 import 'package:clashbot_flutter/styles.dart';
 import 'package:flutter/material.dart';
@@ -20,13 +18,11 @@ class ServerFormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final applicationDetailsStore = context.read<ApplicationDetailsStore>();
-    applicationDetailsStore.discordDetailsStore.loadEverything();
+    final discordDetailsStore = context.read<DiscordDetailsStore>();
     return Observer(
         builder: (_) => ServerFormContent(
-              guilds: applicationDetailsStore.discordDetailsStore.discordGuilds,
-              guildMap:
-                  applicationDetailsStore.discordDetailsStore.discordGuildMap,
+              guilds: discordDetailsStore.discordGuilds,
+              guildMap: discordDetailsStore.discordGuildMap,
               selectedServerFormStore: selectedServerFormStore,
             ));
   }
@@ -104,23 +100,12 @@ class _ServerChoiceChipState extends State<ServerChoiceChip> {
       onSelected: !widget.selectedServerFormStore.maxServersReached
           ? (bool selected) {
               setState(() {
-                developer.log("Selected: $selected");
-                developer.log(
-                    "Max Servers Reached: ${widget.selectedServerFormStore.maxServersReached}");
-                developer.log("widget.guild.id: ${widget.guild.id}");
-                developer.log(
-                    "listOfSelectedServers: ${widget.selectedServerFormStore.listOfSelectedServers}");
-                developer.log(
-                    "Does it contain? ${widget.selectedServerFormStore.listOfSelectedServers.contains(widget.guild.id)}");
                 if (selected &&
                     !widget.selectedServerFormStore.maxServersReached) {
-                  developer.log("Adding server to list ${widget.guild.id}...");
                   widget.selectedServerFormStore.addServer(widget.guild.id);
                 } else if (!selected &&
                     widget.selectedServerFormStore.listOfSelectedServers
                         .contains(widget.guild.id)) {
-                  developer
-                      .log("Removing server from list ${widget.guild.id}...");
                   widget.selectedServerFormStore.removeServer(widget.guild.id);
                 }
               });

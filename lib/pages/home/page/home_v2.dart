@@ -6,18 +6,20 @@ import 'package:clashbot_flutter/models/discord_guild.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/calendar_widget.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/events_widget.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/server_chip_list.dart';
+import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-class Event {
+class HomeEvent {
   final DateTime date;
   final String title;
   final String description;
   final ClashTeam team;
 
-  Event({
+  HomeEvent({
     required this.date,
     required this.title,
     required this.description,
@@ -87,16 +89,75 @@ class _HomeV2State extends State<HomeV2> {
 
   @override
   Widget build(BuildContext context) {
+    ClashStore clashStore = context.read<ClashStore>();
+    DiscordDetailsStore discordDetailsStore =
+        context.read<DiscordDetailsStore>();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Clash Tournaments'),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth > 500) {
+            return Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Flex(direction: Axis.vertical, children: [
+                    const ServerChipList(),
+                    CalendarWidget(
+                        focusedDay: _focusedDay,
+                        selectedDay: _selectedDay,
+                        clashStore: clashStore,
+                        discordDetailsStore: discordDetailsStore),
+                    Expanded(
+                      child: Card.filled(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.blueGrey
+                            : Colors.blueAccent,
+                        margin: const EdgeInsets.all(16.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: SvgPicture.asset(
+                            'svgs/ClashBot-HomePage.svg',
+                            semanticsLabel: 'Clash Bot Home Page',
+                            width: 100,
+                            height: 600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]),
+                ),
+                const Flexible(
+                  flex: 2,
+                  child: EventsListWidget(),
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              children: [
+                ServerChipList(),
+                CalendarWidget(
+                    focusedDay: _focusedDay,
+                    selectedDay: _selectedDay,
+                    clashStore: clashStore,
+                    discordDetailsStore: discordDetailsStore),
+                EventsListWidget(),
+              ],
+            );
+          }
+        },
       ),
-      body: Column(
-        children: [
-          const ServerChipList(),
-          CalendarWidget(focusedDay: _focusedDay, selectedDay: _selectedDay),
-          Expanded(child: EventsListWidget()),
-        ],
+      floatingActionButton: Observer(
+        builder: (_) => clashStore.canCreateTeam
+            ? FloatingActionButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: const Text('Creating team coming soon.'),
+                  ));
+                },
+                child: const Icon(Icons.add),
+              )
+            : Container(),
       ),
     );
   }

@@ -1,11 +1,11 @@
+import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/models/clash_tournament.dart';
-import 'package:clashbot_flutter/models/discord_guild.dart';
-import 'package:clashbot_flutter/models/user.dart';
+import 'package:clashbot_flutter/models/clashbot_user.dart';
 import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
 import 'package:clashbot_flutter/services/clashbot_service.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
-import 'package:clashbot_flutter/stores/discord_details.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:developer' as developer;
 
@@ -17,25 +17,73 @@ class ClashStore = _ClashStore with _$ClashStore;
 
 abstract class _ClashStore with Store {
   final ClashBotService _clashService;
-  final ApplicationDetailsStore _applicationDetailsStore;
+  final ErrorHandlerStore _errorhandlerStore;
 
-  _ClashStore(this._clashService, this._applicationDetailsStore) {
-    reaction((_) => _applicationDetailsStore.id, (_) {
-      refreshClashTournaments();
-    });
-    reaction((_) => _applicationDetailsStore.preferredServers, (_) {
-      resetSelectedServers();
-      refreshClashTeams();
-    });
-  }
+  _ClashStore(this._clashService, this._errorhandlerStore);
+
+  // Constants for network calls
+  static const String refreshClashBotUserCall = "refreshClashBotUser";
+  static const String refreshClashTournamentsCall = "refreshClashTournaments";
+  static const String refreshClashTeamsCall = "refreshClashTeams";
+
+  @observable
+  ClashBotUser clashBotUser = ClashBotUser();
 
   @observable
   ObservableList<String> selectedServers = ObservableList();
 
+  @observable
+  bool filterByDay = false;
+
+  @observable
+  DateTime filterDate = DateTime.now();
+
+  @observable
+  ObservableList<ClashTournament> tournaments = ObservableList();
+
+  @observable
+  ObservableList<ClashTeam> clashTeams = ObservableList();
+
+  @observable
+  bool refreshingUser = false;
+
+  @observable
+  ObservableList<String> callsInProgress = ObservableList();
+
+  @computed
+  bool get isRefreshingData =>
+      callsInProgress.contains(_ClashStore.refreshClashBotUserCall) ||
+      callsInProgress.contains(_ClashStore.refreshClashTournamentsCall) ||
+      callsInProgress.contains(_ClashStore.refreshClashTeamsCall);
+
   @action
-  void resetSelectedServers() {
-    selectedServers =
-        ObservableList.of(_applicationDetailsStore.preferredServers);
+  void addCallInProgress(String call) {
+    callsInProgress.add(call);
+  }
+
+  @action
+  void removeCallInProgress(String call) {
+    callsInProgress.remove(call);
+  }
+
+  @action
+  void clearCallsInProgress() {
+    callsInProgress.clear();
+  }
+
+  @action
+  Future<void> refreshClashBotUser(String id) async {
+    refreshingUser = true;
+    callsInProgress.add(_ClashStore.refreshClashBotUserCall);
+    clashBotUser = await _clashService.getPlayer(id);
+    setSelectedServer(clashBotUser.selectedServers);
+    callsInProgress.remove(_ClashStore.refreshClashBotUserCall);
+    refreshingUser = false;
+  }
+
+  @action
+  void refreshSelectedServers() {
+    selectedServers = ObservableList.of(clashBotUser.selectedServers);
   }
 
   @action
@@ -45,10 +93,7 @@ abstract class _ClashStore with Store {
 
   @action
   void addSelectedServer(String server) {
-    if (_applicationDetailsStore.preferredServers.contains(server) &&
-        !selectedServers.contains(server)) {
-      selectedServers.add(server);
-    }
+    selectedServers.add(server);
   }
 
   @action
@@ -56,8 +101,8 @@ abstract class _ClashStore with Store {
     selectedServers.remove(server);
   }
 
-  @observable
-  bool filterByDay = false;
+  @computed
+  bool get canCreateTeam => filterByDay;
 
   @action
   void turnOnDayFilter() {
@@ -69,16 +114,10 @@ abstract class _ClashStore with Store {
     filterByDay = false;
   }
 
-  @observable
-  DateTime filterDate = DateTime.now();
-
   @action
   void setFilterDate(DateTime date) {
     filterDate = date;
   }
-
-  @observable
-  ObservableList<ClashTournament> tournaments = ObservableList();
 
   @computed
   Map<String, List<ClashTournament>> get tournamentsByNameAndDay {
@@ -93,9 +132,6 @@ abstract class _ClashStore with Store {
     }
     return tournamentsByNameAndDay;
   }
-
-  @observable
-  ObservableList<ClashTeam> clashTeams = ObservableList();
 
   @computed
   Map<ClashTournament, List<ClashTeam>> get tournamentsToTeams {
@@ -115,25 +151,24 @@ abstract class _ClashStore with Store {
       get tournamentsToTeamsFilteredToADayIfActive {
     Map<ClashTournament, List<ClashTeam>> ogTeams = tournamentsToTeams;
     if (filterByDay) {
-      developer.log("Filtering by day");
-      ogTeams = ogTeams.map((key, value) {
+      var teamy = ogTeams.map((key, value) {
         return MapEntry(
             key,
             value.where((team) {
               return isSameDay(key.startTime, filterDate);
             }).toList());
       });
+      return teamy;
     }
-    developer.log("Not filtering by day");
     return ogTeams;
   }
 
   @computed
-  ObservableList<Event> get events {
-    List<Event> events = [];
+  ObservableList<HomeEvent> get events {
+    List<HomeEvent> events = [];
     for (var entry in tournamentsToTeams.entries) {
       for (var team in entry.value) {
-        events.add(Event(
+        events.add(HomeEvent(
           date: entry.key.startTime,
           title: '${entry.key.tournamentName} ${entry.key.tournamentDay}',
           description: "An event",
@@ -150,16 +185,46 @@ abstract class _ClashStore with Store {
   }
 
   @action
-  Future<void> refreshClashTournaments() async {
-    tournaments = ObservableList.of(
-        await _clashService.retrieveTournaments(_applicationDetailsStore.id));
+  Future<void> refreshClashTournaments(String id) async {
+    callsInProgress.add(_ClashStore.refreshClashTournamentsCall);
+    tournaments =
+        ObservableList.of(await _clashService.retrieveTournaments(id));
+    callsInProgress.remove(_ClashStore.refreshClashTournamentsCall);
   }
 
   @action
-  Future<void> refreshClashTeams() async {
-    var futureClashTeams = await _clashService.getClashTeams(
-        _applicationDetailsStore.id, _applicationDetailsStore.preferredServers);
+  Future<void> refreshClashTeams(
+      String id, List<String> preferredServers) async {
+    callsInProgress.add(_ClashStore.refreshClashTeamsCall);
+    var futureClashTeams =
+        await _clashService.getClashTeams(id, preferredServers);
     clashTeams = ObservableList.of(futureClashTeams);
+    callsInProgress.remove(_ClashStore.refreshClashTeamsCall);
+  }
+
+  @action
+  Future<void> createTeam(String id, String name, Role role,
+      ClashTournament clashTournament, String serverId) async {
+    await _clashService.createClashTeam(
+        id,
+        name,
+        role,
+        clashTournament.tournamentName,
+        clashTournament.tournamentDay,
+        serverId);
+    refreshClashTeams(id, selectedServers);
+  }
+
+  @action
+  Future<void> createPlayer(
+      String id, String username, String preferredServers) async {
+    await _clashService.createPlayer(id, username, preferredServers);
+  }
+
+  @action
+  Future<void> createSelectedServers(
+      String id, List<String> preferredServers) async {
+    await _clashService.createSelectedServers(id, preferredServers);
   }
 
   DateTime roundUpToEndOfDay(DateTime date) {
