@@ -29,12 +29,14 @@ class EventsListWidget extends StatelessWidget {
               event: {
                 'title': events[index].key.tournamentName +
                     events[index].key.tournamentDay,
-                'date': formatter.format(events[index].key.startTime),
-                'startTime': formatter.format(events[index].key.startTime),
-                'endTime': formatter.format(events[index].key.startTime),
+                'date': formatter.format(events[index].key.startTime.toLocal()),
+                'startTime':
+                    formatter.format(events[index].key.startTime.toLocal()),
+                'endTime':
+                    formatter.format(events[index].key.startTime.toLocal()),
                 'description': "Some description.",
                 'registrationOpenDateTime':
-                    formatter.format(events[index].key.startTime)
+                    formatter.format(events[index].key.startTime.toLocal())
               },
               eventTeams: events[index].value,
             );
