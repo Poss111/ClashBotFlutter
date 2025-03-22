@@ -8,8 +8,7 @@ class DiscordOauth2Client extends OAuth2Client {
                 'https://discord.com/oauth2/authorize', //Your service's authorization url
             tokenUrl:
                 'https://discord.com/api/oauth2/token', //Your service access token url
-            refreshUrl: 
-                'http://localhost:8084/auth/token',
+            refreshUrl: 'https://discord.com/auth/token',
             redirectUri: redirectUri,
             customUriScheme: customUriScheme);
 }
