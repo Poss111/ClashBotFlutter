@@ -5,6 +5,7 @@ import 'package:clashbot_flutter/core/config/env.dart';
 import 'package:clashbot_flutter/globals/color_schemes.dart';
 import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/models/model_first_time.dart';
+import 'package:clashbot_flutter/pages/errorPages/whoops_page.dart';
 import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
 import 'package:clashbot_flutter/pages/intro/welcome_page.dart';
@@ -72,18 +73,32 @@ GoRouter router = GoRouter(
                 path: HOME_ROUTE,
                 builder: (BuildContext context, GoRouterState state) {
                   return HomeV2();
+                },
+                redirect: (context, state) {
+                  ErrorHandlerStore errorHandlerStore =
+                      context.read<ErrorHandlerStore>();
+                  if (errorHandlerStore.irreconcilable) {
+                    return WHOOPS_ROUTE;
+                  }
+                  return null;
+                }),
+            GoRoute(
+                name: 'whoops',
+                path: WHOOPS_ROUTE,
+                builder: (BuildContext context, GoRouterState state) {
+                  return const WhoopsPage();
                 }),
           ]),
     ],
-    errorBuilder: (context, state) => Scaffold(
+    errorBuilder: (context, state) => const Scaffold(
             body: Center(
           child: Column(
-            children: const [
+            children: [
               Text('Page Not Found', style: headerStyle),
             ],
           ),
         )),
-    debugLogDiagnostics: true);
+    debugLogDiagnostics: false);
 
 void main() async {
   runApp(MyApp());
