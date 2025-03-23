@@ -5,6 +5,7 @@ import 'package:clashbot_flutter/models/clash_tournament.dart';
 import 'package:clashbot_flutter/models/clashbot_user.dart';
 import 'package:clashbot_flutter/models/discord_guild.dart';
 import 'package:clashbot_flutter/models/discord_user.dart';
+import 'package:clashbot_flutter/pages/errorPages/whoops_page.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/calendar_widget.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
 import 'package:clashbot_flutter/services/clashbot_service_impl.dart';
@@ -132,7 +133,8 @@ void main() {
                 ChampionsApi(apiClient),
                 SubscriptionApi(apiClient),
                 TentativeApi(apiClient),
-                TournamentApi(apiClient)),
+                TournamentApi(apiClient),
+                errorHandlerStore),
             errorHandlerStore)),
     ProxyProvider4<ClashStore, ErrorHandlerStore, DiscordDetailsStore,
             RiotChampionStore, ApplicationDetailsStore>(
@@ -149,7 +151,8 @@ class ClashBotStorybookApp extends StatelessWidget {
     return Storybook(initialStory: "4Filled", stories: [
       StoryCalendarWidgetWTournaments(context),
       StoryCalendarWidgetWTournamentsLoading(context),
-      StoryTeamCard()
+      StoryTeamCard(),
+      WhoopsPageStory()
     ]);
   }
 
@@ -230,6 +233,16 @@ class ClashBotStorybookApp extends StatelessWidget {
         });
   }
 
+  Story WhoopsPageStory() {
+    return Story(
+      name: "WhoopsPage",
+      description: "A page for that the app is not usable.",
+      builder: (context) {
+        return const WhoopsPage();
+      },
+    );
+  }
+
   Story StoryCalendarWidgetWTournamentsLoading(BuildContext context) {
     DiscordDetailsStore discordDetailsStore =
         context.read<DiscordDetailsStore>();
@@ -269,7 +282,8 @@ class ClashBotStorybookApp extends StatelessWidget {
             new ChampionsApi(context.read<ApiClient>()),
             new SubscriptionApi(context.read<ApiClient>()),
             new TentativeApi(context.read<ApiClient>()),
-            new TournamentApi(context.read<ApiClient>())),
+            new TournamentApi(context.read<ApiClient>()),
+            new ErrorHandlerStore()),
         context.read<ErrorHandlerStore>());
     clashStoreW5Tournies.addCallInProgress('getTournaments');
     return Story(
@@ -324,7 +338,8 @@ Story StoryCalendarWidgetWTournaments(BuildContext context) {
           new ChampionsApi(context.read<ApiClient>()),
           new SubscriptionApi(context.read<ApiClient>()),
           new TentativeApi(context.read<ApiClient>()),
-          new TournamentApi(context.read<ApiClient>())),
+          new TournamentApi(context.read<ApiClient>()),
+          new ErrorHandlerStore()),
       context.read<ErrorHandlerStore>());
   return Story(
     name: "Widgets/Calendar/filled",

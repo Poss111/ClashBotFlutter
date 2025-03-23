@@ -9,10 +9,27 @@ class WhoopsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Whoops!'),
       ),
-      body: const Center(
-          child: Text(
-        'Something went wrong and we were not able to load what we needed. Our bot is working tirelessly to resolve the issue! Please check back at a later time.',
-      )),
+      body: Container(
+        child: Column(
+          children: [
+            Flex(
+              direction: Axis.vertical,
+              children: [
+                Center(
+                  child: Text(
+                    'Something went wrong and we were not able to load what we needed. Our bot is working tirelessly to resolve the issue!'
+                  ),
+                ),
+                Center(
+                  child: Text(
+                          ' Please check back at a later time.',
+                        ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

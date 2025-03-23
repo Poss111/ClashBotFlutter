@@ -1,20 +1,15 @@
-import 'dart:developer' as developer;
-
 import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/core/config/env.dart';
 import 'package:clashbot_flutter/globals/color_schemes.dart';
-import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/models/model_first_time.dart';
 import 'package:clashbot_flutter/pages/errorPages/whoops_page.dart';
 import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
-import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
 import 'package:clashbot_flutter/pages/intro/welcome_page.dart';
 import 'package:clashbot_flutter/routes.dart';
 import 'package:clashbot_flutter/services/clashbot_service.dart';
 import 'package:clashbot_flutter/services/clashbot_service_impl.dart';
 import 'package:clashbot_flutter/services/discord_service.dart';
 import 'package:clashbot_flutter/services/discord_service_impl.dart';
-import 'package:clashbot_flutter/services/discord_service_mock_impl.dart';
 import 'package:clashbot_flutter/services/riot_resources_service.dart';
 import 'package:clashbot_flutter/services/riot_resources_service_impl.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
@@ -31,8 +26,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:validators/validators.dart';
-import 'package:storybook_flutter/storybook_flutter.dart';
 
 import 'generated/git_info.dart';
 import 'globals/global_settings.dart';
@@ -133,23 +128,24 @@ class _MyAppState extends State<MyApp> {
         providers: [
           ChangeNotifierProvider(create: (context) => widget.modelFirstTime),
           ChangeNotifierProvider(create: (context) => widget.modelTheme),
+          Provider<ErrorHandlerStore>(create: (_) => ErrorHandlerStore()),
           Provider<DiscordService>(
               create: (_) => DiscordServiceImpl(setupOauth2Helper())),
           Provider<ApiClient>(
               create: (_) => ApiClient(basePath: Env.clashbotServiceUrl)),
-          ProxyProvider<ApiClient, ClashBotService>(
-              update: (_, apiClient, __) => ClashBotServiceImpl(
+          ProxyProvider2<ApiClient, ErrorHandlerStore, ClashBotService>(
+              update: (_, apiClient, errorHandlerStore, __) => ClashBotServiceImpl(
                   UserApi(apiClient),
                   TeamApi(apiClient),
                   ChampionsApi(apiClient),
                   SubscriptionApi(apiClient),
                   TentativeApi(apiClient),
-                  TournamentApi(apiClient))),
+                  TournamentApi(apiClient),
+                  errorHandlerStore)),
           Provider<RiotResourcesService>(
               create: (_) => RiotResourceServiceImpl()),
           Provider<ClashBotEventsService>(
               create: (_) => ClashBotEventsService()),
-          Provider<ErrorHandlerStore>(create: (_) => ErrorHandlerStore()),
           ProxyProvider2<ClashBotService, ErrorHandlerStore, ClashStore>(
               update: (_, clashBotService, errorHandlerStore, __) =>
                   ClashStore(clashBotService, errorHandlerStore)),
@@ -324,11 +320,15 @@ class MainContainer extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             // spacing: 1.0,
             children: [
-              IconButton(
+                IconButton(
                 icon: const Icon(Icons.code),
                 tooltip: 'GitHub',
-                onPressed: () {
-                  // Add your GitHub link or functionality here
+                onPressed: () async {
+                  const url = 'https://github.com/Poss111/ClashBotFlutter';
+                  if (await canLaunchUrl(Uri(path: url))) {
+                    await launchUrl(Uri(path: url), mode: LaunchMode.inAppBrowserView, 
+                      webOnlyWindowName: '_blank');
+                  }
                 },
               ),
               const Text(
