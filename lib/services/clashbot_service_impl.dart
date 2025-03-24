@@ -5,6 +5,7 @@ import 'package:clashbot_flutter/models/clash_tournament.dart';
 import 'package:clashbot_flutter/models/clashbot_user.dart';
 import 'package:clashbot_flutter/models/tentative_queue.dart';
 import 'package:clashbot_flutter/services/clashbot_service.dart';
+import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
 
 class ClashBotServiceImpl implements ClashBotService {
   UserApi userApi;
@@ -13,9 +14,16 @@ class ClashBotServiceImpl implements ClashBotService {
   SubscriptionApi subscriptionApi;
   TentativeApi tentativeApi;
   TournamentApi tournamentApi;
+  ErrorHandlerStore errorHandlerStore;
 
-  ClashBotServiceImpl(this.userApi, this.teamApi, this.championsApi,
-      this.subscriptionApi, this.tentativeApi, this.tournamentApi);
+  ClashBotServiceImpl(
+      this.userApi,
+      this.teamApi,
+      this.championsApi,
+      this.subscriptionApi,
+      this.tentativeApi,
+      this.tournamentApi,
+      this.errorHandlerStore);
 
   @override
   Future<ClashBotUser> createPlayer(
@@ -24,14 +32,23 @@ class ClashBotServiceImpl implements ClashBotService {
         CreateUserRequest(discordId: id, name: name, serverId: defaultServerId);
     return userApi
         .createUser(id, createUserRequest: createUserRequest)
-        .then(playerToClashBotUser);
+        .then(playerToClashBotUser)
+        .catchError((error) {
+      errorHandlerStore.setErrorMessage("Whoops! Failed to create player.");
+      return error;
+    });
   }
 
   @override
   Future<List<String>> getChampions(String id) {
     return championsApi
         .retrieveUsersPreferredChampions(id, id)
-        .then(fromChampionsToStringList);
+        .then(fromChampionsToStringList)
+        .catchError((error) {
+      errorHandlerStore
+          .setErrorMessage("Whoops! Failed to retrieve user's champions.");
+      return error;
+    });
   }
 
   @override
@@ -40,7 +57,7 @@ class ClashBotServiceImpl implements ClashBotService {
         .getUser(id, discordId: id)
         .then(playerToClashBotUser)
         .catchError((error) {
-      print('Error getting player: $error');
+      errorHandlerStore.setErrorMessage("Whoops! Failed to retrieve user.");
       throw error;
     });
   }
@@ -56,7 +73,8 @@ class ClashBotServiceImpl implements ClashBotService {
       }
       return subscriptions;
     }).catchError((error) {
-      print('Error getting player subscriptions: $error');
+      errorHandlerStore
+          .setErrorMessage("Whoops! Failed to retrieve user's subscriptions.");
       throw error;
     });
     ;
@@ -71,14 +89,24 @@ class ClashBotServiceImpl implements ClashBotService {
     return championsApi
         .createListOfPreferredChampionsForUser(id, id,
             champions: Champions(champions: championsList))
-        .then(fromChampionsToStringList);
+        .then(fromChampionsToStringList)
+        .catchError((error) {
+      errorHandlerStore
+          .setErrorMessage("Whoops! Failed to overwrite user's champions.");
+      return error;
+    });
   }
 
   @override
   Future<List<String>> removeChampion(String id, String champion) {
     return championsApi
         .removePreferredChampionForUser(id, id, List.of([champion]))
-        .then(fromChampionsToStringList);
+        .then(fromChampionsToStringList)
+        .catchError((error) {
+      errorHandlerStore
+          .setErrorMessage("Whoops! Failed to remove user's champion.");
+      return error;
+    });
   }
 
   @override
@@ -88,7 +116,12 @@ class ClashBotServiceImpl implements ClashBotService {
     return championsApi
         .addToPreferredChampionsForUser(id, id,
             champions: Champions(champions: championsList))
-        .then(fromChampionsToStringList);
+        .then(fromChampionsToStringList)
+        .catchError((error) {
+      errorHandlerStore
+          .setErrorMessage("Whoops! Failed to update user's champions.");
+      return error;
+    });
   }
 
   @override
@@ -100,7 +133,12 @@ class ClashBotServiceImpl implements ClashBotService {
     }
     return userApi
         .createUsersSelectedServers(id, id, servers: Servers(servers: servers))
-        .then(serversToServerIdList);
+        .then(serversToServerIdList)
+        .catchError((error) {
+      errorHandlerStore
+          .setErrorMessage("Whoops! Failed to create user's selected servers.");
+      return error;
+        });
   }
 
   @override
@@ -108,7 +146,12 @@ class ClashBotServiceImpl implements ClashBotService {
       String id, List<String> selectedServers) {
     return userApi
         .removeUsersSelectedServers(id, id, selectedServers)
-        .then(serversToServerIdList);
+        .then(serversToServerIdList)
+        .catchError((error) {
+      errorHandlerStore
+          .setErrorMessage("Whoops! Failed to remove user's selected servers.");
+      return error;
+        });
   }
 
   @override
@@ -120,21 +163,34 @@ class ClashBotServiceImpl implements ClashBotService {
     }
     return userApi
         .addUsersSelectedServers(id, id, servers: Servers(servers: servers))
-        .then(serversToServerIdList);
+        .then(serversToServerIdList)
+        .catchError((error) {
+      errorHandlerStore
+          .setErrorMessage("Whoops! Failed to update user's selected servers.");
+      return error;
+        });
   }
 
   @override
   Future<ClashTeam> addToTeam(String id, Role role, String teamId) {
     return teamApi
         .assignUserToTeam(id, teamId, id, PositionDetails(role: role))
-        .then((team) => teamToClashTeam(team ?? Team()));
+        .then((team) => teamToClashTeam(team ?? Team()))
+        .catchError((error) {
+          errorHandlerStore.setErrorMessage("Whoops! Failed to add user to team.");
+          return error;
+        });
   }
 
   @override
   Future<TentativeQueue> addToTentativeQueue(String id, String tentativeId) {
     return tentativeApi
         .assignUserToATentativeQueue(id, tentativeId, id)
-        .then(tentativeToTentativeQueue);
+        .then(tentativeToTentativeQueue)
+        .catchError((error) {
+          errorHandlerStore.setErrorMessage("Whoops! Failed to add user to tentative queue.");
+          return error;
+        });
   }
 
   @override
@@ -154,6 +210,10 @@ class ClashBotServiceImpl implements ClashBotService {
         }
       }
       return teams;
+    })
+    .catchError((error) {
+      errorHandlerStore.setErrorMessage("Whoops! Failed to retrieve teams.");
+      return error;
     });
   }
 
@@ -176,6 +236,10 @@ class ClashBotServiceImpl implements ClashBotService {
         }
       }
       return tentativeQueues;
+    })
+    .catchError((error) {
+      errorHandlerStore.setErrorMessage("Whoops! Failed to retrieve tentative queues.");
+      return error;
     });
   }
 
@@ -183,7 +247,11 @@ class ClashBotServiceImpl implements ClashBotService {
   Future<ClashTeam> removeFromTeam(String id, String teamId) {
     return teamApi
         .removeUserFromTeam(id, teamId, id)
-        .then((team) => teamToClashTeam(team ?? Team()));
+        .then((team) => teamToClashTeam(team ?? Team()))
+        .catchError((error) {
+          errorHandlerStore.setErrorMessage("Whoops! Failed to remove user from team.");
+          return error;
+        });
   }
 
   @override
@@ -191,7 +259,11 @@ class ClashBotServiceImpl implements ClashBotService {
       String id, String tentativeId) {
     return tentativeApi
         .removeUserFromTentativeQueue(id, tentativeId, id)
-        .then(tentativeToTentativeQueue);
+        .then(tentativeToTentativeQueue)
+        .catchError((error) {
+          errorHandlerStore.setErrorMessage("Whoops! Failed to remove user from tentative queue.");
+          return error;
+        });
   }
 
   @override
@@ -226,7 +298,11 @@ class ClashBotServiceImpl implements ClashBotService {
             tournamentName: tournamentName, tournamentDay: tournamentDay));
     return teamApi
         .createTeam(discordId, teamRequired)
-        .then((team) => teamToClashTeam(team ?? Team()));
+        .then((team) => teamToClashTeam(team ?? Team()))
+        .catchError((error) {
+          errorHandlerStore.setErrorMessage("Whoops! Failed to create team.");
+          return error;
+        });
   }
 
   @override
@@ -241,7 +317,11 @@ class ClashBotServiceImpl implements ClashBotService {
                     tournamentName: tournamentName,
                     tournamentDay: tournamentDay),
                 tentativePlayers: [TentativePlayer(discordId: discordId)]))
-        .then(tentativeToTentativeQueue);
+        .then(tentativeToTentativeQueue)
+        .catchError((error) {
+          errorHandlerStore.setErrorMessage("Whoops! Failed to create tentative queue.");
+          return error;
+        });
   }
 
   @override

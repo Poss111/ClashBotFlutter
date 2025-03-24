@@ -34,7 +34,8 @@ jobs:
           env:
             CLASHBOT_SERVICE_URL: ${{ vars.CLASHBOT_SERVICE_URL }}
             MOCK_DISCORD_SERVICE: false
-          run: ./ciScripts/build-env-file.sh CLASHBOT_SERVICE_URL ${CLASHBOT_SERVICE_URL} MOCK_DISCORD_SERVICE ${MOCK_DISCORD_SERVICE}
+            DISCORD_CLIENT_ID: ${{ vars.DISCORD_CLIENT_ID }}
+          run: ./ciScripts/build-env-file.sh CLASHBOT_SERVICE_URL ${CLASHBOT_SERVICE_URL} MOCK_DISCORD_SERVICE ${MOCK_DISCORD_SERVICE} discordClientId ${DISCORD_CLIENT_ID} 
 
         - name: Generate Envied Files
           run: |

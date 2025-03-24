@@ -1,4 +1,5 @@
 import 'package:clashbot_flutter/clients/discord_client.dart';
+import 'package:clashbot_flutter/core/config/env.dart';
 import 'package:clashbot_flutter/globals/credentials.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
 
@@ -39,7 +40,7 @@ OAuth2Helper setupOauth2Helper() {
   var oAuth2Helper = OAuth2Helper(
     client,
     grantType: OAuth2Helper.authorizationCode,
-    clientId: Credentials.APP_DISCORD_OAUTH_CLIENT_ID,
+    clientId: Env.discordClientId,
     scopes: Credentials.SCOPE,
   );
   return oAuth2Helper;
