@@ -56,6 +56,19 @@ abstract class _ClashStore with Store {
       callsInProgress.contains(_ClashStore.refreshClashTournamentsCall) ||
       callsInProgress.contains(_ClashStore.refreshClashTeamsCall);
 
+  @observable
+  bool failedToLoad = false;
+
+  @action
+  void loadingUserDetailsFailed() {
+    failedToLoad = true;
+  }
+
+  @action
+  void userDetailsSuccessfullyLoaded() {
+    failedToLoad = false;
+  }
+
   @action
   void addCallInProgress(String call) {
     callsInProgress.add(call);
@@ -74,10 +87,15 @@ abstract class _ClashStore with Store {
   @action
   Future<void> refreshClashBotUser(String id) async {
     refreshingUser = true;
-    callsInProgress.add(_ClashStore.refreshClashBotUserCall);
-    clashBotUser = await _clashService.getPlayer(id);
-    setSelectedServer(clashBotUser.selectedServers);
-    callsInProgress.remove(_ClashStore.refreshClashBotUserCall);
+    userDetailsSuccessfullyLoaded();
+    addCallInProgress(_ClashStore.refreshClashBotUserCall);
+    try {
+      clashBotUser = await _clashService.getPlayer(id);
+      setSelectedServer(clashBotUser.selectedServers);
+    } catch (e) {
+      loadingUserDetailsFailed();
+    }
+    removeCallInProgress(_ClashStore.refreshClashBotUserCall);
     refreshingUser = false;
   }
 
@@ -186,20 +204,20 @@ abstract class _ClashStore with Store {
 
   @action
   Future<void> refreshClashTournaments(String id) async {
-    callsInProgress.add(_ClashStore.refreshClashTournamentsCall);
+    addCallInProgress(_ClashStore.refreshClashTournamentsCall);
     tournaments =
         ObservableList.of(await _clashService.retrieveTournaments(id));
-    callsInProgress.remove(_ClashStore.refreshClashTournamentsCall);
+    removeCallInProgress(_ClashStore.refreshClashTournamentsCall);
   }
 
   @action
   Future<void> refreshClashTeams(
       String id, List<String> preferredServers) async {
-    callsInProgress.add(_ClashStore.refreshClashTeamsCall);
+    addCallInProgress(_ClashStore.refreshClashTeamsCall);
     var futureClashTeams =
         await _clashService.getClashTeams(id, preferredServers);
     clashTeams = ObservableList.of(futureClashTeams);
-    callsInProgress.remove(_ClashStore.refreshClashTeamsCall);
+    removeCallInProgress(_ClashStore.refreshClashTeamsCall);
   }
 
   @action

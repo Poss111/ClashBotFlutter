@@ -5,6 +5,7 @@ import 'package:clashbot_flutter/models/discord_user.dart';
 import 'package:clashbot_flutter/services/discord_service.dart';
 import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
 import 'package:mobx/mobx.dart';
+import 'dart:developer' as developer;
 
 part 'discord_details.store.g.dart';
 
@@ -27,6 +28,9 @@ abstract class _DiscordDetailsStore with Store {
   @observable
   ObservableList<String> callsInProgress = ObservableList();
 
+  @observable
+  bool failedToLoad = false;
+
   @computed
   bool get loadingData => callsInProgress.isNotEmpty;
 
@@ -40,46 +44,82 @@ abstract class _DiscordDetailsStore with Store {
   Map<String, DiscordGuild> get discordGuildMap =>
       {for (var guild in discordGuilds) guild.id: guild};
 
+  @computed
+  bool get irreconcilableError => failedToLoad && discordUser.id == '0';
+
+  @action
+  void loadingUserDetailsFailed() {
+    developer.log("loadingUserDetailsFailed");
+    developer.log("failedToLoad: ${failedToLoad}");
+    failedToLoad = true;
+    developer.log("failedToLoad: ${failedToLoad}");
+  }
+
+  @action
+  void userDetailsSuccessfullyLoaded() {
+    failedToLoad = false;
+  }
+
+  @action
+  void addCallInProgress(String call) {
+    callsInProgress.add(call);
+  }
+
+  @action
+  void removeCallInProgress(String call) {
+    callsInProgress.remove(call);
+  }
+
+  @action
+  void clearCallsInProgress() {
+    callsInProgress.clear();
+  }
+
   @action
   Future<void> fetchUserDetails(String discordId) async {
-    callsInProgress.add('fetchUserDetails');
+    addCallInProgress('fetchUserDetails');
     var foundUser;
     try {
+      userDetailsSuccessfullyLoaded();
       foundUser = await _discordService.fetchUserDetails(discordId);
       discordIdToName.putIfAbsent(discordId, () => foundUser.username);
     } on Exception catch (error) {
       _errorHandlerStore.errorMessage =
           'Failed to fetch Discord User details due to ${error.toString()}';
     }
-    callsInProgress.remove('fetchUserDetails');
+    removeCallInProgress('fetchUserDetails');
   }
 
   @action
   Future<void> fetchCurrentUserDetails() async {
-    callsInProgress.add('fetchCurrentUserDetails');
+    addCallInProgress('fetchCurrentUserDetails');
     final future = _discordService.fetchCurrentUserDetails();
     try {
+      userDetailsSuccessfullyLoaded();
       DiscordUser updatedUser = await future;
       discordUser = updatedUser.copy();
       discordIdToName.putIfAbsent(updatedUser.id, () => updatedUser.username);
     } on Exception catch (error) {
       _errorHandlerStore.errorMessage =
           'Failed to fetch Discord User details due to ${error.toString()}';
+      loadingUserDetailsFailed();
     }
-    callsInProgress.remove('fetchCurrentUserDetails');
+    removeCallInProgress('fetchCurrentUserDetails');
   }
 
   @action
   Future<void> fetchUserGuilds() async {
-    callsInProgress.add('fetchUserGuilds');
+    addCallInProgress('fetchUserGuilds');
     final future = _discordService.fetchUserGuilds();
     try {
+      userDetailsSuccessfullyLoaded();
       List<DiscordGuild> guilds = await future;
       discordGuilds.clear();
       discordGuilds.addAll(guilds);
     } on Exception catch (error) {
       _errorHandlerStore.errorMessage = error.toString();
+      loadingUserDetailsFailed();
     }
-    callsInProgress.remove('fetchUserGuilds');
+    removeCallInProgress('fetchUserGuilds');
   }
 }

@@ -68,14 +68,6 @@ GoRouter router = GoRouter(
                 path: HOME_ROUTE,
                 builder: (BuildContext context, GoRouterState state) {
                   return HomeV2();
-                },
-                redirect: (context, state) {
-                  ErrorHandlerStore errorHandlerStore =
-                      context.read<ErrorHandlerStore>();
-                  if (errorHandlerStore.irreconcilable) {
-                    return WHOOPS_ROUTE;
-                  }
-                  return null;
                 }),
             GoRoute(
                 name: 'whoops',
@@ -134,14 +126,15 @@ class _MyAppState extends State<MyApp> {
           Provider<ApiClient>(
               create: (_) => ApiClient(basePath: Env.clashbotServiceUrl)),
           ProxyProvider2<ApiClient, ErrorHandlerStore, ClashBotService>(
-              update: (_, apiClient, errorHandlerStore, __) => ClashBotServiceImpl(
-                  UserApi(apiClient),
-                  TeamApi(apiClient),
-                  ChampionsApi(apiClient),
-                  SubscriptionApi(apiClient),
-                  TentativeApi(apiClient),
-                  TournamentApi(apiClient),
-                  errorHandlerStore)),
+              update: (_, apiClient, errorHandlerStore, __) =>
+                  ClashBotServiceImpl(
+                      UserApi(apiClient),
+                      TeamApi(apiClient),
+                      ChampionsApi(apiClient),
+                      SubscriptionApi(apiClient),
+                      TentativeApi(apiClient),
+                      TournamentApi(apiClient),
+                      errorHandlerStore)),
           Provider<RiotResourcesService>(
               create: (_) => RiotResourceServiceImpl()),
           Provider<ClashBotEventsService>(
@@ -186,11 +179,6 @@ class Main extends StatelessWidget {
             brightness: Brightness.dark,
             colorScheme: darkColorScheme,
             useMaterial3: true,
-            textTheme: const TextTheme(
-                //   headlineLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-                //   titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-                //   bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
-                ),
             snackBarTheme: SnackBarThemeData(
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
@@ -320,14 +308,15 @@ class MainContainer extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             // spacing: 1.0,
             children: [
-                IconButton(
+              IconButton(
                 icon: const Icon(Icons.code),
                 tooltip: 'GitHub',
                 onPressed: () async {
                   const url = 'https://github.com/Poss111/ClashBotFlutter';
                   if (await canLaunchUrl(Uri(path: url))) {
-                    await launchUrl(Uri(path: url), mode: LaunchMode.inAppBrowserView, 
-                      webOnlyWindowName: '_blank');
+                    await launchUrl(Uri(path: url),
+                        mode: LaunchMode.inAppBrowserView,
+                        webOnlyWindowName: '_blank');
                   }
                 },
               ),

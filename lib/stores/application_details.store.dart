@@ -10,6 +10,8 @@ import 'package:collection/collection.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:developer' as developer;
 
+import 'package:url_launcher/url_launcher.dart';
+
 part 'application_details.store.g.dart';
 
 class ApplicationDetailsStore = _ApplicationDetailsStore
@@ -23,9 +25,7 @@ abstract class _ApplicationDetailsStore with Store {
   _ApplicationDetailsStore(this._clashStore, this._discordDetailsStore,
       this._riotChampionStore, this._errorHandlerStore) {
     reaction((_) => _discordDetailsStore.discordUser, (_) {
-      developer.log("reaction: _discordDetailsStore.discordUser");
       if (_discordDetailsStore.discordUser.id != '0') {
-        developer.log("Refreshing clash bot user");
         _clashStore.refreshClashBotUser(_discordDetailsStore.discordUser.id);
         _clashStore.refreshSelectedServers();
         _discordDetailsStore.fetchUserGuilds();
@@ -38,6 +38,18 @@ abstract class _ApplicationDetailsStore with Store {
             .refreshClashTournaments(_clashStore.clashBotUser.discordId!);
         _clashStore.refreshClashTeams(_clashStore.clashBotUser.discordId!,
             _clashStore.clashBotUser.selectedServers);
+      }
+    });
+
+    reaction(
+        (_) => (_discordDetailsStore.failedToLoad, _clashStore.failedToLoad),
+        (failedToLoad) {
+      if (failedToLoad.$1 && failedToLoad.$2) {
+        _errorHandlerStore.setIrreconcilable();
+      } else if (failedToLoad.$2) {
+        _errorHandlerStore.setIrreconcilable();
+      } else {
+        _errorHandlerStore.clearIrreconcilable();
       }
     });
   }

@@ -11,6 +11,6 @@ abstract class Env {
   static String clashbotServiceUrl = _Env.clashbotServiceUrl;
   @EnviedField(varName: 'MOCK_DISCORD_SERVICE')
   static String mockDiscordService = _Env.mockDiscordService;
-  @EnviedField(varName: 'DISCORD_CLIENT_ID')
+  @EnviedField()
   static String discordClientId = _Env.discordClientId;
 }
