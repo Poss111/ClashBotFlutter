@@ -1,3 +1,4 @@
+import 'package:clashbot_flutter/enums/api_call_state.dart';
 import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
@@ -13,6 +14,43 @@ class EventsListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ssZ');
     return Observer(builder: (_) {
+      if (clashStore.teamsApiCallState == ApiCallState.error) {
+        return Flex(
+            direction: Axis.vertical,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Center(
+                  child: IconButton.filled(
+                    onPressed: () {
+                      clashStore.refreshClashTeams(
+                          clashStore.clashBotUser.discordId!,
+                          clashStore.selectedServers);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Retrying to load teams...'),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.refresh),
+                    color: Theme.of(context).colorScheme.error,
+                    tooltip: 'Failed to load teams. Click to retry.',
+                  ),
+                ),
+              ),
+            ]);
+      } else if (clashStore.teamsApiCallState == ApiCallState.loading) {
+        return const Flex(
+            direction: Axis.vertical,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            ]);
+      }
       var events =
           clashStore.tournamentsToTeamsFilteredToADayIfActive.entries.toList();
       return SingleChildScrollView(

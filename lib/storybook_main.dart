@@ -182,6 +182,8 @@ class ClashBotStorybookApp extends StatelessWidget {
       StoryTeamCard(),
       WhoopsPageStory(),
       EventsListWidgetStory(context),
+      FailedToLoadEventsListWidgetStory(context),
+      LoadingEventsListWidgetStory(context),
     ]);
   }
 }
@@ -321,6 +323,118 @@ Story EventsListWidgetStory(BuildContext context) {
       context.read<ErrorHandlerStore>());
   return Story(
     name: "EventsListWidget/Events",
+    builder: (context) {
+      return EventsListWidget(
+        clashStore: clashStoreW5Tournies,
+      );
+    },
+  );
+}
+
+Story FailedToLoadEventsListWidgetStory(BuildContext context) {
+  DiscordDetailsStore discordDetailsStore = context.read<DiscordDetailsStore>();
+  ClashStore clashStoreW5Tournies = new MockClashStore(
+      context.read<ApplicationDetailsStore>().clashBotUser,
+      [
+        ClashTournament('ARAM Clash', '1', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('ARAM Clash', '2', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('Summoner\'s Cup', '1', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('Summoner\'s Cup', '2', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('Summoner\'s Cup', '3', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('Summoner\'s Cup', '4', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+      ],
+      [
+        ClashTeam(
+          '1',
+          'Mock Team 1',
+          'Mock Tournament 1',
+          '1',
+          {
+            Role.TOP: PlayerDetails('1', 'Player 1', []),
+            Role.JG: PlayerDetails('2', 'Player 2', []),
+            Role.MID: PlayerDetails('3', 'Player 3', []),
+            Role.SUPP: PlayerDetails('5', 'Player 5', []),
+          },
+          '460520499680641035',
+          DateTime.now(),
+        )
+      ],
+      ApiCallState.success,
+      ApiCallState.error,
+      ApiCallState.success,
+      new ClashBotServiceImpl(
+          new UserApi(context.read<ApiClient>()),
+          new TeamApi(context.read<ApiClient>()),
+          new ChampionsApi(context.read<ApiClient>()),
+          new SubscriptionApi(context.read<ApiClient>()),
+          new TentativeApi(context.read<ApiClient>()),
+          new TournamentApi(context.read<ApiClient>()),
+          new ErrorHandlerStore()),
+      context.read<ErrorHandlerStore>());
+  return Story(
+    name: "EventsListWidget/EventsFailedToLoad",
+    builder: (context) {
+      return EventsListWidget(
+        clashStore: clashStoreW5Tournies,
+      );
+    },
+  );
+}
+
+Story LoadingEventsListWidgetStory(BuildContext context) {
+  DiscordDetailsStore discordDetailsStore = context.read<DiscordDetailsStore>();
+  ClashStore clashStoreW5Tournies = new MockClashStore(
+      context.read<ApplicationDetailsStore>().clashBotUser,
+      [
+        ClashTournament('ARAM Clash', '1', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('ARAM Clash', '2', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('Summoner\'s Cup', '1', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('Summoner\'s Cup', '2', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('Summoner\'s Cup', '3', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+        ClashTournament('Summoner\'s Cup', '4', DateTime.now(),
+            DateTime.now().add(Duration(days: 1))),
+      ],
+      [
+        ClashTeam(
+          '1',
+          'Mock Team 1',
+          'Mock Tournament 1',
+          '1',
+          {
+            Role.TOP: PlayerDetails('1', 'Player 1', []),
+            Role.JG: PlayerDetails('2', 'Player 2', []),
+            Role.MID: PlayerDetails('3', 'Player 3', []),
+            Role.SUPP: PlayerDetails('5', 'Player 5', []),
+          },
+          '460520499680641035',
+          DateTime.now(),
+        )
+      ],
+      ApiCallState.success,
+      ApiCallState.loading,
+      ApiCallState.success,
+      new ClashBotServiceImpl(
+          new UserApi(context.read<ApiClient>()),
+          new TeamApi(context.read<ApiClient>()),
+          new ChampionsApi(context.read<ApiClient>()),
+          new SubscriptionApi(context.read<ApiClient>()),
+          new TentativeApi(context.read<ApiClient>()),
+          new TournamentApi(context.read<ApiClient>()),
+          new ErrorHandlerStore()),
+      context.read<ErrorHandlerStore>());
+  return Story(
+    name: "EventsListWidget/EventsLoading",
     builder: (context) {
       return EventsListWidget(
         clashStore: clashStoreW5Tournies,
