@@ -133,9 +133,9 @@ class _HomeV2State extends State<HomeV2> {
                             ),
                           ]),
                         ),
-                        const Flexible(
+                        Flexible(
                           flex: 2,
-                          child: EventsListWidget(),
+                          child: EventsListWidget(clashStore: clashStore),
                         ),
                       ],
                     );
@@ -148,7 +148,7 @@ class _HomeV2State extends State<HomeV2> {
                             selectedDay: _selectedDay,
                             clashStore: clashStore,
                             discordDetailsStore: discordDetailsStore),
-                        EventsListWidget(),
+                        EventsListWidget(clashStore: clashStore),
                       ],
                     );
                   }

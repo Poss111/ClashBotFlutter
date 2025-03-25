@@ -4,14 +4,13 @@ import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class EventsListWidget extends StatelessWidget {
-  const EventsListWidget({super.key});
+  final ClashStore clashStore;
+  const EventsListWidget({super.key, required this.clashStore});
 
   @override
   Widget build(BuildContext context) {
-    ClashStore clashStore = context.read<ClashStore>();
     final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ssZ');
     return Observer(builder: (_) {
       var events =
@@ -19,16 +18,16 @@ class EventsListWidget extends StatelessWidget {
       return SingleChildScrollView(
         child: ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           itemCount: clashStore.tournamentsToTeams.entries.length,
           itemBuilder: (context, index) {
             if (clashStore.filterByDay && events[index].value.isEmpty) {
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             }
             return EventTile(
               event: {
-                'title': events[index].key.tournamentName +
-                    events[index].key.tournamentDay,
+                'title': events[index].key.tournamentName,
+                'day': events[index].key.tournamentDay,
                 'date': formatter.format(events[index].key.startTime.toLocal()),
                 'startTime':
                     formatter.format(events[index].key.startTime.toLocal()),
@@ -64,7 +63,11 @@ class EventTile extends StatelessWidget {
           event['title']!,
           style: Theme.of(context).textTheme.headlineSmall,
         ),
-        initiallyExpanded: true,
+        initiallyExpanded: eventTeams.isNotEmpty,
+        trailing: Text(
+          event['day']!,
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
         subtitle: Wrap(
           spacing: 10,
           direction: Axis.horizontal,
