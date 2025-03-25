@@ -7,6 +7,7 @@ import 'package:clashbot_flutter/pages/errorPages/whoops_page.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/calendar_widget.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/events_widget.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/server_chip_list.dart';
+import 'package:clashbot_flutter/stores/application_details.store.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
@@ -94,66 +95,68 @@ class _HomeV2State extends State<HomeV2> {
     ClashStore clashStore = context.read<ClashStore>();
     DiscordDetailsStore discordDetailsStore =
         context.read<DiscordDetailsStore>();
-    ErrorHandlerStore errorHandlerStore = context.read<ErrorHandlerStore>();
+    ApplicationDetailsStore applicationDetailsStore =
+        context.read<ApplicationDetailsStore>();
     return Scaffold(
-      body: Observer(
-        builder: (_) => errorHandlerStore.irreconcilable
-            ? const WhoopsPage()
-            : LayoutBuilder(
-                builder: (context, constraints) {
-                  if (constraints.maxWidth > 500) {
-                    return Row(
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: Flex(direction: Axis.vertical, children: [
-                            const ServerChipList(),
-                            CalendarWidget(
-                                focusedDay: _focusedDay,
-                                selectedDay: _selectedDay,
-                                clashStore: clashStore,
-                                discordDetailsStore: discordDetailsStore),
-                            Expanded(
-                              child: Card.filled(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.blueGrey
-                                    : Colors.blueAccent,
-                                margin: const EdgeInsets.all(16.0),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: SvgPicture.asset(
-                                    'svgs/ClashBot-HomePage.svg',
-                                    semanticsLabel: 'Clash Bot Home Page',
-                                    width: 100,
-                                    height: 600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ]),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth > 500) {
+            return Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Flex(direction: Axis.vertical, children: [
+                    ServerChipList(
+                        appStore: applicationDetailsStore,
+                        discordDetailsStore: discordDetailsStore,
+                        clashStore: clashStore),
+                    CalendarWidget(
+                        focusedDay: _focusedDay,
+                        selectedDay: _selectedDay,
+                        clashStore: clashStore,
+                        discordDetailsStore: discordDetailsStore),
+                    Expanded(
+                      child: Card.filled(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.blueGrey
+                            : Colors.blueAccent,
+                        margin: const EdgeInsets.all(16.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: SvgPicture.asset(
+                            'svgs/ClashBot-HomePage.svg',
+                            semanticsLabel: 'Clash Bot Home Page',
+                            width: 100,
+                            height: 600,
+                          ),
                         ),
-                        Flexible(
-                          flex: 2,
-                          child: EventsListWidget(clashStore: clashStore),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return Column(
-                      children: [
-                        ServerChipList(),
-                        CalendarWidget(
-                            focusedDay: _focusedDay,
-                            selectedDay: _selectedDay,
-                            clashStore: clashStore,
-                            discordDetailsStore: discordDetailsStore),
-                        EventsListWidget(clashStore: clashStore),
-                      ],
-                    );
-                  }
-                },
-              ),
+                      ),
+                    ),
+                  ]),
+                ),
+                Flexible(
+                  flex: 2,
+                  child: EventsListWidget(clashStore: clashStore),
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              children: [
+                ServerChipList(
+                    appStore: applicationDetailsStore,
+                    discordDetailsStore: discordDetailsStore,
+                    clashStore: clashStore),
+                CalendarWidget(
+                    focusedDay: _focusedDay,
+                    selectedDay: _selectedDay,
+                    clashStore: clashStore,
+                    discordDetailsStore: discordDetailsStore),
+                EventsListWidget(clashStore: clashStore),
+              ],
+            );
+          }
+        },
       ),
       floatingActionButton: Observer(
         builder: (_) => clashStore.canCreateTeam

@@ -9,6 +9,7 @@ import 'package:clashbot_flutter/models/discord_user.dart';
 import 'package:clashbot_flutter/pages/errorPages/whoops_page.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/calendar_widget.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/events_widget.dart';
+import 'package:clashbot_flutter/pages/home/page/widgets/server_chip_list.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
 import 'package:clashbot_flutter/services/clashbot_service_impl.dart';
 import 'package:clashbot_flutter/services/discord_service_impl.dart';
@@ -27,27 +28,22 @@ import 'package:storybook_flutter/storybook_flutter.dart';
 class MockApplicationDetailsStore extends ApplicationDetailsStore {
   MockApplicationDetailsStore(
       ClashBotUser mockClashBotUser,
+      List<String> mockPreferredServers,
       super._clashStore,
       super._discordDetailsStore,
       super._riotChampionStore,
-      super._errorHandlerStore);
-
-  @override
-  ClashBotUser get clashBotUser => ClashBotUser(
-        discordId: '123456789',
-        champions: [],
-        role: Role.TOP,
-        serverId: 'server1',
-        selectedServers: [
-          'server1',
-        ],
-        preferredServers: ['server1', 'server2'],
-      );
+      super._errorHandlerStore) {
+    clashBotUser = mockClashBotUser;
+    clashBotUser.preferredServers = ObservableList.of(mockPreferredServers);
+  }
 }
 
 class MockDiscordDetailsStore extends DiscordDetailsStore {
-  MockDiscordDetailsStore(List<DiscordGuild> guilds, DiscordUser user,
-      super.discordService, super._errorHandlerStore);
+  MockDiscordDetailsStore(List<DiscordGuild> guilds, DiscordUser discordUser,
+      super.discordService, super._errorHandlerStore) {
+    discordGuilds = ObservableList.of(guilds);
+    this.discordUser = discordUser;
+  }
 }
 
 class MockClashStore extends ClashStore {
@@ -167,7 +163,7 @@ void main() {
             RiotChampionStore, ApplicationDetailsStore>(
         update: (_, clashStore, errorHandlerStore, discordDetailsStore,
                 riotChampionStore, __) =>
-            MockApplicationDetailsStore(clashUser, clashStore,
+            MockApplicationDetailsStore(clashUser, [], clashStore,
                 discordDetailsStore, riotChampionStore, errorHandlerStore)),
   ], child: ClashBotStorybookApp()));
 }
@@ -176,14 +172,24 @@ class ClashBotStorybookApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Storybook(initialStory: "EventsListWidget/Events/4Filled", stories: [
+      // Calendar Widget Stories
       StoryCalendarWidgetWTournaments(context),
       StoryCalendarWidgetWTournamentsLoading(context),
       StoryCalendarWidgetFailedToFetchTournaments(context),
+
+      // Team Card Stories
       StoryTeamCard(),
+
+      // Whoops Page Story
       WhoopsPageStory(),
+
+      // Events List Widget Stories
       EventsListWidgetStory(context),
       FailedToLoadEventsListWidgetStory(context),
       LoadingEventsListWidgetStory(context),
+
+      // Server Chips List
+      StoryServerChipsList(context),
     ]);
   }
 }
@@ -441,4 +447,78 @@ Story LoadingEventsListWidgetStory(BuildContext context) {
       );
     },
   );
+}
+
+Story StoryServerChipsList(BuildContext context) {
+  ApplicationDetailsStore applicationDetailsStore = MockApplicationDetailsStore(
+      ClashBotUser(
+        discordId: '123456789',
+        champions: [],
+        role: Role.TOP,
+        serverId: '123456789',
+        selectedServers: [
+          '123456789',
+        ],
+        preferredServers: ['123456789', '123456788'],
+      ),
+      ['123456789', '123456788'],
+      context.read<ClashStore>(),
+      context.read<DiscordDetailsStore>(),
+      context.read<RiotChampionStore>(),
+      context.read<ErrorHandlerStore>());
+
+  ClashStore clashStore = context.read<ClashStore>();
+
+  return Story(
+    name: "Widgets/ServerChipsList/filled",
+    description: "A list of server chips",
+    builder: (context) {
+      int numberOfServers = context.knobs
+          .sliderInt(label: "numberOfServers", initial: 2, max: 5, min: 1);
+      List<String> servers = buildMockServers(numberOfServers);
+      return ServerChipList(
+        appStore: buildApplicationStoreWServers(servers, context),
+        discordDetailsStore: MockDiscordDetailsStore(
+            buildMockDiscordGuilds(servers),
+            DiscordUser('123456789', 'mock_username', '123456789',
+                "mock_discriminator"),
+            new DiscordServiceImpl(setupOauth2Helper()),
+            new ErrorHandlerStore()),
+        clashStore: clashStore,
+      );
+    },
+  );
+}
+
+buildApplicationStoreWServers(List<String> servers, BuildContext context) {
+  return MockApplicationDetailsStore(
+      ClashBotUser(
+        discordId: '123456789',
+        champions: [],
+        role: Role.TOP,
+        serverId: servers[0],
+        selectedServers: servers,
+        preferredServers: servers,
+      ),
+      servers,
+      context.read<ClashStore>(),
+      context.read<DiscordDetailsStore>(),
+      context.read<RiotChampionStore>(),
+      context.read<ErrorHandlerStore>());
+}
+
+List<String> buildMockServers(int numberOfServers) {
+  List<String> servers = [];
+  for (var i = 0; i < numberOfServers; i++) {
+    servers.add('server$i');
+  }
+  return servers;
+}
+
+List<DiscordGuild> buildMockDiscordGuilds(List<String> servers) {
+  List<DiscordGuild> guilds = [];
+  for (var i = 0; i < servers.length; i++) {
+    guilds.add(DiscordGuild(servers[i], 'Mock Guild $i', '123456789', false));
+  }
+  return guilds;
 }

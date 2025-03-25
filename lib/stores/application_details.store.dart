@@ -40,18 +40,6 @@ abstract class _ApplicationDetailsStore with Store {
             _clashStore.clashBotUser.selectedServers);
       }
     });
-
-    reaction(
-        (_) => (_discordDetailsStore.failedToLoad, _clashStore.failedToLoad),
-        (failedToLoad) {
-      if (failedToLoad.$1 && failedToLoad.$2) {
-        _errorHandlerStore.setIrreconcilable();
-      } else if (failedToLoad.$2) {
-        _errorHandlerStore.setIrreconcilable();
-      } else {
-        _errorHandlerStore.clearIrreconcilable();
-      }
-    });
   }
 
   @observable
@@ -79,7 +67,7 @@ abstract class _ApplicationDetailsStore with Store {
 
   @computed
   ObservableList<String> get preferredServers =>
-      ObservableList.of(_clashStore.selectedServers);
+      ObservableList.of(clashBotUser.preferredServers.sorted());
 
   @computed
   List<ClashNotification> get sortedNotifications =>

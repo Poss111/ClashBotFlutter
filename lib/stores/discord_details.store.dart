@@ -28,9 +28,6 @@ abstract class _DiscordDetailsStore with Store {
   @observable
   ObservableList<String> callsInProgress = ObservableList();
 
-  @observable
-  bool failedToLoad = false;
-
   @computed
   bool get loadingData => callsInProgress.isNotEmpty;
 
@@ -43,22 +40,6 @@ abstract class _DiscordDetailsStore with Store {
   @computed
   Map<String, DiscordGuild> get discordGuildMap =>
       {for (var guild in discordGuilds) guild.id: guild};
-
-  @computed
-  bool get irreconcilableError => failedToLoad && discordUser.id == '0';
-
-  @action
-  void loadingUserDetailsFailed() {
-    developer.log("loadingUserDetailsFailed");
-    developer.log("failedToLoad: ${failedToLoad}");
-    failedToLoad = true;
-    developer.log("failedToLoad: ${failedToLoad}");
-  }
-
-  @action
-  void userDetailsSuccessfullyLoaded() {
-    failedToLoad = false;
-  }
 
   @action
   void addCallInProgress(String call) {
@@ -80,7 +61,6 @@ abstract class _DiscordDetailsStore with Store {
     addCallInProgress('fetchUserDetails');
     var foundUser;
     try {
-      userDetailsSuccessfullyLoaded();
       foundUser = await _discordService.fetchUserDetails(discordId);
       discordIdToName.putIfAbsent(discordId, () => foundUser.username);
     } on Exception catch (error) {
@@ -95,14 +75,12 @@ abstract class _DiscordDetailsStore with Store {
     addCallInProgress('fetchCurrentUserDetails');
     final future = _discordService.fetchCurrentUserDetails();
     try {
-      userDetailsSuccessfullyLoaded();
       DiscordUser updatedUser = await future;
       discordUser = updatedUser.copy();
       discordIdToName.putIfAbsent(updatedUser.id, () => updatedUser.username);
     } on Exception catch (error) {
       _errorHandlerStore.errorMessage =
           'Failed to fetch Discord User details due to ${error.toString()}';
-      loadingUserDetailsFailed();
     }
     removeCallInProgress('fetchCurrentUserDetails');
   }
@@ -112,13 +90,11 @@ abstract class _DiscordDetailsStore with Store {
     addCallInProgress('fetchUserGuilds');
     final future = _discordService.fetchUserGuilds();
     try {
-      userDetailsSuccessfullyLoaded();
       List<DiscordGuild> guilds = await future;
       discordGuilds.clear();
       discordGuilds.addAll(guilds);
     } on Exception catch (error) {
       _errorHandlerStore.errorMessage = error.toString();
-      loadingUserDetailsFailed();
     }
     removeCallInProgress('fetchUserGuilds');
   }

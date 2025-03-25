@@ -58,9 +58,6 @@ abstract class _ClashStore with Store {
       callsInProgress.contains(_ClashStore.refreshClashTeamsCall);
 
   @observable
-  bool failedToLoad = false;
-
-  @observable
   ApiCallState tournamentsApiCallState = ApiCallState.idle;
 
   @observable
@@ -82,16 +79,6 @@ abstract class _ClashStore with Store {
   @action
   void setUserApiCallState(ApiCallState state) {
     userApiCallState = state;
-  }
-
-  @action
-  void loadingUserDetailsFailed() {
-    failedToLoad = true;
-  }
-
-  @action
-  void userDetailsSuccessfullyLoaded() {
-    failedToLoad = false;
   }
 
   @action
