@@ -1,4 +1,5 @@
 import 'package:clash_bot_api/api.dart';
+import 'package:clashbot_flutter/enums/api_call_state.dart';
 import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/models/clash_tournament.dart';
 import 'package:clashbot_flutter/models/clashbot_user.dart';
@@ -57,16 +58,27 @@ abstract class _ClashStore with Store {
       callsInProgress.contains(_ClashStore.refreshClashTeamsCall);
 
   @observable
-  bool failedToLoad = false;
+  ApiCallState tournamentsApiCallState = ApiCallState.idle;
+
+  @observable
+  ApiCallState teamsApiCallState = ApiCallState.idle;
+
+  @observable
+  ApiCallState userApiCallState = ApiCallState.idle;
 
   @action
-  void loadingUserDetailsFailed() {
-    failedToLoad = true;
+  void setTournamentsApiCallState(ApiCallState state) {
+    tournamentsApiCallState = state;
   }
 
   @action
-  void userDetailsSuccessfullyLoaded() {
-    failedToLoad = false;
+  void setTeamsApiCallState(ApiCallState state) {
+    teamsApiCallState = state;
+  }
+
+  @action
+  void setUserApiCallState(ApiCallState state) {
+    userApiCallState = state;
   }
 
   @action
@@ -87,13 +99,14 @@ abstract class _ClashStore with Store {
   @action
   Future<void> refreshClashBotUser(String id) async {
     refreshingUser = true;
-    userDetailsSuccessfullyLoaded();
     addCallInProgress(_ClashStore.refreshClashBotUserCall);
+    setUserApiCallState(ApiCallState.loading);
     try {
       clashBotUser = await _clashService.getPlayer(id);
       setSelectedServer(clashBotUser.selectedServers);
+      setUserApiCallState(ApiCallState.success);
     } catch (e) {
-      loadingUserDetailsFailed();
+      setUserApiCallState(ApiCallState.error);
     }
     removeCallInProgress(_ClashStore.refreshClashBotUserCall);
     refreshingUser = false;
@@ -205,8 +218,14 @@ abstract class _ClashStore with Store {
   @action
   Future<void> refreshClashTournaments(String id) async {
     addCallInProgress(_ClashStore.refreshClashTournamentsCall);
-    tournaments =
-        ObservableList.of(await _clashService.retrieveTournaments(id));
+    setTournamentsApiCallState(ApiCallState.loading);
+    try {
+      tournaments =
+          ObservableList.of(await _clashService.retrieveTournaments(id));
+    } catch (e) {
+      setTournamentsApiCallState(ApiCallState.error);
+    }
+    setTournamentsApiCallState(ApiCallState.success);
     removeCallInProgress(_ClashStore.refreshClashTournamentsCall);
   }
 
@@ -214,8 +233,15 @@ abstract class _ClashStore with Store {
   Future<void> refreshClashTeams(
       String id, List<String> preferredServers) async {
     addCallInProgress(_ClashStore.refreshClashTeamsCall);
-    var futureClashTeams =
-        await _clashService.getClashTeams(id, preferredServers);
+    setTeamsApiCallState(ApiCallState.loading);
+    var futureClashTeams;
+    try {
+      futureClashTeams =
+          await _clashService.getClashTeams(id, preferredServers);
+      setTeamsApiCallState(ApiCallState.success);
+    } catch (e) {
+      setTeamsApiCallState(ApiCallState.error);
+    }
     clashTeams = ObservableList.of(futureClashTeams);
     removeCallInProgress(_ClashStore.refreshClashTeamsCall);
   }

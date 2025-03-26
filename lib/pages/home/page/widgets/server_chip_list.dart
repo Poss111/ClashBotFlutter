@@ -8,27 +8,31 @@ import 'package:provider/provider.dart';
 import 'dart:developer' as developer;
 
 class ServerChipList extends StatelessWidget {
-  const ServerChipList({super.key});
+  final ApplicationDetailsStore appStore;
+  final DiscordDetailsStore discordDetailsStore;
+  final ClashStore clashStore;
+
+  const ServerChipList({
+    super.key,
+    required this.appStore,
+    required this.discordDetailsStore,
+    required this.clashStore,
+  });
 
   @override
   Widget build(BuildContext context) {
-    ApplicationDetailsStore appStore = context.read<ApplicationDetailsStore>();
-    DiscordDetailsStore discordDetailsStore =
-        context.read<DiscordDetailsStore>();
-    ClashStore clashStore = context.read<ClashStore>();
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Observer(
           builder: (_) {
-            developer.log("Preferred servers: ${appStore.preferredServers}");
             return Row(
               children: appStore.preferredServers.map((serverId) {
                 bool isSelected = clashStore.selectedServers.contains(serverId);
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: FilterChip(
+                  child: FilterChip.elevated(
                     avatar: CircleAvatar(
                       backgroundImage: discordDetailsStore
                                   .discordGuildMap[serverId]?.iconURL !=

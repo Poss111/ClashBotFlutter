@@ -38,18 +38,7 @@ abstract class _ApplicationDetailsStore with Store {
             .refreshClashTournaments(_clashStore.clashBotUser.discordId!);
         _clashStore.refreshClashTeams(_clashStore.clashBotUser.discordId!,
             _clashStore.clashBotUser.selectedServers);
-      }
-    });
-
-    reaction(
-        (_) => (_discordDetailsStore.failedToLoad, _clashStore.failedToLoad),
-        (failedToLoad) {
-      if (failedToLoad.$1 && failedToLoad.$2) {
-        _errorHandlerStore.setIrreconcilable();
-      } else if (failedToLoad.$2) {
-        _errorHandlerStore.setIrreconcilable();
-      } else {
-        _errorHandlerStore.clearIrreconcilable();
+        setPreferredServers(_clashStore.clashBotUser.selectedServers);
       }
     });
   }
@@ -59,6 +48,9 @@ abstract class _ApplicationDetailsStore with Store {
 
   @observable
   ObservableList<ClashNotification> notifications = ObservableList();
+
+  @observable
+  ObservableList<String> preferredServers = ObservableList();
 
   @computed
   bool get isLoggedIn =>
@@ -78,16 +70,19 @@ abstract class _ApplicationDetailsStore with Store {
       ObservableList.of(clashBotUser.selectedServers.sorted());
 
   @computed
-  ObservableList<String> get preferredServers =>
-      ObservableList.of(_clashStore.selectedServers);
-
-  @computed
   List<ClashNotification> get sortedNotifications =>
       notifications.sortedBy((element) => element.timestamp);
 
   @computed
   List<ClashNotification> get unreadNotifications =>
       notifications.where((notification) => !notification.read).toList();
+
+  @action
+  void setPreferredServers(List<String> servers) {
+    developer.log(
+        "ApplicationDetailsStore:             setPreferredServers $servers");
+    preferredServers = ObservableList.of(servers);
+  }
 
   @action
   void refreshDiscordUser() {

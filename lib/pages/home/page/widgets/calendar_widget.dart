@@ -1,3 +1,4 @@
+import 'package:clashbot_flutter/enums/api_call_state.dart';
 import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
 import 'package:clashbot_flutter/pages/shimmer_loading_page.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
@@ -5,7 +6,10 @@ import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
+import 'package:mobx/mobx.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'dart:developer' as developer;
 
 /// This widget requires the following providers:
 ///
@@ -61,36 +65,39 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Observer(
-        builder: (_) => widget.clashStore.isRefreshingData
-            ? SizedBox(
-                width: 1000.0, child: LoadingCalendar(focusedDay: _focusedDay))
-            : SizedBox(
-                width: 1000.0,
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      CalendarHeader(
-                        focusedDay: _focusedDay,
-                        onMonthChanged: onMonthChanged,
+        builder: (_) =>
+            widget.clashStore.tournamentsApiCallState == ApiCallState.loading
+                ? SizedBox(
+                    width: 1000.0,
+                    child: LoadingCalendar(focusedDay: _focusedDay))
+                : SizedBox(
+                    width: 1000.0,
+                    child: Container(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          CalendarHeader(
+                            focusedDay: _focusedDay,
+                            onMonthChanged: onMonthChanged,
+                            clashStore: widget.clashStore,
+                          ),
+                          CalendarBody(
+                            focusedDay: _focusedDay,
+                            hoveredDay: _hoveredDay,
+                            isDarkMode: isDarkMode,
+                            discordDetailsStore: widget.discordDetailsStore,
+                            clashStore: widget.clashStore,
+                            onDaySelected: onDaySelected,
+                            onHoveredDayChanged: (day) {
+                              setState(() {
+                                _hoveredDay = day;
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      CalendarBody(
-                        focusedDay: _focusedDay,
-                        hoveredDay: _hoveredDay,
-                        isDarkMode: isDarkMode,
-                        discordDetailsStore: widget.discordDetailsStore,
-                        clashStore: widget.clashStore,
-                        onDaySelected: onDaySelected,
-                        onHoveredDayChanged: (day) {
-                          setState(() {
-                            _hoveredDay = day;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ));
+                    ),
+                  ));
   }
 }
 
@@ -142,36 +149,83 @@ class LoadingCalendar extends StatelessWidget {
 class CalendarHeader extends StatelessWidget {
   final DateTime focusedDay;
   final ValueChanged<DateTime> onMonthChanged;
+  final ClashStore clashStore;
 
   const CalendarHeader({
     Key? key,
     required this.focusedDay,
     required this.onMonthChanged,
+    required this.clashStore,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            onMonthChanged(DateTime(focusedDay.year, focusedDay.month - 1));
-          },
-        ),
-        Text(
-          DateFormat('MMMM yyyy').format(focusedDay),
-          style: const TextStyle(fontSize: 20.0),
-        ),
-        IconButton(
-          icon: const Icon(Icons.arrow_forward),
-          onPressed: () {
-            onMonthChanged(DateTime(focusedDay.year, focusedDay.month + 1));
-          },
-        ),
-      ],
-    );
+    return Observer(builder: (_) {
+      developer.log(
+          "CalendarHeader:        Api Status${clashStore.tournamentsApiCallState}");
+      InputChip chip;
+      switch (clashStore.tournamentsApiCallState) {
+        case ApiCallState.loading:
+          chip = InputChip(
+            label: const CircularProgressIndicator(),
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            tooltip: 'Loading...',
+          );
+        case ApiCallState.success:
+          chip = InputChip(
+            label: const Icon(Icons.check),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            tooltip: "Data up to date",
+          );
+          break;
+        case ApiCallState.error:
+          chip = InputChip(
+            label: const Icon(Icons.refresh),
+            onPressed: () {
+              clashStore
+                  .refreshClashTournaments(clashStore.clashBotUser.discordId!);
+            },
+            backgroundColor: Theme.of(context).colorScheme.error,
+            tooltip: 'Data failed to load, tap to retry',
+          );
+          break;
+        default:
+          chip = InputChip(
+            label: const Text('N/A'),
+            onPressed: () {},
+            backgroundColor: Theme.of(context).colorScheme.onSurface,
+            tooltip: 'N/A',
+          );
+          break;
+      }
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              onMonthChanged(DateTime(focusedDay.year, focusedDay.month - 1));
+            },
+          ),
+          Wrap(
+            spacing: 10,
+            children: [
+              Text(
+                DateFormat('MMMM yyyy').format(focusedDay),
+                style: const TextStyle(fontSize: 20.0),
+              ),
+              chip,
+            ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            onPressed: () {
+              onMonthChanged(DateTime(focusedDay.year, focusedDay.month + 1));
+            },
+          ),
+        ],
+      );
+    });
   }
 }
 

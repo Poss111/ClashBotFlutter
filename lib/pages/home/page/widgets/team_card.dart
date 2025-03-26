@@ -6,6 +6,7 @@ import 'package:clashbot_flutter/stores/application_details.store.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'dart:developer' as developer;
@@ -14,7 +15,12 @@ class TeamCard extends StatelessWidget {
   TeamCard({
     super.key,
     required this.team,
+    required this.applicationDetailsStore,
+    required this.discordDetailsStore,
   });
+
+  final ApplicationDetailsStore applicationDetailsStore;
+  final DiscordDetailsStore discordDetailsStore;
 
   final ClashTeam team;
   final Map<Role, String> roleToImage = {
@@ -27,10 +33,7 @@ class TeamCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ApplicationDetailsStore applicationDetailsStore =
-        context.read<ApplicationDetailsStore>();
-    DiscordDetailsStore discordDetailsStore =
-        context.read<DiscordDetailsStore>();
+    final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ssZ');
     return Card(
       surfaceTintColor: Theme.of(context).brightness == Brightness.dark
           ? const Color.fromARGB(
@@ -59,12 +62,31 @@ class TeamCard extends StatelessWidget {
                           : null,
                     );
                   }),
-                  Text(
-                    team.name.length > 20
-                        ? '${team.name.substring(0, 20)}...'
-                        : team.name,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                  Observer(builder: (_) {
+                    var formattedDate = DateFormat.yMd().add_jm().format(
+                        DateTime.parse(
+                            formatter.format(team.lastUpdatedAt.toLocal())));
+                    return Column(
+                      children: [
+                        Text(
+                          team.name.length > 20
+                              ? '${team.name.substring(0, 20)}...'
+                              : team.name,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 5,
+                          children: [
+                            Icon(Icons.update),
+                            Text(formattedDate,
+                                style: Theme.of(context).textTheme.bodySmall),
+                          ],
+                        ),
+                      ],
+                    );
+                  }),
                   const IconButton.filledTonal(
                       tooltip: 'Coming soon...',
                       icon: Icon(Icons.fullscreen),
