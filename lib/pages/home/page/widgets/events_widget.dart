@@ -1,14 +1,22 @@
 import 'package:clashbot_flutter/enums/api_call_state.dart';
 import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
+import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 
 class EventsListWidget extends StatelessWidget {
+  const EventsListWidget(
+      {super.key,
+      required this.clashStore,
+      required this.applicationDetailsStore,
+      required this.discordDetailStore});
   final ClashStore clashStore;
-  const EventsListWidget({super.key, required this.clashStore});
+  final ApplicationDetailsStore applicationDetailsStore;
+  final DiscordDetailsStore discordDetailStore;
 
   @override
   Widget build(BuildContext context) {
@@ -53,31 +61,36 @@ class EventsListWidget extends StatelessWidget {
       }
       var events =
           clashStore.tournamentsToTeamsFilteredToADayIfActive.entries.toList();
-      return SingleChildScrollView(
-        child: ListView.builder(
-          shrinkWrap: true,
-          physics: const BouncingScrollPhysics(),
-          itemCount: clashStore.tournamentsToTeams.entries.length,
-          itemBuilder: (context, index) {
-            if (clashStore.filterByDay && events[index].value.isEmpty) {
-              return const SizedBox.shrink();
-            }
-            return EventTile(
-              event: {
-                'title': events[index].key.tournamentName,
-                'day': events[index].key.tournamentDay,
-                'date': formatter.format(events[index].key.startTime.toLocal()),
-                'startTime':
-                    formatter.format(events[index].key.startTime.toLocal()),
-                'endTime':
-                    formatter.format(events[index].key.startTime.toLocal()),
-                'description': "Some description.",
-                'registrationOpenDateTime':
-                    formatter.format(events[index].key.startTime.toLocal())
-              },
-              eventTeams: events[index].value,
-            );
-          },
+      return Flexible(
+        child: SingleChildScrollView(
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
+            itemCount: clashStore.tournamentsToTeams.entries.length,
+            itemBuilder: (context, index) {
+              if (clashStore.filterByDay && events[index].value.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              return EventTile(
+                event: {
+                  'title': events[index].key.tournamentName,
+                  'day': events[index].key.tournamentDay,
+                  'date':
+                      formatter.format(events[index].key.startTime.toLocal()),
+                  'startTime':
+                      formatter.format(events[index].key.startTime.toLocal()),
+                  'endTime':
+                      formatter.format(events[index].key.startTime.toLocal()),
+                  'description': "Some description.",
+                  'registrationOpenDateTime':
+                      formatter.format(events[index].key.startTime.toLocal())
+                },
+                eventTeams: events[index].value,
+                applicationDetailsStore: applicationDetailsStore,
+                discordDetailStore: discordDetailStore,
+              );
+            },
+          ),
         ),
       );
     });
@@ -85,14 +98,17 @@ class EventsListWidget extends StatelessWidget {
 }
 
 class EventTile extends StatelessWidget {
-  const EventTile({
-    super.key,
-    required this.event,
-    required this.eventTeams,
-  });
+  const EventTile(
+      {super.key,
+      required this.event,
+      required this.eventTeams,
+      required this.applicationDetailsStore,
+      required this.discordDetailStore});
 
   final Map<String, String> event;
   final List<ClashTeam> eventTeams;
+  final ApplicationDetailsStore applicationDetailsStore;
+  final DiscordDetailsStore discordDetailStore;
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +158,7 @@ class EventTile extends StatelessWidget {
             ),
             Row(
               children: [
-                const Icon(Icons.app_registration),
+                const Icon(Icons.how_to_reg),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Text(DateFormat('h:mm a Z').format(
@@ -159,7 +175,10 @@ class EventTile extends StatelessWidget {
               direction: Axis.horizontal,
               alignment: WrapAlignment.center,
               children: eventTeams.map((team) {
-                return TeamCard(team: team);
+                return TeamCard(
+                    team: team,
+                    applicationDetailsStore: applicationDetailsStore,
+                    discordDetailsStore: discordDetailStore);
               }).toList(),
             ),
           )

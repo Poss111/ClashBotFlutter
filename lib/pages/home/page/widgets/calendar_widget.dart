@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'dart:developer' as developer;
 
 /// This widget requires the following providers:
 ///
@@ -160,6 +161,8 @@ class CalendarHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (_) {
+      developer.log(
+          "CalendarHeader:        Api Status${clashStore.tournamentsApiCallState}");
       InputChip chip;
       switch (clashStore.tournamentsApiCallState) {
         case ApiCallState.loading:
@@ -204,9 +207,7 @@ class CalendarHeader extends StatelessWidget {
               onMonthChanged(DateTime(focusedDay.year, focusedDay.month - 1));
             },
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          Wrap(
             spacing: 10,
             children: [
               Text(

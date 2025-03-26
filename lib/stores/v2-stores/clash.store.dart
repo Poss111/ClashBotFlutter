@@ -218,8 +218,14 @@ abstract class _ClashStore with Store {
   @action
   Future<void> refreshClashTournaments(String id) async {
     addCallInProgress(_ClashStore.refreshClashTournamentsCall);
-    tournaments =
-        ObservableList.of(await _clashService.retrieveTournaments(id));
+    setTournamentsApiCallState(ApiCallState.loading);
+    try {
+      tournaments =
+          ObservableList.of(await _clashService.retrieveTournaments(id));
+    } catch (e) {
+      setTournamentsApiCallState(ApiCallState.error);
+    }
+    setTournamentsApiCallState(ApiCallState.success);
     removeCallInProgress(_ClashStore.refreshClashTournamentsCall);
   }
 

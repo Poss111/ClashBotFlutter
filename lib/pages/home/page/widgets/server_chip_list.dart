@@ -32,7 +32,7 @@ class ServerChipList extends StatelessWidget {
                 bool isSelected = clashStore.selectedServers.contains(serverId);
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: FilterChip(
+                  child: FilterChip.elevated(
                     avatar: CircleAvatar(
                       backgroundImage: discordDetailsStore
                                   .discordGuildMap[serverId]?.iconURL !=
