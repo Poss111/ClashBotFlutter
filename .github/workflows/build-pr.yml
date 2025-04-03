@@ -40,7 +40,8 @@ jobs:
             ./ciScripts/build-env-file.sh \
               CLASHBOT_SERVICE_URL ${CLASHBOT_SERVICE_URL} \
               MOCK_DISCORD_SERVICE ${MOCK_DISCORD_SERVICE} \
-              discordClientId ${DISCORD_CLIENT_ID}
+              discordClientId ${DISCORD_CLIENT_ID} \
+              clashbotEventUrl http://localhost:8080/api/v2/ws
 
         - name: Unit Tests
           run: flutter test "test/unit/" >> $GITHUB_STEP_SUMMARY
@@ -73,7 +74,8 @@ jobs:
             ./ciScripts/build-env-file.sh \
               CLASHBOT_SERVICE_URL ${CLASHBOT_SERVICE_URL} \
               MOCK_DISCORD_SERVICE ${MOCK_DISCORD_SERVICE} \
-              discordClientId ${DISCORD_CLIENT_ID}
+              discordClientId ${DISCORD_CLIENT_ID} \
+              clashbotEventUrl http://localhost:8080/api/v2/ws
 
         - name: Generate Envied Files
           run: flutter pub run build_runner build --delete-conflicting-outputs
@@ -119,7 +121,8 @@ jobs:
           ./ciScripts/build-env-file.sh \
             CLASHBOT_SERVICE_URL ${CLASHBOT_SERVICE_URL} \
             MOCK_DISCORD_SERVICE ${MOCK_DISCORD_SERVICE} \
-            discordClientId ${DISCORD_CLIENT_ID}
+            discordClientId ${DISCORD_CLIENT_ID} \
+              clashbotEventUrl http://localhost:8080/api/v2/ws
 
       - name: Generate Envied Files
         run: flutter pub run build_runner build --delete-conflicting-outputs
