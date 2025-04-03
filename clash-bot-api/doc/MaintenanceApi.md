@@ -1,8 +1,8 @@
-# clash_bot_api.api.MaintenanceApi
+# openapi.api.MaintenanceApi
 
 ## Load the API package
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 ```
 
 All URIs are relative to *http://localhost:8080/api/v2*
@@ -21,7 +21,7 @@ Will move all Teams and Tentative Queues that are now inactive into an archive t
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = MaintenanceApi();
 final xCausedBy = xCausedBy_example; // String | 

@@ -1,8 +1,8 @@
-# clash_bot_api.api.TeamApi
+# openapi.api.TeamApi
 
 ## Load the API package
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 ```
 
 All URIs are relative to *http://localhost:8080/api/v2*
@@ -26,7 +26,7 @@ Assign's a User to the specified Team based on the role provided.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TeamApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -75,7 +75,7 @@ Creates a Team with the defined details
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TeamApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -120,7 +120,7 @@ Removes a User from the specified Team.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TeamApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -167,7 +167,7 @@ Returns a single Clash Bot Team based on the id provided.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TeamApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -212,7 +212,7 @@ Returns a list of Teams.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TeamApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -265,7 +265,7 @@ Updates an existing Clash Bot Team's metadata.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TeamApi();
 final xCausedBy = xCausedBy_example; // String | 

@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -35,8 +35,8 @@ class Subscription {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is Subscription &&
-     other.key == key &&
-     other.isOn == isOn;
+    other.key == key &&
+    other.isOn == isOn;
 
   @override
   int get hashCode =>
@@ -48,18 +48,18 @@ class Subscription {
   String toString() => 'Subscription[key=$key, isOn=$isOn]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (key != null) {
-      _json[r'key'] = key;
+    final json = <String, dynamic>{};
+    if (this.key != null) {
+      json[r'key'] = this.key;
     } else {
-      _json[r'key'] = null;
+      json[r'key'] = null;
     }
-    if (isOn != null) {
-      _json[r'isOn'] = isOn;
+    if (this.isOn != null) {
+      json[r'isOn'] = this.isOn;
     } else {
-      _json[r'isOn'] = null;
+      json[r'isOn'] = null;
     }
-    return _json;
+    return json;
   }
 
   /// Returns a new [Subscription] instance and imports its values from
@@ -88,7 +88,7 @@ class Subscription {
     return null;
   }
 
-  static List<Subscription>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<Subscription> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <Subscription>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -119,12 +119,10 @@ class Subscription {
   static Map<String, List<Subscription>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<Subscription>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = Subscription.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = Subscription.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

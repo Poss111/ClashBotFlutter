@@ -4,6 +4,7 @@ import 'package:clashbot_flutter/snackbars/join_team_snackbar.dart';
 import 'package:clashbot_flutter/snackbars/remove_team_snackbar.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/clash_team.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
@@ -16,13 +17,13 @@ class TeamCard extends StatelessWidget {
     required this.team,
   });
 
-  final ClashTeam team;
+  final ClashTeamStore team;
   final Map<Role, String> roleToImage = {
-    Role.TOP: 'images/TopIcon.webp',
-    Role.BOT: 'images/BotIcon.webp',
-    Role.MID: 'images/MidIcon.webp',
-    Role.JG: 'images/JGIcon.webp',
-    Role.SUPP: 'images/SuppIcon.webp',
+    Role.top: 'images/TopIcon.webp',
+    Role.bot: 'images/BotIcon.webp',
+    Role.mid: 'images/MidIcon.webp',
+    Role.jg: 'images/JGIcon.webp',
+    Role.supp: 'images/SuppIcon.webp',
   };
 
   @override
@@ -59,11 +60,20 @@ class TeamCard extends StatelessWidget {
                           : null,
                     );
                   }),
-                  Text(
-                    team.name.length > 20
-                        ? '${team.name.substring(0, 20)}...'
-                        : team.name,
-                    style: Theme.of(context).textTheme.titleLarge,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Tooltip(
+                        child: Text(
+                          team.name.length > 20
+                              ? '${team.name.substring(0, 20)}...'
+                              : team.name,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        message: 'ID ${team.id}',
+                      ),
+                    ],
                   ),
                   const IconButton.filledTonal(
                       tooltip: 'Coming soon...',
@@ -71,20 +81,43 @@ class TeamCard extends StatelessWidget {
                       onPressed: null)
                 ],
               ),
-              Expanded(
-                child: Flex(
-                    direction: Axis.vertical,
-                    spacing: 4,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: Role.values.map((role) {
-                      return RoleChip(
-                          image: roleToImage[role] ?? 'Unknown',
-                          role: role,
-                          player: team.members[role],
-                          teamId: team.id,
-                          isUser: team.members[role]?.id ==
-                              applicationDetailsStore.clashBotUser.discordId);
-                    }).toList()),
+              Observer(
+                builder: (_) => Expanded(
+                  child: Flex(
+                      direction: Axis.vertical,
+                      spacing: 4,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: Role.values.map((role) {
+                        return AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) {
+                            return FadeTransition(
+                                opacity: animation, child: child);
+                          },
+                          child: RoleChip(
+                            key: ValueKey(team.members[role]?.id ?? role),
+                            image: roleToImage[role] ?? 'Unknown',
+                            role: role,
+                            id: team.members[role]?.id,
+                            teamId: team.id,
+                            isUser: team.members[role]?.id ==
+                                applicationDetailsStore.clashBotUser.discordId,
+                            onJoinPressed: joinTeam(
+                                role,
+                                team.members[role]?.id,
+                                team.name,
+                                team.serverId),
+                            onRemovePressed: removeFromTeam(
+                                role,
+                                team.members[role]?.id,
+                                team.name,
+                                team.serverId),
+                            discordDetailsStore: discordDetailsStore,
+                          ),
+                        );
+                      }).toList()),
+                ),
               ),
             ],
           ),
@@ -95,56 +128,73 @@ class TeamCard extends StatelessWidget {
 }
 
 class RoleChip extends StatelessWidget {
-  const RoleChip(
+  RoleChip(
       {super.key,
       required this.image,
       required this.role,
-      this.player,
+      this.id,
       required this.teamId,
-      required this.isUser});
+      required this.isUser,
+      required this.onJoinPressed,
+      required this.onRemovePressed,
+      required this.discordDetailsStore});
 
   final String image;
   final Role role;
-  final PlayerDetails? player;
+  String? id;
   final String teamId;
   final bool isUser;
+  final SnackBar onJoinPressed;
+  final SnackBar onRemovePressed;
+  final DiscordDetailsStore discordDetailsStore;
 
   @override
   Widget build(BuildContext context) {
-    return player != null
-        ? (isUser
-            ? UsersFilledButton(
-                role: role, player: player, teamId: teamId, image: image)
-            : RoleFilledWidget(
-                role: role, player: player, teamId: teamId, image: image))
+    return id != null
+        ? Observer(builder: (_) {
+            var name = discordDetailsStore.discordIdToName[id];
+            if (name == null || name == 'N/A') {
+              discordDetailsStore.pushForName(id!);
+              name = id;
+            }
+            return isUser
+                ? UsersFilledButton(
+                    role: role,
+                    name: name!,
+                    teamId: teamId,
+                    image: image,
+                    onPressed: onRemovePressed)
+                : RoleFilledWidget(
+                    role: role, name: name!, teamId: teamId, image: image);
+          })
         : UnfilledRoleWidget(
-            role: role, player: player, teamId: teamId, image: image);
+            role: role, teamId: teamId, image: image, onPressed: onJoinPressed);
   }
 }
 
 class UsersFilledButton extends StatelessWidget {
-  const UsersFilledButton({
-    super.key,
-    required this.role,
-    required this.player,
-    required this.teamId,
-    required this.image,
-  });
+  const UsersFilledButton(
+      {super.key,
+      required this.role,
+      required this.name,
+      required this.teamId,
+      required this.image,
+      required this.onPressed});
 
   final Role role;
-  final PlayerDetails? player;
+  final String name;
   final String teamId;
   final String image;
+  final SnackBar onPressed;
 
   @override
   Widget build(BuildContext context) {
     return FilledButton.tonal(
       onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-            removeFromTeam(role, player!.id, player!.name, teamId));
+        ScaffoldMessenger.of(context).showSnackBar(onPressed);
       },
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(
+        backgroundColor: WidgetStateProperty.all<Color>(
             Theme.of(context).colorScheme.inversePrimary),
       ),
       child: Flex(
@@ -163,7 +213,7 @@ class UsersFilledButton extends StatelessWidget {
               flex: 3,
               child: Center(
                 child: Text(
-                  player?.name ?? 'Unknown',
+                  name,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
@@ -182,15 +232,15 @@ class UnfilledRoleWidget extends StatelessWidget {
   const UnfilledRoleWidget({
     super.key,
     required this.role,
-    required this.player,
     required this.teamId,
     required this.image,
+    required this.onPressed,
   });
 
   final Role role;
-  final PlayerDetails? player;
   final String teamId;
   final String image;
+  final SnackBar onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -198,8 +248,7 @@ class UnfilledRoleWidget extends StatelessWidget {
       width: 72.5,
       child: FilledButton.tonal(
           onPressed: () {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(joinTeam(role, player!.id, player!.name, teamId));
+            ScaffoldMessenger.of(context).showSnackBar(onPressed);
           },
           child: Padding(
             padding: const EdgeInsets.all(4.0),
@@ -216,13 +265,13 @@ class RoleFilledWidget extends StatelessWidget {
   const RoleFilledWidget({
     super.key,
     required this.role,
-    required this.player,
+    required this.name,
     required this.teamId,
     required this.image,
   });
 
   final Role role;
-  final PlayerDetails? player;
+  final String name;
   final String teamId;
   final String image;
 
@@ -242,7 +291,7 @@ class RoleFilledWidget extends StatelessWidget {
             flex: 3,
             child: Center(
               child: Text(
-                player?.name ?? 'Unknown',
+                name,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),

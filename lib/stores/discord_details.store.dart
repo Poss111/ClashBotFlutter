@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:clashbot_flutter/models/discord_guild.dart';
 import 'package:clashbot_flutter/models/discord_user.dart';
+import 'package:clashbot_flutter/models/notification.dart';
 import 'package:clashbot_flutter/services/discord_service.dart';
-import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/notification_handler.store.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:developer' as developer;
 
@@ -13,7 +14,7 @@ class DiscordDetailsStore = _DiscordDetailsStore with _$DiscordDetailsStore;
 
 abstract class _DiscordDetailsStore with Store {
   final DiscordService _discordService;
-  final ErrorHandlerStore _errorHandlerStore;
+  final NotificationHandlerStore _errorHandlerStore;
   _DiscordDetailsStore(this._discordService, this._errorHandlerStore);
 
   @observable
@@ -49,10 +50,7 @@ abstract class _DiscordDetailsStore with Store {
 
   @action
   void loadingUserDetailsFailed() {
-    developer.log("loadingUserDetailsFailed");
-    developer.log("failedToLoad: ${failedToLoad}");
     failedToLoad = true;
-    developer.log("failedToLoad: ${failedToLoad}");
   }
 
   @action
@@ -76,6 +74,15 @@ abstract class _DiscordDetailsStore with Store {
   }
 
   @action
+  void pushForName(String discordId) {
+    if (discordIdToName.containsKey(discordId) &&
+        discordIdToName[discordId] != 'N/A') {
+      return;
+    }
+    fetchUserDetails(discordId);
+  }
+
+  @action
   Future<void> fetchUserDetails(String discordId) async {
     addCallInProgress('fetchUserDetails');
     var foundUser;
@@ -84,8 +91,8 @@ abstract class _DiscordDetailsStore with Store {
       foundUser = await _discordService.fetchUserDetails(discordId);
       discordIdToName.putIfAbsent(discordId, () => foundUser.username);
     } on Exception catch (error) {
-      _errorHandlerStore.errorMessage =
-          'Failed to fetch Discord User details due to ${error.toString()}';
+      _errorHandlerStore.setNotification(Notification.error(
+          'Failed to fetch Discord User details due to ${error.toString()}'));
     }
     removeCallInProgress('fetchUserDetails');
   }
@@ -100,8 +107,8 @@ abstract class _DiscordDetailsStore with Store {
       discordUser = updatedUser.copy();
       discordIdToName.putIfAbsent(updatedUser.id, () => updatedUser.username);
     } on Exception catch (error) {
-      _errorHandlerStore.errorMessage =
-          'Failed to fetch Discord User details due to ${error.toString()}';
+      _errorHandlerStore.setNotification(Notification.error(
+          'Failed to fetch Discord User details due to ${error.toString()}'));
       loadingUserDetailsFailed();
     }
     removeCallInProgress('fetchCurrentUserDetails');
@@ -117,7 +124,7 @@ abstract class _DiscordDetailsStore with Store {
       discordGuilds.clear();
       discordGuilds.addAll(guilds);
     } on Exception catch (error) {
-      _errorHandlerStore.errorMessage = error.toString();
+      _errorHandlerStore.setNotification(Notification.error(error.toString()));
       loadingUserDetailsFailed();
     }
     removeCallInProgress('fetchUserGuilds');

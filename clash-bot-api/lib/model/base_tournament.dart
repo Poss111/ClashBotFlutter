@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -37,8 +37,8 @@ class BaseTournament {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is BaseTournament &&
-     other.tournamentName == tournamentName &&
-     other.tournamentDay == tournamentDay;
+    other.tournamentName == tournamentName &&
+    other.tournamentDay == tournamentDay;
 
   @override
   int get hashCode =>
@@ -50,18 +50,18 @@ class BaseTournament {
   String toString() => 'BaseTournament[tournamentName=$tournamentName, tournamentDay=$tournamentDay]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (tournamentName != null) {
-      _json[r'tournamentName'] = tournamentName;
+    final json = <String, dynamic>{};
+    if (this.tournamentName != null) {
+      json[r'tournamentName'] = this.tournamentName;
     } else {
-      _json[r'tournamentName'] = null;
+      json[r'tournamentName'] = null;
     }
-    if (tournamentDay != null) {
-      _json[r'tournamentDay'] = tournamentDay;
+    if (this.tournamentDay != null) {
+      json[r'tournamentDay'] = this.tournamentDay;
     } else {
-      _json[r'tournamentDay'] = null;
+      json[r'tournamentDay'] = null;
     }
-    return _json;
+    return json;
   }
 
   /// Returns a new [BaseTournament] instance and imports its values from
@@ -90,7 +90,7 @@ class BaseTournament {
     return null;
   }
 
-  static List<BaseTournament>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<BaseTournament> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <BaseTournament>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -121,12 +121,10 @@ class BaseTournament {
   static Map<String, List<BaseTournament>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<BaseTournament>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = BaseTournament.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = BaseTournament.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

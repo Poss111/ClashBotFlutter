@@ -1,8 +1,8 @@
-# clash_bot_api.api.TentativeApi
+# openapi.api.TentativeApi
 
 ## Load the API package
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 ```
 
 All URIs are relative to *http://localhost:8080/api/v2*
@@ -25,7 +25,7 @@ Updates an existing Tentative queue.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TentativeApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -72,7 +72,7 @@ Creates a Tentative queue.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TentativeApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -117,7 +117,7 @@ Removes a User from the specified Tentative Queue.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TentativeApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -164,7 +164,7 @@ Retrieves a Tentative queues.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TentativeApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -209,7 +209,7 @@ Retrieves a list of Tentative queues.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TentativeApi();
 final xCausedBy = xCausedBy_example; // String | 

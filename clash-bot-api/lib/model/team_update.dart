@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -21,7 +21,7 @@ class TeamUpdate {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is TeamUpdate &&
-     other.teamName == teamName;
+    other.teamName == teamName;
 
   @override
   int get hashCode =>
@@ -32,9 +32,9 @@ class TeamUpdate {
   String toString() => 'TeamUpdate[teamName=$teamName]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-      _json[r'teamName'] = teamName;
-    return _json;
+    final json = <String, dynamic>{};
+      json[r'teamName'] = this.teamName;
+    return json;
   }
 
   /// Returns a new [TeamUpdate] instance and imports its values from
@@ -62,7 +62,7 @@ class TeamUpdate {
     return null;
   }
 
-  static List<TeamUpdate>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<TeamUpdate> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <TeamUpdate>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -93,12 +93,10 @@ class TeamUpdate {
   static Map<String, List<TeamUpdate>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<TeamUpdate>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = TeamUpdate.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = TeamUpdate.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

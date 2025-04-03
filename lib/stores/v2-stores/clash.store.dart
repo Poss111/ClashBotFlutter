@@ -5,7 +5,8 @@ import 'package:clashbot_flutter/models/clashbot_user.dart';
 import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
 import 'package:clashbot_flutter/services/clashbot_service.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
-import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/clash_team.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/notification_handler.store.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:developer' as developer;
 
@@ -17,7 +18,7 @@ class ClashStore = _ClashStore with _$ClashStore;
 
 abstract class _ClashStore with Store {
   final ClashBotService _clashService;
-  final ErrorHandlerStore _errorhandlerStore;
+  final NotificationHandlerStore _errorhandlerStore;
 
   _ClashStore(this._clashService, this._errorhandlerStore);
 
@@ -42,7 +43,7 @@ abstract class _ClashStore with Store {
   ObservableList<ClashTournament> tournaments = ObservableList();
 
   @observable
-  ObservableList<ClashTeam> clashTeams = ObservableList();
+  ObservableList<ClashTeamStore> clashTeams = ObservableList();
 
   @observable
   bool refreshingUser = false;
@@ -152,8 +153,8 @@ abstract class _ClashStore with Store {
   }
 
   @computed
-  Map<ClashTournament, List<ClashTeam>> get tournamentsToTeams {
-    Map<ClashTournament, List<ClashTeam>> tournamentsToTeams = {};
+  Map<ClashTournament, List<ClashTeamStore>> get tournamentsToTeams {
+    Map<ClashTournament, List<ClashTeamStore>> tournamentsToTeams = {};
     for (var t in tournaments) {
       tournamentsToTeams[t] = clashTeams.where((team) {
         return team.tournamentName + team.tournamentDay ==
@@ -165,9 +166,9 @@ abstract class _ClashStore with Store {
   }
 
   @computed
-  Map<ClashTournament, List<ClashTeam>>
+  Map<ClashTournament, List<ClashTeamStore>>
       get tournamentsToTeamsFilteredToADayIfActive {
-    Map<ClashTournament, List<ClashTeam>> ogTeams = tournamentsToTeams;
+    Map<ClashTournament, List<ClashTeamStore>> ogTeams = tournamentsToTeams;
     if (filterByDay) {
       var teamy = ogTeams.map((key, value) {
         return MapEntry(
@@ -198,7 +199,7 @@ abstract class _ClashStore with Store {
   }
 
   @action
-  void setEvents(List<ClashTeam> events) {
+  void setEvents(List<ClashTeamStore> events) {
     this.clashTeams = ObservableList.of(events);
   }
 
@@ -216,7 +217,9 @@ abstract class _ClashStore with Store {
     addCallInProgress(_ClashStore.refreshClashTeamsCall);
     var futureClashTeams =
         await _clashService.getClashTeams(id, preferredServers);
-    clashTeams = ObservableList.of(futureClashTeams);
+    clashTeams = ObservableList.of(futureClashTeams.map((t) {
+      return ClashTeamStore.fromClashTeam(t);
+    }).toList());
     removeCallInProgress(_ClashStore.refreshClashTeamsCall);
   }
 
@@ -231,6 +234,43 @@ abstract class _ClashStore with Store {
         clashTournament.tournamentDay,
         serverId);
     refreshClashTeams(id, selectedServers);
+  }
+
+  @action
+  void addTeam(ClashTeam team) {
+    clashTeams.add(ClashTeamStore.fromClashTeam(team));
+  }
+
+  @action
+  void updateTeam(ClashTeam team) {
+    var index = clashTeams.indexWhere((element) => element.id == team.id);
+    if (index != -1) {
+      clashTeams[index].updateLastUpdatedAt(team.lastUpdatedAt);
+      clashTeams[index].updateName(team.name);
+    }
+  }
+
+  @action
+  void addTeamMember(String teamId, Role role, String memberId) {
+    var index = clashTeams.indexWhere((element) => element.id == teamId);
+    print("addTeamMember:         Adding member $memberId to team $teamId");
+    if (index != -1) {
+      print("addTeamMember:         Found team $teamId");
+      clashTeams[index].updateMember(role, memberId, []);
+    }
+  }
+
+  @action
+  void removeTeamMember(String teamId, String memberId) {
+    var index = clashTeams.indexWhere((element) => element.id == teamId);
+    if (index != -1) {
+      clashTeams[index].removeMember(memberId);
+    }
+  }
+
+  @action
+  void removeTeam(String id) {
+    clashTeams.removeWhere((element) => element.id == id);
   }
 
   @action

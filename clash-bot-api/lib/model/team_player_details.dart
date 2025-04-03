@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -62,11 +62,11 @@ class TeamPlayerDetails {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is TeamPlayerDetails &&
-     other.top == top &&
-     other.mid == mid &&
-     other.jg == jg &&
-     other.bot == bot &&
-     other.supp == supp;
+    other.top == top &&
+    other.mid == mid &&
+    other.jg == jg &&
+    other.bot == bot &&
+    other.supp == supp;
 
   @override
   int get hashCode =>
@@ -81,33 +81,33 @@ class TeamPlayerDetails {
   String toString() => 'TeamPlayerDetails[top=$top, mid=$mid, jg=$jg, bot=$bot, supp=$supp]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (top != null) {
-      _json[r'Top'] = top;
+    final json = <String, dynamic>{};
+    if (this.top != null) {
+      json[r'top'] = this.top;
     } else {
-      _json[r'Top'] = null;
+      json[r'top'] = null;
     }
-    if (mid != null) {
-      _json[r'Mid'] = mid;
+    if (this.mid != null) {
+      json[r'mid'] = this.mid;
     } else {
-      _json[r'Mid'] = null;
+      json[r'mid'] = null;
     }
-    if (jg != null) {
-      _json[r'Jg'] = jg;
+    if (this.jg != null) {
+      json[r'jg'] = this.jg;
     } else {
-      _json[r'Jg'] = null;
+      json[r'jg'] = null;
     }
-    if (bot != null) {
-      _json[r'Bot'] = bot;
+    if (this.bot != null) {
+      json[r'bot'] = this.bot;
     } else {
-      _json[r'Bot'] = null;
+      json[r'bot'] = null;
     }
-    if (supp != null) {
-      _json[r'Supp'] = supp;
+    if (this.supp != null) {
+      json[r'supp'] = this.supp;
     } else {
-      _json[r'Supp'] = null;
+      json[r'supp'] = null;
     }
-    return _json;
+    return json;
   }
 
   /// Returns a new [TeamPlayerDetails] instance and imports its values from
@@ -129,17 +129,17 @@ class TeamPlayerDetails {
       }());
 
       return TeamPlayerDetails(
-        top: TeamPlayer.fromJson(json[r'Top']),
-        mid: TeamPlayer.fromJson(json[r'Mid']),
-        jg: TeamPlayer.fromJson(json[r'Jg']),
-        bot: TeamPlayer.fromJson(json[r'Bot']),
-        supp: TeamPlayer.fromJson(json[r'Supp']),
+        top: TeamPlayer.fromJson(json[r'top']),
+        mid: TeamPlayer.fromJson(json[r'mid']),
+        jg: TeamPlayer.fromJson(json[r'jg']),
+        bot: TeamPlayer.fromJson(json[r'bot']),
+        supp: TeamPlayer.fromJson(json[r'supp']),
       );
     }
     return null;
   }
 
-  static List<TeamPlayerDetails>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<TeamPlayerDetails> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <TeamPlayerDetails>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -170,12 +170,10 @@ class TeamPlayerDetails {
   static Map<String, List<TeamPlayerDetails>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<TeamPlayerDetails>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = TeamPlayerDetails.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = TeamPlayerDetails.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

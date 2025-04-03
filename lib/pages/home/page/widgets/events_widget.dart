@@ -1,6 +1,7 @@
 import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/team_card.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/clash_team.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
@@ -55,7 +56,7 @@ class EventTile extends StatelessWidget {
   });
 
   final Map<String, String> event;
-  final List<ClashTeam> eventTeams;
+  final List<ClashTeamStore> eventTeams;
 
   @override
   Widget build(BuildContext context) {

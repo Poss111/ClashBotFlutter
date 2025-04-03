@@ -1,8 +1,8 @@
-# clash_bot_api.api.ChampionsApi
+# openapi.api.ChampionsApi
 
 ## Load the API package
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 ```
 
 All URIs are relative to *http://localhost:8080/api/v2*
@@ -24,7 +24,7 @@ Adds the requested champion to the users preferred champions. Cannot be greater 
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = ChampionsApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -71,7 +71,7 @@ Updates the users preferred champions with an entirely new list. Cannot be great
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = ChampionsApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -118,7 +118,7 @@ Removes the requested champion to the users preferred champions.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = ChampionsApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -165,7 +165,7 @@ Returns a list of preferred champions that the User has.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = ChampionsApi();
 final xCausedBy = xCausedBy_example; // String | 

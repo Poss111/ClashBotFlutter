@@ -1,8 +1,8 @@
-# clash_bot_api.api.TournamentApi
+# openapi.api.TournamentApi
 
 ## Load the API package
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 ```
 
 All URIs are relative to *http://localhost:8080/api/v2*
@@ -11,6 +11,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**createTournament**](TournamentApi.md#createtournament) | **POST** /tournaments | 
 [**getTournaments**](TournamentApi.md#gettournaments) | **GET** /tournaments | 
+[**retrieveRiotClashTournaments**](TournamentApi.md#retrieveriotclashtournaments) | **PATCH** /tournaments/riot | 
 
 
 # **createTournament**
@@ -22,7 +23,7 @@ To create a Tournament
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TournamentApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -65,7 +66,7 @@ No authorization required
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = TournamentApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -89,6 +90,45 @@ Name | Type | Description  | Notes
  **tournament** | **String**| The Tournament name to filter by. | [optional] 
  **day** | **String**| The tournament day to filter by. | [optional] 
  **upcomingOnly** | **bool**| Whether to return only upcoming tournaments or not? | [optional] 
+
+### Return type
+
+[**Tournaments**](Tournaments.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **retrieveRiotClashTournaments**
+> Tournaments retrieveRiotClashTournaments()
+
+
+
+Will retrieve Clash Tournaments from Riot's League of Legends API
+
+### Example
+```dart
+import 'package:openapi/api.dart';
+
+final api_instance = TournamentApi();
+
+try {
+    final result = api_instance.retrieveRiotClashTournaments();
+    print(result);
+} catch (e) {
+    print('Exception when calling TournamentApi->retrieveRiotClashTournaments: $e\n');
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
 
 ### Return type
 

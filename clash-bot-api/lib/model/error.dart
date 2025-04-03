@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -35,8 +35,8 @@ class Error {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is Error &&
-     other.code == code &&
-     other.message == message;
+    other.code == code &&
+    other.message == message;
 
   @override
   int get hashCode =>
@@ -48,18 +48,18 @@ class Error {
   String toString() => 'Error[code=$code, message=$message]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (code != null) {
-      _json[r'code'] = code;
+    final json = <String, dynamic>{};
+    if (this.code != null) {
+      json[r'code'] = this.code;
     } else {
-      _json[r'code'] = null;
+      json[r'code'] = null;
     }
-    if (message != null) {
-      _json[r'message'] = message;
+    if (this.message != null) {
+      json[r'message'] = this.message;
     } else {
-      _json[r'message'] = null;
+      json[r'message'] = null;
     }
-    return _json;
+    return json;
   }
 
   /// Returns a new [Error] instance and imports its values from
@@ -88,7 +88,7 @@ class Error {
     return null;
   }
 
-  static List<Error>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<Error> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <Error>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -119,12 +119,10 @@ class Error {
   static Map<String, List<Error>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<Error>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = Error.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = Error.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

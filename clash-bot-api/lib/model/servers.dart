@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -20,7 +20,7 @@ class Servers {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is Servers &&
-     other.servers == servers;
+    _deepEquality.equals(other.servers, servers);
 
   @override
   int get hashCode =>
@@ -31,9 +31,9 @@ class Servers {
   String toString() => 'Servers[servers=$servers]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-      _json[r'servers'] = servers;
-    return _json;
+    final json = <String, dynamic>{};
+      json[r'servers'] = this.servers;
+    return json;
   }
 
   /// Returns a new [Servers] instance and imports its values from
@@ -55,13 +55,13 @@ class Servers {
       }());
 
       return Servers(
-        servers: Server.listFromJson(json[r'servers']) ?? const [],
+        servers: Server.listFromJson(json[r'servers']),
       );
     }
     return null;
   }
 
-  static List<Servers>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<Servers> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <Servers>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -92,12 +92,10 @@ class Servers {
   static Map<String, List<Servers>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<Servers>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = Servers.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = Servers.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

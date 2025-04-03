@@ -1,11 +1,15 @@
 import 'package:clash_bot_api/api.dart';
+import 'package:clashbot_flutter/core/config/env.dart';
 import 'package:clashbot_flutter/models/clash_notification.dart';
 import 'package:clashbot_flutter/models/clashbot_user.dart';
+import 'package:clashbot_flutter/models/notification.dart';
+import 'package:clashbot_flutter/models/websocket_state.dart';
 import 'package:clashbot_flutter/services/clashbot_service.dart';
+import 'package:clashbot_flutter/stores/clash_events.store.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/riot_champion.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
-import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/notification_handler.store.dart';
 import 'package:collection/collection.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:developer' as developer;
@@ -21,9 +25,14 @@ abstract class _ApplicationDetailsStore with Store {
   late DiscordDetailsStore _discordDetailsStore;
   late RiotChampionStore _riotChampionStore;
   final ClashStore _clashStore;
-  final ErrorHandlerStore _errorHandlerStore;
-  _ApplicationDetailsStore(this._clashStore, this._discordDetailsStore,
-      this._riotChampionStore, this._errorHandlerStore) {
+  final NotificationHandlerStore _errorHandlerStore;
+  final ClashEventsStore _clashEventsStore;
+  _ApplicationDetailsStore(
+      this._clashStore,
+      this._clashEventsStore,
+      this._discordDetailsStore,
+      this._riotChampionStore,
+      this._errorHandlerStore) {
     reaction((_) => _discordDetailsStore.discordUser, (_) {
       if (_discordDetailsStore.discordUser.id != '0') {
         _clashStore.refreshClashBotUser(_discordDetailsStore.discordUser.id);
@@ -38,6 +47,11 @@ abstract class _ApplicationDetailsStore with Store {
             .refreshClashTournaments(_clashStore.clashBotUser.discordId!);
         _clashStore.refreshClashTeams(_clashStore.clashBotUser.discordId!,
             _clashStore.clashBotUser.selectedServers);
+        if (_clashEventsStore.status != WebSocketState.open) {
+          _clashEventsStore.connect(Env.clashbotEventUrl);
+          _clashEventsStore
+              .subscribeToServers(_clashStore.clashBotUser.selectedServers);
+        }
       }
     });
 
@@ -127,8 +141,8 @@ abstract class _ApplicationDetailsStore with Store {
       _clashStore.createSelectedServers(id, preferredServers);
       _clashStore.refreshClashBotUser(id);
     } on Exception catch (issue) {
-      _errorHandlerStore.errorMessage =
-          'Failed to create new Clash Bot User, please try again.';
+      _errorHandlerStore.setNotification(Notification.error(
+          'Failed to create new Clash Bot User, please try again.'));
       rethrow;
     }
   }

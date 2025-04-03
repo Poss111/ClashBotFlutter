@@ -12,17 +12,21 @@ import 'package:clashbot_flutter/services/clashbot_service_impl.dart';
 import 'package:clashbot_flutter/services/discord_service_impl.dart';
 import 'package:clashbot_flutter/services/riot_resources_service_impl.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/clash_events.store.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/riot_champion.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
-import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/clash_team.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/notification_handler.store.dart';
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:storybook_flutter/storybook_flutter.dart';
 
 class MockApplicationDetailsStore extends ApplicationDetailsStore {
   MockApplicationDetailsStore(
       ClashBotUser mockClashBotUser,
+      super._clashEventsStore,
       super._clashStore,
       super._discordDetailsStore,
       super._riotChampionStore,
@@ -32,7 +36,7 @@ class MockApplicationDetailsStore extends ApplicationDetailsStore {
   ClashBotUser get clashBotUser => ClashBotUser(
         discordId: '123456789',
         champions: [],
-        role: Role.TOP,
+        role: Role.top,
         serverId: 'server1',
         selectedServers: [
           'server1',
@@ -64,7 +68,7 @@ void main() {
   var clashUser = ClashBotUser(
     discordId: loggedInUserId,
     champions: [],
-    role: Role.TOP,
+    role: Role.top,
     serverId: 'server1',
     selectedServers: [
       'server1',
@@ -86,10 +90,10 @@ void main() {
       tournaments[0].tournamentName,
       tournaments[0].tournamentDay,
       {
-        Role.TOP: PlayerDetails('1', 'Player 1', []),
-        Role.JG: PlayerDetails('2', 'Player 2', []),
-        Role.MID: PlayerDetails('3', 'Player 3', []),
-        Role.SUPP: PlayerDetails('5', 'Player 5', []),
+        Role.top: PlayerDetails('1', []),
+        Role.jg: PlayerDetails('2', []),
+        Role.mid: PlayerDetails('3', []),
+        Role.supp: PlayerDetails('5', []),
       },
       '123456789',
       DateTime.now(),
@@ -100,10 +104,10 @@ void main() {
       tournaments[0].tournamentName,
       tournaments[0].tournamentDay,
       {
-        Role.TOP: PlayerDetails('1', 'Player 1', []),
-        Role.JG: PlayerDetails('2', 'Player 2', []),
-        Role.MID: PlayerDetails('3', 'Player 3', []),
-        Role.SUPP: PlayerDetails('5', 'Player 5', []),
+        Role.top: PlayerDetails('1', []),
+        Role.jg: PlayerDetails('2', []),
+        Role.mid: PlayerDetails('3', []),
+        Role.supp: PlayerDetails('5', []),
       },
       '123456789',
       DateTime.now(),
@@ -113,16 +117,20 @@ void main() {
       loggedInUserId, 'mock_username', '123456789', "mock_discriminator");
   runApp(MultiProvider(providers: [
     Provider<ApiClient>(create: (_) => ApiClient(basePath: "http://localhost")),
-    Provider<ErrorHandlerStore>(create: (_) => ErrorHandlerStore()),
-    ProxyProvider<ErrorHandlerStore, DiscordDetailsStore>(
+    Provider<NotificationHandlerStore>(
+        create: (_) => NotificationHandlerStore()),
+    ProxyProvider<NotificationHandlerStore, DiscordDetailsStore>(
         update: (_, errorHandlerStore, __) {
       return MockDiscordDetailsStore(guilds, discordUser,
           DiscordServiceImpl(setupOauth2Helper()), errorHandlerStore);
     }),
-    ProxyProvider<ErrorHandlerStore, RiotChampionStore>(
+    ProxyProvider<NotificationHandlerStore, RiotChampionStore>(
         update: (_, errorHandlerStore, __) => MockRiotChampionStore(
             RiotResourceServiceImpl(), errorHandlerStore)),
-    ProxyProvider2<ErrorHandlerStore, ApiClient, ClashStore>(
+    ProxyProvider2<ClashStore, NotificationHandlerStore, ClashEventsStore>(
+        update: (_, clashStore, errorHandlerStore, __) =>
+            ClashEventsStore(clashStore, errorHandlerStore)),
+    ProxyProvider2<NotificationHandlerStore, ApiClient, ClashStore>(
         update: (_, errorHandlerStore, apiClient, __) => MockClashStore(
             clashUser,
             tournaments,
@@ -136,11 +144,11 @@ void main() {
                 TournamentApi(apiClient),
                 errorHandlerStore),
             errorHandlerStore)),
-    ProxyProvider4<ClashStore, ErrorHandlerStore, DiscordDetailsStore,
-            RiotChampionStore, ApplicationDetailsStore>(
-        update: (_, clashStore, errorHandlerStore, discordDetailsStore,
-                riotChampionStore, __) =>
-            MockApplicationDetailsStore(clashUser, clashStore,
+    ProxyProvider5<ClashStore, ClashEventsStore, NotificationHandlerStore,
+            DiscordDetailsStore, RiotChampionStore, ApplicationDetailsStore>(
+        update: (_, clashStore, clashEventsStore, errorHandlerStore,
+                discordDetailsStore, riotChampionStore, __) =>
+            MockApplicationDetailsStore(clashUser, clashStore, clashEventsStore,
                 discordDetailsStore, riotChampionStore, errorHandlerStore)),
   ], child: ClashBotStorybookApp()));
 }
@@ -162,7 +170,7 @@ class ClashBotStorybookApp extends StatelessWidget {
         description: "A card for displaying team information",
         builder: (context) {
           return TeamCard(
-              team: ClashTeam(
+              team: ClashTeamStore(
             '1',
             'Mock Team',
             'Tournament 1',
@@ -171,60 +179,60 @@ class ClashBotStorybookApp extends StatelessWidget {
               switch (context.knobs
                   .text(label: '# of missing roles', initial: '0')) {
                 case '0':
-                  return {
-                    Role.TOP: PlayerDetails('123456789', 'Player 1', []),
-                    Role.JG: PlayerDetails('2', 'Player 2', []),
-                    Role.MID: PlayerDetails('3', 'Player 3', []),
-                    Role.BOT: PlayerDetails('5', 'Player 4', []),
-                    Role.SUPP: PlayerDetails('5', 'Player 5', []),
-                  };
+                  return ObservableMap<Role, PlayerDetails?>.of({
+                    Role.top: PlayerDetails('123456789', []),
+                    Role.jg: PlayerDetails('2', []),
+                    Role.mid: PlayerDetails('3', []),
+                    Role.bot: PlayerDetails('5', []),
+                    Role.supp: PlayerDetails('5', []),
+                  });
                 case '1':
-                  return {
-                    Role.TOP: PlayerDetails('1', 'Player 1', []),
-                    Role.JG: PlayerDetails('2', 'Player 2', []),
-                    Role.MID: PlayerDetails('3', 'Player 3', []),
-                    Role.BOT: PlayerDetails('5', 'Player 4', []),
-                    Role.SUPP: null,
-                  };
+                  return ObservableMap<Role, PlayerDetails?>.of({
+                    Role.top: PlayerDetails('1', []),
+                    Role.jg: PlayerDetails('2', []),
+                    Role.mid: PlayerDetails('3', []),
+                    Role.bot: PlayerDetails('5', []),
+                    Role.supp: null,
+                  });
                 case '2':
-                  return {
-                    Role.TOP: PlayerDetails('1', 'Player 1', []),
-                    Role.JG: PlayerDetails('2', 'Player 2', []),
-                    Role.MID: PlayerDetails('3', 'Player 3', []),
-                    Role.BOT: null,
-                    Role.SUPP: null,
-                  };
+                  return ObservableMap<Role, PlayerDetails?>.of({
+                    Role.top: PlayerDetails('1', []),
+                    Role.jg: PlayerDetails('2', []),
+                    Role.mid: PlayerDetails('3', []),
+                    Role.bot: null,
+                    Role.supp: null,
+                  });
                 case '3':
-                  return {
-                    Role.TOP: PlayerDetails('1', 'Player 1', []),
-                    Role.MID: PlayerDetails('3', 'Player 3', []),
-                    Role.JG: null,
-                    Role.BOT: null,
-                    Role.SUPP: null,
-                  };
+                  return ObservableMap<Role, PlayerDetails?>.of({
+                    Role.top: PlayerDetails('1', []),
+                    Role.mid: PlayerDetails('3', []),
+                    Role.jg: null,
+                    Role.bot: null,
+                    Role.supp: null,
+                  });
                 case '4':
-                  return {
-                    Role.TOP: PlayerDetails('1', 'Player 1', []),
-                    Role.JG: null,
-                    Role.MID: null,
-                    Role.BOT: null,
-                    Role.SUPP: null,
-                  };
+                  return ObservableMap<Role, PlayerDetails?>.of({
+                    Role.top: PlayerDetails('1', []),
+                    Role.jg: null,
+                    Role.mid: null,
+                    Role.bot: null,
+                    Role.supp: null,
+                  });
                 case '5':
-                  return {
-                    Role.TOP: null,
-                    Role.JG: null,
-                    Role.MID: null,
-                    Role.BOT: null,
-                    Role.SUPP: null,
-                  };
+                  return ObservableMap<Role, PlayerDetails?>.of({
+                    Role.top: null,
+                    Role.jg: null,
+                    Role.mid: null,
+                    Role.bot: null,
+                    Role.supp: null,
+                  });
                 default:
-                  return {
-                    Role.TOP: PlayerDetails('1', 'Player 1', []),
-                    Role.JG: PlayerDetails('2', 'Player 2', []),
-                    Role.MID: PlayerDetails('3', 'Player 3', []),
-                    Role.SUPP: PlayerDetails('5', 'Player 5', []),
-                  };
+                  return ObservableMap<Role, PlayerDetails?>.of({
+                    Role.top: PlayerDetails('1', []),
+                    Role.jg: PlayerDetails('2', []),
+                    Role.mid: PlayerDetails('3', []),
+                    Role.supp: PlayerDetails('5', []),
+                  });
               }
             }(),
             '123456789',
@@ -267,10 +275,10 @@ class ClashBotStorybookApp extends StatelessWidget {
             'Mock Tournament 1',
             '1',
             {
-              Role.TOP: PlayerDetails('1', 'Player 1', []),
-              Role.JG: PlayerDetails('2', 'Player 2', []),
-              Role.MID: PlayerDetails('3', 'Player 3', []),
-              Role.SUPP: PlayerDetails('5', 'Player 5', []),
+              Role.top: PlayerDetails('1', []),
+              Role.jg: PlayerDetails('2', []),
+              Role.mid: PlayerDetails('3', []),
+              Role.supp: PlayerDetails('5', []),
             },
             '123456789',
             DateTime.now(),
@@ -283,8 +291,8 @@ class ClashBotStorybookApp extends StatelessWidget {
             new SubscriptionApi(context.read<ApiClient>()),
             new TentativeApi(context.read<ApiClient>()),
             new TournamentApi(context.read<ApiClient>()),
-            new ErrorHandlerStore()),
-        context.read<ErrorHandlerStore>());
+            new NotificationHandlerStore()),
+        context.read<NotificationHandlerStore>());
     clashStoreW5Tournies.addCallInProgress('getTournaments');
     return Story(
       name: "Widgets/Calendar/loading",
@@ -323,10 +331,10 @@ Story StoryCalendarWidgetWTournaments(BuildContext context) {
           'Mock Tournament 1',
           '1',
           {
-            Role.TOP: PlayerDetails('1', 'Player 1', []),
-            Role.JG: PlayerDetails('2', 'Player 2', []),
-            Role.MID: PlayerDetails('3', 'Player 3', []),
-            Role.SUPP: PlayerDetails('5', 'Player 5', []),
+            Role.top: PlayerDetails('1', []),
+            Role.jg: PlayerDetails('2', []),
+            Role.mid: PlayerDetails('3', []),
+            Role.supp: PlayerDetails('5', []),
           },
           '460520499680641035',
           DateTime.now(),
@@ -339,8 +347,8 @@ Story StoryCalendarWidgetWTournaments(BuildContext context) {
           new SubscriptionApi(context.read<ApiClient>()),
           new TentativeApi(context.read<ApiClient>()),
           new TournamentApi(context.read<ApiClient>()),
-          new ErrorHandlerStore()),
-      context.read<ErrorHandlerStore>());
+          new NotificationHandlerStore()),
+      context.read<NotificationHandlerStore>());
   return Story(
     name: "Widgets/Calendar/filled",
     description: "ClashBot's main calendar widget filled",

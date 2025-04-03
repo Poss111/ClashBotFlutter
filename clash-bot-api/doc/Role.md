@@ -1,8 +1,8 @@
-# clash_bot_api.model.Role
+# openapi.model.Role
 
 ## Load the model package
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 ```
 
 ## Properties

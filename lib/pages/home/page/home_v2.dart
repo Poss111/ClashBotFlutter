@@ -9,7 +9,8 @@ import 'package:clashbot_flutter/pages/home/page/widgets/events_widget.dart';
 import 'package:clashbot_flutter/pages/home/page/widgets/server_chip_list.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
-import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/clash_team.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/notification_handler.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,7 +20,7 @@ class HomeEvent {
   final DateTime date;
   final String title;
   final String description;
-  final ClashTeam team;
+  final ClashTeamStore team;
 
   HomeEvent({
     required this.date,
@@ -94,7 +95,8 @@ class _HomeV2State extends State<HomeV2> {
     ClashStore clashStore = context.read<ClashStore>();
     DiscordDetailsStore discordDetailsStore =
         context.read<DiscordDetailsStore>();
-    ErrorHandlerStore errorHandlerStore = context.read<ErrorHandlerStore>();
+    NotificationHandlerStore errorHandlerStore =
+        context.read<NotificationHandlerStore>();
     return Scaffold(
       body: Observer(
         builder: (_) => errorHandlerStore.irreconcilable

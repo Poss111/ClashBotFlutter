@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -26,7 +26,7 @@ class Champion {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is Champion &&
-     other.name == name;
+    other.name == name;
 
   @override
   int get hashCode =>
@@ -37,13 +37,13 @@ class Champion {
   String toString() => 'Champion[name=$name]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (name != null) {
-      _json[r'name'] = name;
+    final json = <String, dynamic>{};
+    if (this.name != null) {
+      json[r'name'] = this.name;
     } else {
-      _json[r'name'] = null;
+      json[r'name'] = null;
     }
-    return _json;
+    return json;
   }
 
   /// Returns a new [Champion] instance and imports its values from
@@ -71,7 +71,7 @@ class Champion {
     return null;
   }
 
-  static List<Champion>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<Champion> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <Champion>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -102,12 +102,10 @@ class Champion {
   static Map<String, List<Champion>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<Champion>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = Champion.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = Champion.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

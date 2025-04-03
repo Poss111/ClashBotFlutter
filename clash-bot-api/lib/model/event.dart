@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -42,11 +42,11 @@ class Event {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is Event &&
-     other.id == id &&
-     other.teamEvent == teamEvent &&
-     other.summary == summary &&
-     other.serverId == serverId &&
-     other.causedBy == causedBy;
+    other.id == id &&
+    other.teamEvent == teamEvent &&
+    other.summary == summary &&
+    other.serverId == serverId &&
+    other.causedBy == causedBy;
 
   @override
   int get hashCode =>
@@ -61,17 +61,17 @@ class Event {
   String toString() => 'Event[id=$id, teamEvent=$teamEvent, summary=$summary, serverId=$serverId, causedBy=$causedBy]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-      _json[r'id'] = id;
-      _json[r'teamEvent'] = teamEvent;
-    if (summary != null) {
-      _json[r'summary'] = summary;
+    final json = <String, dynamic>{};
+      json[r'id'] = this.id;
+      json[r'teamEvent'] = this.teamEvent;
+    if (this.summary != null) {
+      json[r'summary'] = this.summary;
     } else {
-      _json[r'summary'] = null;
+      json[r'summary'] = null;
     }
-      _json[r'serverId'] = serverId;
-      _json[r'causedBy'] = causedBy;
-    return _json;
+      json[r'serverId'] = this.serverId;
+      json[r'causedBy'] = this.causedBy;
+    return json;
   }
 
   /// Returns a new [Event] instance and imports its values from
@@ -103,7 +103,7 @@ class Event {
     return null;
   }
 
-  static List<Event>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<Event> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <Event>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -134,12 +134,10 @@ class Event {
   static Map<String, List<Event>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<Event>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = Event.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = Event.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

@@ -3,9 +3,10 @@ import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/models/clash_team.dart';
 import 'package:clashbot_flutter/models/clash_tournament.dart';
 import 'package:clashbot_flutter/models/clashbot_user.dart';
+import 'package:clashbot_flutter/models/notification.dart';
 import 'package:clashbot_flutter/models/tentative_queue.dart';
 import 'package:clashbot_flutter/services/clashbot_service.dart';
-import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/notification_handler.store.dart';
 
 class ClashBotServiceImpl implements ClashBotService {
   UserApi userApi;
@@ -14,7 +15,7 @@ class ClashBotServiceImpl implements ClashBotService {
   SubscriptionApi subscriptionApi;
   TentativeApi tentativeApi;
   TournamentApi tournamentApi;
-  ErrorHandlerStore errorHandlerStore;
+  NotificationHandlerStore errorHandlerStore;
 
   ClashBotServiceImpl(
       this.userApi,
@@ -34,7 +35,8 @@ class ClashBotServiceImpl implements ClashBotService {
         .createUser(id, createUserRequest: createUserRequest)
         .then(playerToClashBotUser)
         .catchError((error) {
-      errorHandlerStore.setErrorMessage("Whoops! Failed to create player.");
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to create player."));
       return error;
     });
   }
@@ -45,8 +47,8 @@ class ClashBotServiceImpl implements ClashBotService {
         .retrieveUsersPreferredChampions(id, id)
         .then(fromChampionsToStringList)
         .catchError((error) {
-      errorHandlerStore
-          .setErrorMessage("Whoops! Failed to retrieve user's champions.");
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to retrieve user's champions."));
       return error;
     });
   }
@@ -57,7 +59,8 @@ class ClashBotServiceImpl implements ClashBotService {
         .getUser(id, discordId: id)
         .then(playerToClashBotUser)
         .catchError((error) {
-      errorHandlerStore.setErrorMessage("Whoops! Failed to retrieve user.");
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to retrieve user."));
       throw error;
     });
   }
@@ -73,8 +76,8 @@ class ClashBotServiceImpl implements ClashBotService {
       }
       return subscriptions;
     }).catchError((error) {
-      errorHandlerStore
-          .setErrorMessage("Whoops! Failed to retrieve user's subscriptions.");
+      errorHandlerStore.setNotification(Notification.error(
+          "Whoops! Failed to retrieve user's subscriptions."));
       throw error;
     });
     ;
@@ -91,8 +94,8 @@ class ClashBotServiceImpl implements ClashBotService {
             champions: Champions(champions: championsList))
         .then(fromChampionsToStringList)
         .catchError((error) {
-      errorHandlerStore
-          .setErrorMessage("Whoops! Failed to overwrite user's champions.");
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to overwrite user's champions."));
       return error;
     });
   }
@@ -103,8 +106,8 @@ class ClashBotServiceImpl implements ClashBotService {
         .removePreferredChampionForUser(id, id, List.of([champion]))
         .then(fromChampionsToStringList)
         .catchError((error) {
-      errorHandlerStore
-          .setErrorMessage("Whoops! Failed to remove user's champion.");
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to remove user's champion."));
       return error;
     });
   }
@@ -118,8 +121,8 @@ class ClashBotServiceImpl implements ClashBotService {
             champions: Champions(champions: championsList))
         .then(fromChampionsToStringList)
         .catchError((error) {
-      errorHandlerStore
-          .setErrorMessage("Whoops! Failed to update user's champions.");
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to update user's champions."));
       return error;
     });
   }
@@ -135,10 +138,10 @@ class ClashBotServiceImpl implements ClashBotService {
         .createUsersSelectedServers(id, id, servers: Servers(servers: servers))
         .then(serversToServerIdList)
         .catchError((error) {
-      errorHandlerStore
-          .setErrorMessage("Whoops! Failed to create user's selected servers.");
+      errorHandlerStore.setNotification(Notification.error(
+          "Whoops! Failed to create user's selected servers."));
       return error;
-        });
+    });
   }
 
   @override
@@ -148,10 +151,10 @@ class ClashBotServiceImpl implements ClashBotService {
         .removeUsersSelectedServers(id, id, selectedServers)
         .then(serversToServerIdList)
         .catchError((error) {
-      errorHandlerStore
-          .setErrorMessage("Whoops! Failed to remove user's selected servers.");
+      errorHandlerStore.setNotification(Notification.error(
+          "Whoops! Failed to remove user's selected servers."));
       return error;
-        });
+    });
   }
 
   @override
@@ -165,10 +168,10 @@ class ClashBotServiceImpl implements ClashBotService {
         .addUsersSelectedServers(id, id, servers: Servers(servers: servers))
         .then(serversToServerIdList)
         .catchError((error) {
-      errorHandlerStore
-          .setErrorMessage("Whoops! Failed to update user's selected servers.");
+      errorHandlerStore.setNotification(Notification.error(
+          "Whoops! Failed to update user's selected servers."));
       return error;
-        });
+    });
   }
 
   @override
@@ -177,9 +180,10 @@ class ClashBotServiceImpl implements ClashBotService {
         .assignUserToTeam(id, teamId, id, PositionDetails(role: role))
         .then((team) => teamToClashTeam(team ?? Team()))
         .catchError((error) {
-          errorHandlerStore.setErrorMessage("Whoops! Failed to add user to team.");
-          return error;
-        });
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to add user to team."));
+      return error;
+    });
   }
 
   @override
@@ -188,9 +192,10 @@ class ClashBotServiceImpl implements ClashBotService {
         .assignUserToATentativeQueue(id, tentativeId, id)
         .then(tentativeToTentativeQueue)
         .catchError((error) {
-          errorHandlerStore.setErrorMessage("Whoops! Failed to add user to tentative queue.");
-          return error;
-        });
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to add user to tentative queue."));
+      return error;
+    });
   }
 
   @override
@@ -210,9 +215,9 @@ class ClashBotServiceImpl implements ClashBotService {
         }
       }
       return teams;
-    })
-    .catchError((error) {
-      errorHandlerStore.setErrorMessage("Whoops! Failed to retrieve teams.");
+    }).catchError((error) {
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to retrieve teams."));
       return error;
     });
   }
@@ -236,9 +241,9 @@ class ClashBotServiceImpl implements ClashBotService {
         }
       }
       return tentativeQueues;
-    })
-    .catchError((error) {
-      errorHandlerStore.setErrorMessage("Whoops! Failed to retrieve tentative queues.");
+    }).catchError((error) {
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to retrieve tentative queues."));
       return error;
     });
   }
@@ -249,9 +254,10 @@ class ClashBotServiceImpl implements ClashBotService {
         .removeUserFromTeam(id, teamId, id)
         .then((team) => teamToClashTeam(team ?? Team()))
         .catchError((error) {
-          errorHandlerStore.setErrorMessage("Whoops! Failed to remove user from team.");
-          return error;
-        });
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to remove user from team."));
+      return error;
+    });
   }
 
   @override
@@ -261,9 +267,10 @@ class ClashBotServiceImpl implements ClashBotService {
         .removeUserFromTentativeQueue(id, tentativeId, id)
         .then(tentativeToTentativeQueue)
         .catchError((error) {
-          errorHandlerStore.setErrorMessage("Whoops! Failed to remove user from tentative queue.");
-          return error;
-        });
+      errorHandlerStore.setNotification(Notification.error(
+          "Whoops! Failed to remove user from tentative queue."));
+      return error;
+    });
   }
 
   @override
@@ -271,18 +278,18 @@ class ClashBotServiceImpl implements ClashBotService {
       String serverId, String tournamentName, String tournamentDay) {
     var playerDetails;
     switch (role) {
-      case Role.TOP:
+      case Role.top:
         playerDetails =
             TeamPlayerDetails(top: TeamPlayer(discordId: discordId));
         break;
-      case Role.JG:
+      case Role.jg:
         playerDetails = TeamPlayerDetails(jg: TeamPlayer(discordId: discordId));
         break;
-      case Role.MID:
+      case Role.mid:
         playerDetails =
             TeamPlayerDetails(mid: TeamPlayer(discordId: discordId));
         break;
-      case Role.BOT:
+      case Role.bot:
         playerDetails =
             TeamPlayerDetails(bot: TeamPlayer(discordId: discordId));
         break;
@@ -300,9 +307,10 @@ class ClashBotServiceImpl implements ClashBotService {
         .createTeam(discordId, teamRequired)
         .then((team) => teamToClashTeam(team ?? Team()))
         .catchError((error) {
-          errorHandlerStore.setErrorMessage("Whoops! Failed to create team.");
-          return error;
-        });
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to create team."));
+      return error;
+    });
   }
 
   @override
@@ -319,9 +327,10 @@ class ClashBotServiceImpl implements ClashBotService {
                 tentativePlayers: [TentativePlayer(discordId: discordId)]))
         .then(tentativeToTentativeQueue)
         .catchError((error) {
-          errorHandlerStore.setErrorMessage("Whoops! Failed to create tentative queue.");
-          return error;
-        });
+      errorHandlerStore.setNotification(
+          Notification.error("Whoops! Failed to create tentative queue."));
+      return error;
+    });
   }
 
   @override
@@ -391,45 +400,40 @@ class ClashBotServiceImpl implements ClashBotService {
       Map<Role, PlayerDetails> map = {};
       if (null != team.playerDetails) {
         if (null != team.playerDetails!.top) {
-          map[Role.TOP] = PlayerDetails(
+          map[Role.top] = PlayerDetails(
               team.playerDetails!.top?.discordId ?? '',
-              team.playerDetails!.top?.name ?? '',
               team.playerDetails!.top?.champions
                       .map((champ) => champ.name ?? '')
                       .toList() ??
                   List<String>.empty(growable: true));
         }
         if (null != team.playerDetails?.jg) {
-          map[Role.JG] = PlayerDetails(
+          map[Role.jg] = PlayerDetails(
               team.playerDetails!.jg?.discordId ?? '',
-              team.playerDetails!.jg?.name ?? '',
               team.playerDetails!.jg?.champions
                       .map((champ) => champ.name ?? '')
                       .toList() ??
                   List<String>.empty(growable: true));
         }
         if (null != team.playerDetails?.mid) {
-          map[Role.MID] = PlayerDetails(
+          map[Role.mid] = PlayerDetails(
               team.playerDetails!.mid?.discordId ?? '',
-              team.playerDetails!.mid?.name ?? '',
               team.playerDetails!.mid?.champions
                       .map((champ) => champ.name ?? '')
                       .toList() ??
                   List<String>.empty(growable: true));
         }
         if (null != team.playerDetails?.bot) {
-          map[Role.BOT] = PlayerDetails(
+          map[Role.bot] = PlayerDetails(
               team.playerDetails!.bot?.discordId ?? '',
-              team.playerDetails!.bot?.name ?? '',
               team.playerDetails!.bot?.champions
                       .map((champ) => champ.name ?? '')
                       .toList() ??
                   List<String>.empty(growable: true));
         }
         if (null != team.playerDetails?.supp) {
-          map[Role.SUPP] = PlayerDetails(
+          map[Role.supp] = PlayerDetails(
               team.playerDetails!.supp?.discordId ?? '',
-              team.playerDetails!.supp?.name ?? '',
               team.playerDetails!.supp?.champions
                       .map((champ) => champ.name ?? '')
                       .toList() ??
@@ -453,45 +457,40 @@ class ClashBotServiceImpl implements ClashBotService {
       Map<Role, PlayerDetails> map = {};
       if (null != team.playerDetails) {
         if (null != team.playerDetails!.top) {
-          map[Role.TOP] = PlayerDetails(
+          map[Role.top] = PlayerDetails(
               team.playerDetails!.top?.discordId ?? '',
-              team.playerDetails!.top?.name ?? '',
               team.playerDetails!.top?.champions
                       .map((champ) => champ.name ?? '')
                       .toList() ??
                   []);
         }
         if (null != team.playerDetails?.jg) {
-          map[Role.JG] = PlayerDetails(
+          map[Role.jg] = PlayerDetails(
               team.playerDetails!.jg?.discordId ?? '',
-              team.playerDetails!.jg?.name ?? '',
               team.playerDetails!.jg?.champions
                       .map((champ) => champ.name ?? '')
                       .toList() ??
                   []);
         }
         if (null != team.playerDetails?.mid) {
-          map[Role.MID] = PlayerDetails(
+          map[Role.mid] = PlayerDetails(
               team.playerDetails!.mid?.discordId ?? '',
-              team.playerDetails!.mid?.name ?? '',
               team.playerDetails!.mid?.champions
                       .map((champ) => champ.name ?? '')
                       .toList() ??
                   []);
         }
         if (null != team.playerDetails?.bot) {
-          map[Role.BOT] = PlayerDetails(
+          map[Role.bot] = PlayerDetails(
               team.playerDetails!.bot?.discordId ?? '',
-              team.playerDetails!.bot?.name ?? '',
               team.playerDetails!.bot?.champions
                       .map((champ) => champ.name ?? '')
                       .toList() ??
                   []);
         }
         if (null != team.playerDetails?.supp) {
-          map[Role.SUPP] = PlayerDetails(
+          map[Role.supp] = PlayerDetails(
               team.playerDetails!.supp?.discordId ?? '',
-              team.playerDetails!.supp?.name ?? '',
               team.playerDetails!.supp?.champions
                       .map((champ) => champ.name ?? '')
                       .toList() ??
