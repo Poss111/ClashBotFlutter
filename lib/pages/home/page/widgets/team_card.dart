@@ -7,6 +7,7 @@ import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash_team.store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'dart:developer' as developer;
@@ -15,9 +16,13 @@ class TeamCard extends StatelessWidget {
   TeamCard({
     super.key,
     required this.team,
+    required this.applicationDetailsStore,
+    required this.discordDetailsStore,
   });
 
   final ClashTeamStore team;
+  final ApplicationDetailsStore applicationDetailsStore;
+  final DiscordDetailsStore discordDetailsStore;
   final Map<Role, String> roleToImage = {
     Role.top: 'images/TopIcon.webp',
     Role.bot: 'images/BotIcon.webp',
@@ -28,10 +33,7 @@ class TeamCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ApplicationDetailsStore applicationDetailsStore =
-        context.read<ApplicationDetailsStore>();
-    DiscordDetailsStore discordDetailsStore =
-        context.read<DiscordDetailsStore>();
+    final DateFormat formatter = DateFormat('yyyy-MM-ddTHH:mm:ssZ');
     return Card(
       surfaceTintColor: Theme.of(context).brightness == Brightness.dark
           ? const Color.fromARGB(

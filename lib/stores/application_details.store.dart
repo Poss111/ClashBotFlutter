@@ -74,6 +74,9 @@ abstract class _ApplicationDetailsStore with Store {
   @observable
   ObservableList<ClashNotification> notifications = ObservableList();
 
+  @observable
+  ObservableList<String> preferredServers = ObservableList();
+
   @computed
   bool get isLoggedIn =>
       _discordDetailsStore.userHasLoggedIn && clashBotUser.discordId != '0';
@@ -92,16 +95,19 @@ abstract class _ApplicationDetailsStore with Store {
       ObservableList.of(clashBotUser.selectedServers.sorted());
 
   @computed
-  ObservableList<String> get preferredServers =>
-      ObservableList.of(_clashStore.selectedServers);
-
-  @computed
   List<ClashNotification> get sortedNotifications =>
       notifications.sortedBy((element) => element.timestamp);
 
   @computed
   List<ClashNotification> get unreadNotifications =>
       notifications.where((notification) => !notification.read).toList();
+
+  @action
+  void setPreferredServers(List<String> servers) {
+    developer.log(
+        "ApplicationDetailsStore:             setPreferredServers $servers");
+    preferredServers = ObservableList.of(servers);
+  }
 
   @action
   void refreshDiscordUser() {

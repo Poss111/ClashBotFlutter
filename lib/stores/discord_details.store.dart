@@ -87,7 +87,6 @@ abstract class _DiscordDetailsStore with Store {
     addCallInProgress('fetchUserDetails');
     var foundUser;
     try {
-      userDetailsSuccessfullyLoaded();
       foundUser = await _discordService.fetchUserDetails(discordId);
       discordIdToName.putIfAbsent(discordId, () => foundUser.username);
     } on Exception catch (error) {
@@ -102,7 +101,6 @@ abstract class _DiscordDetailsStore with Store {
     addCallInProgress('fetchCurrentUserDetails');
     final future = _discordService.fetchCurrentUserDetails();
     try {
-      userDetailsSuccessfullyLoaded();
       DiscordUser updatedUser = await future;
       discordUser = updatedUser.copy();
       discordIdToName.putIfAbsent(updatedUser.id, () => updatedUser.username);
@@ -119,7 +117,6 @@ abstract class _DiscordDetailsStore with Store {
     addCallInProgress('fetchUserGuilds');
     final future = _discordService.fetchUserGuilds();
     try {
-      userDetailsSuccessfullyLoaded();
       List<DiscordGuild> guilds = await future;
       discordGuilds.clear();
       discordGuilds.addAll(guilds);
