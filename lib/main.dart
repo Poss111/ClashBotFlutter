@@ -2,6 +2,7 @@ import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/core/config/env.dart';
 import 'package:clashbot_flutter/globals/color_schemes.dart';
 import 'package:clashbot_flutter/models/model_first_time.dart';
+import 'package:clashbot_flutter/models/websocket_state.dart';
 import 'package:clashbot_flutter/pages/errorPages/whoops_page.dart';
 import 'package:clashbot_flutter/pages/home/page/home_v2.dart';
 import 'package:clashbot_flutter/pages/intro/welcome_page.dart';
@@ -13,10 +14,11 @@ import 'package:clashbot_flutter/services/discord_service_impl.dart';
 import 'package:clashbot_flutter/services/riot_resources_service.dart';
 import 'package:clashbot_flutter/services/riot_resources_service_impl.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/clash_events.store.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/riot_champion.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
-import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/notification_handler.store.dart';
 import 'package:clashbot_flutter/styles.dart';
 import 'package:clashbot_flutter/utils/reusable_widgets.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +34,6 @@ import 'package:validators/validators.dart';
 import 'generated/git_info.dart';
 import 'globals/global_settings.dart';
 import 'models/model_theme.dart';
-import 'services/clashbot_events_service.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -120,12 +121,13 @@ class _MyAppState extends State<MyApp> {
         providers: [
           ChangeNotifierProvider(create: (context) => widget.modelFirstTime),
           ChangeNotifierProvider(create: (context) => widget.modelTheme),
-          Provider<ErrorHandlerStore>(create: (_) => ErrorHandlerStore()),
+          Provider<NotificationHandlerStore>(
+              create: (_) => NotificationHandlerStore()),
           Provider<DiscordService>(
               create: (_) => DiscordServiceImpl(setupOauth2Helper())),
           Provider<ApiClient>(
               create: (_) => ApiClient(basePath: Env.clashbotServiceUrl)),
-          ProxyProvider2<ApiClient, ErrorHandlerStore, ClashBotService>(
+          ProxyProvider2<ApiClient, NotificationHandlerStore, ClashBotService>(
               update: (_, apiClient, errorHandlerStore, __) =>
                   ClashBotServiceImpl(
                       UserApi(apiClient),
@@ -137,26 +139,37 @@ class _MyAppState extends State<MyApp> {
                       errorHandlerStore)),
           Provider<RiotResourcesService>(
               create: (_) => RiotResourceServiceImpl()),
-          Provider<ClashBotEventsService>(
-              create: (_) => ClashBotEventsService()),
-          ProxyProvider2<ClashBotService, ErrorHandlerStore, ClashStore>(
+          ProxyProvider2<ClashBotService, NotificationHandlerStore, ClashStore>(
               update: (_, clashBotService, errorHandlerStore, __) =>
                   ClashStore(clashBotService, errorHandlerStore)),
-          ProxyProvider2<DiscordService, ErrorHandlerStore,
+          ProxyProvider2<ClashStore, NotificationHandlerStore,
+                  ClashEventsStore>(
+              update: (_, clashStore, errorHandlerStore, __) =>
+                  ClashEventsStore(clashStore, errorHandlerStore)),
+          ProxyProvider2<DiscordService, NotificationHandlerStore,
                   DiscordDetailsStore>(
               update: (_, discordService, errorHandlerStore, __) =>
                   DiscordDetailsStore(discordService, errorHandlerStore)),
-          ProxyProvider2<RiotResourcesService, ErrorHandlerStore,
+          ProxyProvider2<RiotResourcesService, NotificationHandlerStore,
                   RiotChampionStore>(
               update: (_, riotResourceService, errorHandlerStore, __) =>
                   RiotChampionStore(riotResourceService, errorHandlerStore)),
           // Depends on ClashStore, DiscordDetailsStore, RiotChampionStore, ErrorHandlerStore
-          ProxyProvider4<ClashStore, DiscordDetailsStore, RiotChampionStore,
-                  ErrorHandlerStore, ApplicationDetailsStore>(
-              update: (_, clashStore, discordDetailsStore, riotChampionStore,
-                      errorHandlerStore, __) =>
-                  ApplicationDetailsStore(clashStore, discordDetailsStore,
-                      riotChampionStore, errorHandlerStore)),
+          ProxyProvider5<
+                  ClashStore,
+                  ClashEventsStore,
+                  DiscordDetailsStore,
+                  RiotChampionStore,
+                  NotificationHandlerStore,
+                  ApplicationDetailsStore>(
+              update: (_, clashStore, clashEventsStore, discordDetailsStore,
+                      riotChampionStore, errorHandlerStore, __) =>
+                  ApplicationDetailsStore(
+                      clashStore,
+                      clashEventsStore,
+                      discordDetailsStore,
+                      riotChampionStore,
+                      errorHandlerStore)),
         ],
         child: Consumer2<ApplicationDetailsStore, ModelFirstTime>(builder:
             (context, ApplicationDetailsStore appStore,
@@ -276,6 +289,14 @@ class MainApp extends StatelessWidget {
   }
 }
 
+Color hexToColor(String hex) {
+  hex = hex.replaceAll("#", "");
+  if (hex.length == 6) {
+    hex = "FF$hex"; // Add full opacity if not provided
+  }
+  return Color(int.parse(hex, radix: 16));
+}
+
 class MainContainer extends StatelessWidget {
   const MainContainer({required this.child, super.key});
 
@@ -284,13 +305,13 @@ class MainContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final discordDetailsStore = context.read<DiscordDetailsStore>();
-    final errorStore = context.read<ErrorHandlerStore>();
+    final errorStore = context.read<NotificationHandlerStore>();
     autorun((_) {
-      if ('' != errorStore.errorMessage) {
+      if ('' != errorStore.notification.message) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Colors.redAccent,
-            content: Text(errorStore.errorMessage)));
-        errorStore.errorMessage = '';
+            backgroundColor: hexToColor(errorStore.notification.type.color),
+            content: Text(errorStore.notification.message)));
+        errorStore.notification.message = '';
       }
     });
     return Consumer<ModelTheme>(

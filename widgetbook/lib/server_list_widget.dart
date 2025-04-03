@@ -1,4 +1,6 @@
 import 'package:clashbot_flutter/pages/home/page/widgets/server_chip_list.dart';
+import 'package:clashbot_flutter/stores/clash_events.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/notification_handler.store.dart';
 import 'package:flutter/widgets.dart';
 import 'package:clash_bot_api/api.dart';
 import 'package:clashbot_flutter/enums/api_call_state.dart';
@@ -16,7 +18,6 @@ import 'package:clashbot_flutter/stores/application_details.store.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/riot_champion.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
-import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
@@ -70,13 +71,13 @@ ServerChipListDependencies buildServerChipListDependencies({
   final mockUser = ClashBotUser(
     discordId: '123456789',
     champions: [],
-    role: Role.TOP,
+    role: Role.top,
     serverId: servers[0],
     selectedServers: servers,
     preferredServers: servers,
   );
 
-  final errorHandlerStore = ErrorHandlerStore();
+  final errorHandlerStore = NotificationHandlerStore();
   final mockDiscordUser = DiscordUser(
     '123456789',
     'mock_username',
@@ -115,6 +116,7 @@ ServerChipListDependencies buildServerChipListDependencies({
       mockUser,
       servers,
       mockClashStore,
+      ClashEventsStore(mockClashStore, errorHandlerStore),
       mockDiscordDetailsStore,
       RiotChampionStore(RiotResourceServiceImpl(), errorHandlerStore),
       errorHandlerStore,

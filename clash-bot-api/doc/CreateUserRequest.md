@@ -1,8 +1,8 @@
-# clash_bot_api.model.CreateUserRequest
+# openapi.model.CreateUserRequest
 
 ## Load the model package
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 ```
 
 ## Properties

@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -67,13 +67,13 @@ class Player {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is Player &&
-     other.discordId == discordId &&
-     other.name == name &&
-     other.role == role &&
-     other.champions == champions &&
-     other.subscriptions == subscriptions &&
-     other.serverId == serverId &&
-     other.selectedServers == selectedServers;
+    other.discordId == discordId &&
+    other.name == name &&
+    other.role == role &&
+    _deepEquality.equals(other.champions, champions) &&
+    _deepEquality.equals(other.subscriptions, subscriptions) &&
+    other.serverId == serverId &&
+    _deepEquality.equals(other.selectedServers, selectedServers);
 
   @override
   int get hashCode =>
@@ -90,31 +90,31 @@ class Player {
   String toString() => 'Player[discordId=$discordId, name=$name, role=$role, champions=$champions, subscriptions=$subscriptions, serverId=$serverId, selectedServers=$selectedServers]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (discordId != null) {
-      _json[r'discordId'] = discordId;
+    final json = <String, dynamic>{};
+    if (this.discordId != null) {
+      json[r'discordId'] = this.discordId;
     } else {
-      _json[r'discordId'] = null;
+      json[r'discordId'] = null;
     }
-    if (name != null) {
-      _json[r'name'] = name;
+    if (this.name != null) {
+      json[r'name'] = this.name;
     } else {
-      _json[r'name'] = null;
+      json[r'name'] = null;
     }
-    if (role != null) {
-      _json[r'role'] = role;
+    if (this.role != null) {
+      json[r'role'] = this.role;
     } else {
-      _json[r'role'] = null;
+      json[r'role'] = null;
     }
-      _json[r'champions'] = champions;
-      _json[r'subscriptions'] = subscriptions;
-    if (serverId != null) {
-      _json[r'serverId'] = serverId;
+      json[r'champions'] = this.champions;
+      json[r'subscriptions'] = this.subscriptions;
+    if (this.serverId != null) {
+      json[r'serverId'] = this.serverId;
     } else {
-      _json[r'serverId'] = null;
+      json[r'serverId'] = null;
     }
-      _json[r'selectedServers'] = selectedServers;
-    return _json;
+      json[r'selectedServers'] = this.selectedServers;
+    return json;
   }
 
   /// Returns a new [Player] instance and imports its values from
@@ -139,18 +139,18 @@ class Player {
         discordId: mapValueOfType<String>(json, r'discordId'),
         name: mapValueOfType<String>(json, r'name'),
         role: Role.fromJson(json[r'role']),
-        champions: Champion.listFromJson(json[r'champions']) ?? const [],
-        subscriptions: Subscription.listFromJson(json[r'subscriptions']) ?? const [],
+        champions: Champion.listFromJson(json[r'champions']),
+        subscriptions: Subscription.listFromJson(json[r'subscriptions']),
         serverId: mapValueOfType<String>(json, r'serverId'),
-        selectedServers: json[r'selectedServers'] is List
-            ? (json[r'selectedServers'] as List).cast<String>()
+        selectedServers: json[r'selectedServers'] is Iterable
+            ? (json[r'selectedServers'] as Iterable).cast<String>().toList(growable: false)
             : const [],
       );
     }
     return null;
   }
 
-  static List<Player>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<Player> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <Player>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -181,12 +181,10 @@ class Player {
   static Map<String, List<Player>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<Player>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = Player.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = Player.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

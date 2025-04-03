@@ -1,8 +1,8 @@
-# clash_bot_api.model.Event
+# openapi.model.Event
 
 ## Load the model package
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 ```
 
 ## Properties

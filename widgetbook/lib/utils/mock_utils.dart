@@ -14,7 +14,7 @@ import 'package:clashbot_flutter/stores/application_details.store.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/riot_champion.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
-import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/clash_team.store.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
@@ -30,20 +30,20 @@ List<ClashTournament> buildTournaments(int count) {
   );
 }
 
-List<ClashTeam> buildClashTeams(int count) {
+List<ClashTeamStore> buildClashTeams(int count) {
   return List.generate(
     count,
-    (index) => ClashTeam(
+    (index) => ClashTeamStore(
       '$index',
       'Mock Team $index',
       'Mock Tournament $index',
       '$index',
-      {
-        Role.TOP: PlayerDetails('$index', 'Player $index', []),
-        Role.JG: PlayerDetails('${index + 1}', 'Player ${index + 1}', []),
-        Role.MID: PlayerDetails('${index + 2}', 'Player ${index + 2}', []),
-        Role.SUPP: PlayerDetails('${index + 3}', 'Player ${index + 3}', []),
-      },
+      ObservableMap<Role, PlayerDetails>.of({
+        Role.top: PlayerDetails('$index', []),
+        Role.jg: PlayerDetails('${index + 1}', []),
+        Role.mid: PlayerDetails('${index + 2}', []),
+        Role.supp: PlayerDetails('${index + 3}', []),
+      }),
       '123456789',
       DateTime.now(),
     ),
@@ -68,6 +68,7 @@ class MockApplicationDetailsStore extends ApplicationDetailsStore {
     ClashBotUser mockClashBotUser,
     List<String> mockPreferredServers,
     super._clashStore,
+    super._clashEventsStore,
     super._discordDetailsStore,
     super._riotChampionStore,
     super._errorHandlerStore,
@@ -94,7 +95,7 @@ class MockClashStore extends ClashStore {
   MockClashStore(
     ClashBotUser clashBotUser,
     List<ClashTournament> tournaments,
-    List<ClashTeam> clashTeams,
+    List<ClashTeamStore> clashTeams,
     ApiCallState tournamentsApiCallStateToBeSet,
     ApiCallState teamsApiCallState,
     ApiCallState userApiCallState,

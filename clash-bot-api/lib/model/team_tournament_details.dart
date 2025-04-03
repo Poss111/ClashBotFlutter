@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -44,10 +44,10 @@ class TeamTournamentDetails {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is TeamTournamentDetails &&
-     other.discordId == discordId &&
-     other.tournamentName == tournamentName &&
-     other.tournamentDay == tournamentDay &&
-     other.role == role;
+    other.discordId == discordId &&
+    other.tournamentName == tournamentName &&
+    other.tournamentDay == tournamentDay &&
+    other.role == role;
 
   @override
   int get hashCode =>
@@ -61,28 +61,28 @@ class TeamTournamentDetails {
   String toString() => 'TeamTournamentDetails[discordId=$discordId, tournamentName=$tournamentName, tournamentDay=$tournamentDay, role=$role]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (discordId != null) {
-      _json[r'discordId'] = discordId;
+    final json = <String, dynamic>{};
+    if (this.discordId != null) {
+      json[r'discordId'] = this.discordId;
     } else {
-      _json[r'discordId'] = null;
+      json[r'discordId'] = null;
     }
-    if (tournamentName != null) {
-      _json[r'tournamentName'] = tournamentName;
+    if (this.tournamentName != null) {
+      json[r'tournamentName'] = this.tournamentName;
     } else {
-      _json[r'tournamentName'] = null;
+      json[r'tournamentName'] = null;
     }
-    if (tournamentDay != null) {
-      _json[r'tournamentDay'] = tournamentDay;
+    if (this.tournamentDay != null) {
+      json[r'tournamentDay'] = this.tournamentDay;
     } else {
-      _json[r'tournamentDay'] = null;
+      json[r'tournamentDay'] = null;
     }
-    if (role != null) {
-      _json[r'role'] = role;
+    if (this.role != null) {
+      json[r'role'] = this.role;
     } else {
-      _json[r'role'] = null;
+      json[r'role'] = null;
     }
-    return _json;
+    return json;
   }
 
   /// Returns a new [TeamTournamentDetails] instance and imports its values from
@@ -113,7 +113,7 @@ class TeamTournamentDetails {
     return null;
   }
 
-  static List<TeamTournamentDetails>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<TeamTournamentDetails> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <TeamTournamentDetails>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -144,12 +144,10 @@ class TeamTournamentDetails {
   static Map<String, List<TeamTournamentDetails>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<TeamTournamentDetails>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = TeamTournamentDetails.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = TeamTournamentDetails.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

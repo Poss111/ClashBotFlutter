@@ -1,9 +1,9 @@
 import 'package:clash_bot_api/api.dart';
 
 final roleToValueMapper = {
-  Role.TOP: 'Top',
-  Role.JG: 'Jungle',
-  Role.MID: 'Middle',
-  Role.BOT: 'Bottem',
-  Role.SUPP: 'Support',
+  Role.top: 'Top',
+  Role.jg: 'Jungle',
+  Role.mid: 'Middle',
+  Role.bot: 'Bottem',
+  Role.supp: 'Support',
 };

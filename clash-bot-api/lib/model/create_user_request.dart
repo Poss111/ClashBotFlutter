@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -33,10 +33,10 @@ class CreateUserRequest {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is CreateUserRequest &&
-     other.discordId == discordId &&
-     other.name == name &&
-     other.serverId == serverId &&
-     other.selectedGuilds == selectedGuilds;
+    other.discordId == discordId &&
+    other.name == name &&
+    other.serverId == serverId &&
+    _deepEquality.equals(other.selectedGuilds, selectedGuilds);
 
   @override
   int get hashCode =>
@@ -50,12 +50,12 @@ class CreateUserRequest {
   String toString() => 'CreateUserRequest[discordId=$discordId, name=$name, serverId=$serverId, selectedGuilds=$selectedGuilds]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-      _json[r'discordId'] = discordId;
-      _json[r'name'] = name;
-      _json[r'serverId'] = serverId;
-      _json[r'selectedGuilds'] = selectedGuilds;
-    return _json;
+    final json = <String, dynamic>{};
+      json[r'discordId'] = this.discordId;
+      json[r'name'] = this.name;
+      json[r'serverId'] = this.serverId;
+      json[r'selectedGuilds'] = this.selectedGuilds;
+    return json;
   }
 
   /// Returns a new [CreateUserRequest] instance and imports its values from
@@ -80,15 +80,15 @@ class CreateUserRequest {
         discordId: mapValueOfType<String>(json, r'discordId')!,
         name: mapValueOfType<String>(json, r'name')!,
         serverId: mapValueOfType<String>(json, r'serverId')!,
-        selectedGuilds: json[r'selectedGuilds'] is List
-            ? (json[r'selectedGuilds'] as List).cast<String>()
+        selectedGuilds: json[r'selectedGuilds'] is Iterable
+            ? (json[r'selectedGuilds'] as Iterable).cast<String>().toList(growable: false)
             : const [],
       );
     }
     return null;
   }
 
-  static List<CreateUserRequest>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<CreateUserRequest> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <CreateUserRequest>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -119,12 +119,10 @@ class CreateUserRequest {
   static Map<String, List<CreateUserRequest>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<CreateUserRequest>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = CreateUserRequest.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = CreateUserRequest.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

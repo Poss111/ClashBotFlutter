@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -32,7 +32,7 @@ class SubscriptionType {
 
   static SubscriptionType? fromJson(dynamic value) => SubscriptionTypeTypeTransformer().decode(value);
 
-  static List<SubscriptionType>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<SubscriptionType> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <SubscriptionType>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -65,7 +65,7 @@ class SubscriptionTypeTypeTransformer {
   /// and users are still using an old app with the old code.
   SubscriptionType? decode(dynamic data, {bool allowNull = true}) {
     if (data != null) {
-      switch (data.toString()) {
+      switch (data) {
         case r'DISCORD_MONDAY_NOTIFICATION': return SubscriptionType.DISCORD_MONDAY_NOTIFICATION;
         default:
           if (!allowNull) {

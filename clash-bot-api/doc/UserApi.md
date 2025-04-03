@@ -1,8 +1,8 @@
-# clash_bot_api.api.UserApi
+# openapi.api.UserApi
 
 ## Load the API package
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 ```
 
 All URIs are relative to *http://localhost:8080/api/v2*
@@ -27,7 +27,7 @@ Adds the selected server to the users selected servers. Cannot be greater than a
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = UserApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -74,7 +74,7 @@ Create a new Clash Bot Player.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = UserApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -119,7 +119,7 @@ Updates the users selected servers with an entirely new list. Cannot be greater 
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = UserApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -166,7 +166,7 @@ Retrieve a Clash Bot Player Details
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = UserApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -211,7 +211,7 @@ Removes the selected server to the users selected servers.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = UserApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -258,7 +258,7 @@ Returns a list of selected servers that the User has.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = UserApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -303,7 +303,7 @@ Update an existing Clash Bot Player.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = UserApi();
 final xCausedBy = xCausedBy_example; // String | 

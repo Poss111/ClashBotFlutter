@@ -12,7 +12,8 @@ import 'package:clashbot_flutter/services/riot_resources_service_impl.dart';
 import 'package:clashbot_flutter/stores/discord_details.store.dart';
 import 'package:clashbot_flutter/stores/riot_champion.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
-import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/clash_team.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/notification_handler.store.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
@@ -24,7 +25,7 @@ import 'package:widgetbook_workspace/utils/mock_utils.dart';
 @widgetbook.UseCase(name: 'Loading', type: CalendarWidget)
 Widget buildCoolButtonUseCase(BuildContext context) {
   List<ClashTournament> tournaments = buildTournaments(1);
-  List<ClashTeam> clashTeams = buildClashTeams(2);
+  List<ClashTeamStore> clashTeams = buildClashTeams(2);
   List<DiscordGuild> guilds = buildGuilds(1);
   CalendarWidgetDependencies calendarWidgetDependencies =
       buildCalendarWidgetDependencies(
@@ -52,7 +53,7 @@ Widget buildCalendarStory(BuildContext context) {
     initialValue: 1,
   );
   List<ClashTournament> tournaments = buildTournaments(numberOfTournaments);
-  List<ClashTeam> clashTeams = buildClashTeams(2);
+  List<ClashTeamStore> clashTeams = buildClashTeams(2);
   List<DiscordGuild> guilds = buildGuilds(1);
   CalendarWidgetDependencies calendarWidgetDependencies =
       buildCalendarWidgetDependencies(
@@ -81,7 +82,7 @@ Widget buildCalendarStoryError(BuildContext context) {
     initialValue: 1,
   );
   List<ClashTournament> tournaments = buildTournaments(numberOfTournaments);
-  List<ClashTeam> clashTeams = buildClashTeams(2);
+  List<ClashTeamStore> clashTeams = buildClashTeams(2);
   List<DiscordGuild> guilds = buildGuilds(1);
   CalendarWidgetDependencies calendarWidgetDependencies =
       buildCalendarWidgetDependencies(
@@ -105,7 +106,7 @@ class CalendarWidgetDependencies {
   final ClashStore clashStore;
   final DiscordDetailsStore discordDetailsStore;
   final RiotChampionStore riotChampionStore;
-  final ErrorHandlerStore errorHandlerStore;
+  final NotificationHandlerStore errorHandlerStore;
 
   CalendarWidgetDependencies(
     this.clashStore,
@@ -117,7 +118,7 @@ class CalendarWidgetDependencies {
 
 CalendarWidgetDependencies buildCalendarWidgetDependencies(
   List<ClashTournament> tournaments,
-  List<ClashTeam> clashTeams,
+  List<ClashTeamStore> clashTeams,
   List<DiscordGuild> guilds,
   ApiCallState tournamentsApiCallState,
   ApiCallState teamsApiCallState,
@@ -127,12 +128,12 @@ CalendarWidgetDependencies buildCalendarWidgetDependencies(
     guilds,
     DiscordUser('1', 'Mock User', 'icon', '1'),
     DiscordServiceImpl(setupOauth2Helper()),
-    ErrorHandlerStore(),
+    NotificationHandlerStore(),
   );
   var clashUser = ClashBotUser(
     discordId: "1",
     champions: [],
-    role: Role.TOP,
+    role: Role.top,
     serverId: 'server1',
     selectedServers: ['server1'],
     preferredServers: ['server1', 'server2'],
@@ -152,15 +153,18 @@ CalendarWidgetDependencies buildCalendarWidgetDependencies(
       SubscriptionApi(apiClient),
       TentativeApi(apiClient),
       TournamentApi(apiClient),
-      ErrorHandlerStore(),
+      NotificationHandlerStore(),
     ),
-    ErrorHandlerStore(),
+    NotificationHandlerStore(),
   );
   clashStore.addCallInProgress('getTournaments');
   return CalendarWidgetDependencies(
     clashStore,
     discordDetailsStore,
-    MockRiotChampionStore(RiotResourceServiceImpl(), ErrorHandlerStore()),
-    ErrorHandlerStore(),
+    MockRiotChampionStore(
+      RiotResourceServiceImpl(),
+      NotificationHandlerStore(),
+    ),
+    NotificationHandlerStore(),
   );
 }

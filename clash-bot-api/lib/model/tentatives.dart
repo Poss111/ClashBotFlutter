@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -29,8 +29,8 @@ class Tentatives {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is Tentatives &&
-     other.count == count &&
-     other.queues == queues;
+    other.count == count &&
+    _deepEquality.equals(other.queues, queues);
 
   @override
   int get hashCode =>
@@ -42,14 +42,14 @@ class Tentatives {
   String toString() => 'Tentatives[count=$count, queues=$queues]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (count != null) {
-      _json[r'count'] = count;
+    final json = <String, dynamic>{};
+    if (this.count != null) {
+      json[r'count'] = this.count;
     } else {
-      _json[r'count'] = null;
+      json[r'count'] = null;
     }
-      _json[r'queues'] = queues;
-    return _json;
+      json[r'queues'] = this.queues;
+    return json;
   }
 
   /// Returns a new [Tentatives] instance and imports its values from
@@ -72,13 +72,13 @@ class Tentatives {
 
       return Tentatives(
         count: mapValueOfType<int>(json, r'count'),
-        queues: Tentative.listFromJson(json[r'queues']) ?? const [],
+        queues: Tentative.listFromJson(json[r'queues']),
       );
     }
     return null;
   }
 
-  static List<Tentatives>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<Tentatives> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <Tentatives>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -109,12 +109,10 @@ class Tentatives {
   static Map<String, List<Tentatives>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<Tentatives>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = Tentatives.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = Tentatives.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

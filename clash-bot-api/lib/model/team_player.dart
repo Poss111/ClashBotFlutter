@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -14,7 +14,6 @@ class TeamPlayer {
   /// Returns a new [TeamPlayer] instance.
   TeamPlayer({
     this.discordId,
-    this.name,
     this.champions = const [],
   });
 
@@ -27,48 +26,32 @@ class TeamPlayer {
   ///
   String? discordId;
 
-  /// The Players discord name
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? name;
-
   /// A list of the Users preferred champions.
   List<Champion> champions;
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is TeamPlayer &&
-     other.discordId == discordId &&
-     other.name == name &&
-     other.champions == champions;
+    other.discordId == discordId &&
+    _deepEquality.equals(other.champions, champions);
 
   @override
   int get hashCode =>
     // ignore: unnecessary_parenthesis
     (discordId == null ? 0 : discordId!.hashCode) +
-    (name == null ? 0 : name!.hashCode) +
     (champions.hashCode);
 
   @override
-  String toString() => 'TeamPlayer[discordId=$discordId, name=$name, champions=$champions]';
+  String toString() => 'TeamPlayer[discordId=$discordId, champions=$champions]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (discordId != null) {
-      _json[r'discordId'] = discordId;
+    final json = <String, dynamic>{};
+    if (this.discordId != null) {
+      json[r'discordId'] = this.discordId;
     } else {
-      _json[r'discordId'] = null;
+      json[r'discordId'] = null;
     }
-    if (name != null) {
-      _json[r'name'] = name;
-    } else {
-      _json[r'name'] = null;
-    }
-      _json[r'champions'] = champions;
-    return _json;
+      json[r'champions'] = this.champions;
+    return json;
   }
 
   /// Returns a new [TeamPlayer] instance and imports its values from
@@ -91,14 +74,13 @@ class TeamPlayer {
 
       return TeamPlayer(
         discordId: mapValueOfType<String>(json, r'discordId'),
-        name: mapValueOfType<String>(json, r'name'),
-        champions: Champion.listFromJson(json[r'champions']) ?? const [],
+        champions: Champion.listFromJson(json[r'champions']),
       );
     }
     return null;
   }
 
-  static List<TeamPlayer>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<TeamPlayer> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <TeamPlayer>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -129,12 +111,10 @@ class TeamPlayer {
   static Map<String, List<TeamPlayer>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<TeamPlayer>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = TeamPlayer.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = TeamPlayer.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

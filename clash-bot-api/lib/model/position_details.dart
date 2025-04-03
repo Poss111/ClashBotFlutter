@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -35,8 +35,8 @@ class PositionDetails {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is PositionDetails &&
-     other.champions == champions &&
-     other.role == role;
+    other.champions == champions &&
+    other.role == role;
 
   @override
   int get hashCode =>
@@ -48,18 +48,18 @@ class PositionDetails {
   String toString() => 'PositionDetails[champions=$champions, role=$role]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (champions != null) {
-      _json[r'champions'] = champions;
+    final json = <String, dynamic>{};
+    if (this.champions != null) {
+      json[r'champions'] = this.champions;
     } else {
-      _json[r'champions'] = null;
+      json[r'champions'] = null;
     }
-    if (role != null) {
-      _json[r'role'] = role;
+    if (this.role != null) {
+      json[r'role'] = this.role;
     } else {
-      _json[r'role'] = null;
+      json[r'role'] = null;
     }
-    return _json;
+    return json;
   }
 
   /// Returns a new [PositionDetails] instance and imports its values from
@@ -88,7 +88,7 @@ class PositionDetails {
     return null;
   }
 
-  static List<PositionDetails>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<PositionDetails> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <PositionDetails>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -119,12 +119,10 @@ class PositionDetails {
   static Map<String, List<PositionDetails>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<PositionDetails>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = PositionDetails.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = PositionDetails.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

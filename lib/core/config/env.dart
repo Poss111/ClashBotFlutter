@@ -2,10 +2,7 @@ import 'package:envied/envied.dart';
 
 part 'env.g.dart';
 
-@Envied(
-    // environment: true,
-    // obfuscate: true,
-    )
+@Envied()
 abstract class Env {
   @EnviedField(varName: 'CLASHBOT_SERVICE_URL')
   static String clashbotServiceUrl = _Env.clashbotServiceUrl;
@@ -13,4 +10,6 @@ abstract class Env {
   static String mockDiscordService = _Env.mockDiscordService;
   @EnviedField()
   static String discordClientId = _Env.discordClientId;
+  @EnviedField()
+  static String clashbotEventUrl = _Env.clashbotEventUrl;
 }

@@ -10,10 +10,13 @@ import 'package:clashbot_flutter/services/clashbot_service_impl.dart';
 import 'package:clashbot_flutter/services/discord_service_impl.dart';
 import 'package:clashbot_flutter/services/riot_resources_service_impl.dart';
 import 'package:clashbot_flutter/stores/application_details.store.dart';
+import 'package:clashbot_flutter/stores/clash_events.store.dart';
 import 'package:clashbot_flutter/stores/riot_champion.store.dart';
 import 'package:clashbot_flutter/stores/v2-stores/clash.store.dart';
-import 'package:clashbot_flutter/stores/v2-stores/error_handler.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/clash_team.store.dart';
+import 'package:clashbot_flutter/stores/v2-stores/notification_handler.store.dart';
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 import 'package:widgetbook_workspace/utils/mock_utils.dart';
 
@@ -23,7 +26,7 @@ Widget buildEventListWidget(BuildContext context) {
   var clashBotUser = ClashBotUser(
     discordId: "1",
     champions: [],
-    role: Role.TOP,
+    role: Role.top,
     serverId: 'server1',
     selectedServers: ['server1'],
     preferredServers: ['server1', 'server2'],
@@ -69,17 +72,17 @@ Widget buildEventListWidget(BuildContext context) {
       ),
     ],
     [
-      ClashTeam(
+      ClashTeamStore(
         '1',
         'Mock Team 1',
         'Mock Tournament 1',
         '1',
-        {
-          Role.TOP: PlayerDetails('1', 'Player 1', []),
-          Role.JG: PlayerDetails('2', 'Player 2', []),
-          Role.MID: PlayerDetails('3', 'Player 3', []),
-          Role.SUPP: PlayerDetails('5', 'Player 5', []),
-        },
+        ObservableMap.of({
+          Role.top: PlayerDetails('1', []),
+          Role.jg: PlayerDetails('2', []),
+          Role.mid: PlayerDetails('3', []),
+          Role.supp: PlayerDetails('5', []),
+        }),
         '460520499680641035',
         DateTime.now(),
       ),
@@ -94,24 +97,25 @@ Widget buildEventListWidget(BuildContext context) {
       SubscriptionApi(apiClient),
       TentativeApi(apiClient),
       TournamentApi(apiClient),
-      ErrorHandlerStore(),
+      NotificationHandlerStore(),
     ),
-    ErrorHandlerStore(),
+    NotificationHandlerStore(),
   );
   var mockDiscordDetailsStore = MockDiscordDetailsStore(
     buildGuilds(2),
     DiscordUser('1', 'Mock User', 'Mock#0001', 'avatar'),
     DiscordServiceImpl(setupOauth2Helper()),
-    ErrorHandlerStore(),
+    NotificationHandlerStore(),
   );
   var mockServers = buildMockServers(2);
   var applicationDetailsStore = MockApplicationDetailsStore(
     clashBotUser,
     mockServers,
     clashStoreW5Tournies,
+    ClashEventsStore(clashStoreW5Tournies, NotificationHandlerStore()),
     mockDiscordDetailsStore,
-    RiotChampionStore(RiotResourceServiceImpl(), ErrorHandlerStore()),
-    ErrorHandlerStore(),
+    RiotChampionStore(RiotResourceServiceImpl(), NotificationHandlerStore()),
+    NotificationHandlerStore(),
   );
   return EventsListWidget(
     clashStore: clashStoreW5Tournies,

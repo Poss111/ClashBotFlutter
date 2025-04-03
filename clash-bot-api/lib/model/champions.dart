@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -20,7 +20,7 @@ class Champions {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is Champions &&
-     other.champions == champions;
+    _deepEquality.equals(other.champions, champions);
 
   @override
   int get hashCode =>
@@ -31,9 +31,9 @@ class Champions {
   String toString() => 'Champions[champions=$champions]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-      _json[r'champions'] = champions;
-    return _json;
+    final json = <String, dynamic>{};
+      json[r'champions'] = this.champions;
+    return json;
   }
 
   /// Returns a new [Champions] instance and imports its values from
@@ -55,13 +55,13 @@ class Champions {
       }());
 
       return Champions(
-        champions: Champion.listFromJson(json[r'champions']) ?? const [],
+        champions: Champion.listFromJson(json[r'champions']),
       );
     }
     return null;
   }
 
-  static List<Champions>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<Champions> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <Champions>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -92,12 +92,10 @@ class Champions {
   static Map<String, List<Champions>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<Champions>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = Champions.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = Champions.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

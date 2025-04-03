@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -57,12 +57,12 @@ class TeamRequired {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is TeamRequired &&
-     other.id == id &&
-     other.name == name &&
-     other.playerDetails == playerDetails &&
-     other.serverId == serverId &&
-     other.tournament == tournament &&
-     other.lastUpdatedAt == lastUpdatedAt;
+    other.id == id &&
+    other.name == name &&
+    other.playerDetails == playerDetails &&
+    other.serverId == serverId &&
+    other.tournament == tournament &&
+    other.lastUpdatedAt == lastUpdatedAt;
 
   @override
   int get hashCode =>
@@ -78,26 +78,26 @@ class TeamRequired {
   String toString() => 'TeamRequired[id=$id, name=$name, playerDetails=$playerDetails, serverId=$serverId, tournament=$tournament, lastUpdatedAt=$lastUpdatedAt]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (id != null) {
-      _json[r'id'] = id;
+    final json = <String, dynamic>{};
+    if (this.id != null) {
+      json[r'id'] = this.id;
     } else {
-      _json[r'id'] = null;
+      json[r'id'] = null;
     }
-    if (name != null) {
-      _json[r'name'] = name;
+    if (this.name != null) {
+      json[r'name'] = this.name;
     } else {
-      _json[r'name'] = null;
+      json[r'name'] = null;
     }
-      _json[r'playerDetails'] = playerDetails;
-      _json[r'serverId'] = serverId;
-      _json[r'tournament'] = tournament;
-    if (lastUpdatedAt != null) {
-      _json[r'lastUpdatedAt'] = lastUpdatedAt!.toUtc().toIso8601String();
+      json[r'playerDetails'] = this.playerDetails;
+      json[r'serverId'] = this.serverId;
+      json[r'tournament'] = this.tournament;
+    if (this.lastUpdatedAt != null) {
+      json[r'lastUpdatedAt'] = this.lastUpdatedAt!.toUtc().toIso8601String();
     } else {
-      _json[r'lastUpdatedAt'] = null;
+      json[r'lastUpdatedAt'] = null;
     }
-    return _json;
+    return json;
   }
 
   /// Returns a new [TeamRequired] instance and imports its values from
@@ -124,13 +124,13 @@ class TeamRequired {
         playerDetails: TeamPlayerDetails.fromJson(json[r'playerDetails'])!,
         serverId: mapValueOfType<String>(json, r'serverId')!,
         tournament: BaseTournament.fromJson(json[r'tournament'])!,
-        lastUpdatedAt: mapDateTime(json, r'lastUpdatedAt', ''),
+        lastUpdatedAt: mapDateTime(json, r'lastUpdatedAt', r''),
       );
     }
     return null;
   }
 
-  static List<TeamRequired>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<TeamRequired> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <TeamRequired>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -161,12 +161,10 @@ class TeamRequired {
   static Map<String, List<TeamRequired>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<TeamRequired>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = TeamRequired.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = TeamRequired.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

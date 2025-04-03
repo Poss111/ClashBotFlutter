@@ -1,8 +1,8 @@
-# clash_bot_api.api.SubscriptionApi
+# openapi.api.SubscriptionApi
 
 ## Load the API package
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 ```
 
 All URIs are relative to *http://localhost:8080/api/v2*
@@ -23,7 +23,7 @@ Retrieve details on a user's subscription.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = SubscriptionApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -70,7 +70,7 @@ Subscribes the User to the specified subscription.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = SubscriptionApi();
 final xCausedBy = xCausedBy_example; // String | 
@@ -117,7 +117,7 @@ Unsubscribes the User from the specified subscription.
 
 ### Example
 ```dart
-import 'package:clash_bot_api/api.dart';
+import 'package:openapi/api.dart';
 
 final api_instance = SubscriptionApi();
 final xCausedBy = xCausedBy_example; // String | 

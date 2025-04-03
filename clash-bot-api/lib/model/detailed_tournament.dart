@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -57,10 +57,10 @@ class DetailedTournament {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is DetailedTournament &&
-     other.tournamentName == tournamentName &&
-     other.tournamentDay == tournamentDay &&
-     other.startTime == startTime &&
-     other.registrationTime == registrationTime;
+    other.tournamentName == tournamentName &&
+    other.tournamentDay == tournamentDay &&
+    other.startTime == startTime &&
+    other.registrationTime == registrationTime;
 
   @override
   int get hashCode =>
@@ -74,28 +74,28 @@ class DetailedTournament {
   String toString() => 'DetailedTournament[tournamentName=$tournamentName, tournamentDay=$tournamentDay, startTime=$startTime, registrationTime=$registrationTime]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (tournamentName != null) {
-      _json[r'tournamentName'] = tournamentName;
+    final json = <String, dynamic>{};
+    if (this.tournamentName != null) {
+      json[r'tournamentName'] = this.tournamentName;
     } else {
-      _json[r'tournamentName'] = null;
+      json[r'tournamentName'] = null;
     }
-    if (tournamentDay != null) {
-      _json[r'tournamentDay'] = tournamentDay;
+    if (this.tournamentDay != null) {
+      json[r'tournamentDay'] = this.tournamentDay;
     } else {
-      _json[r'tournamentDay'] = null;
+      json[r'tournamentDay'] = null;
     }
-    if (startTime != null) {
-      _json[r'startTime'] = startTime!.toUtc().toIso8601String();
+    if (this.startTime != null) {
+      json[r'startTime'] = this.startTime!.toUtc().toIso8601String();
     } else {
-      _json[r'startTime'] = null;
+      json[r'startTime'] = null;
     }
-    if (registrationTime != null) {
-      _json[r'registrationTime'] = registrationTime!.toUtc().toIso8601String();
+    if (this.registrationTime != null) {
+      json[r'registrationTime'] = this.registrationTime!.toUtc().toIso8601String();
     } else {
-      _json[r'registrationTime'] = null;
+      json[r'registrationTime'] = null;
     }
-    return _json;
+    return json;
   }
 
   /// Returns a new [DetailedTournament] instance and imports its values from
@@ -119,14 +119,14 @@ class DetailedTournament {
       return DetailedTournament(
         tournamentName: mapValueOfType<String>(json, r'tournamentName'),
         tournamentDay: mapValueOfType<String>(json, r'tournamentDay'),
-        startTime: mapDateTime(json, r'startTime', ''),
-        registrationTime: mapDateTime(json, r'registrationTime', ''),
+        startTime: mapDateTime(json, r'startTime', r''),
+        registrationTime: mapDateTime(json, r'registrationTime', r''),
       );
     }
     return null;
   }
 
-  static List<DetailedTournament>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<DetailedTournament> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <DetailedTournament>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -157,12 +157,10 @@ class DetailedTournament {
   static Map<String, List<DetailedTournament>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<DetailedTournament>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = DetailedTournament.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = DetailedTournament.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

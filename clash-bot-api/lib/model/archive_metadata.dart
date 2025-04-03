@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -47,9 +47,9 @@ class ArchiveMetadata {
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is ArchiveMetadata &&
-     other.teamsMoved == teamsMoved &&
-     other.tentativeQueuesMoved == tentativeQueuesMoved &&
-     other.totalTime == totalTime;
+    other.teamsMoved == teamsMoved &&
+    other.tentativeQueuesMoved == tentativeQueuesMoved &&
+    other.totalTime == totalTime;
 
   @override
   int get hashCode =>
@@ -62,23 +62,23 @@ class ArchiveMetadata {
   String toString() => 'ArchiveMetadata[teamsMoved=$teamsMoved, tentativeQueuesMoved=$tentativeQueuesMoved, totalTime=$totalTime]';
 
   Map<String, dynamic> toJson() {
-    final _json = <String, dynamic>{};
-    if (teamsMoved != null) {
-      _json[r'teamsMoved'] = teamsMoved;
+    final json = <String, dynamic>{};
+    if (this.teamsMoved != null) {
+      json[r'teamsMoved'] = this.teamsMoved;
     } else {
-      _json[r'teamsMoved'] = null;
+      json[r'teamsMoved'] = null;
     }
-    if (tentativeQueuesMoved != null) {
-      _json[r'tentativeQueuesMoved'] = tentativeQueuesMoved;
+    if (this.tentativeQueuesMoved != null) {
+      json[r'tentativeQueuesMoved'] = this.tentativeQueuesMoved;
     } else {
-      _json[r'tentativeQueuesMoved'] = null;
+      json[r'tentativeQueuesMoved'] = null;
     }
-    if (totalTime != null) {
-      _json[r'totalTime'] = totalTime;
+    if (this.totalTime != null) {
+      json[r'totalTime'] = this.totalTime;
     } else {
-      _json[r'totalTime'] = null;
+      json[r'totalTime'] = null;
     }
-    return _json;
+    return json;
   }
 
   /// Returns a new [ArchiveMetadata] instance and imports its values from
@@ -108,7 +108,7 @@ class ArchiveMetadata {
     return null;
   }
 
-  static List<ArchiveMetadata>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<ArchiveMetadata> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <ArchiveMetadata>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -139,12 +139,10 @@ class ArchiveMetadata {
   static Map<String, List<ArchiveMetadata>> mapListFromJson(dynamic json, {bool growable = false,}) {
     final map = <String, List<ArchiveMetadata>>{};
     if (json is Map && json.isNotEmpty) {
-      json = json.cast<String, dynamic>(); // ignore: parameter_assignments
+      // ignore: parameter_assignments
+      json = json.cast<String, dynamic>();
       for (final entry in json.entries) {
-        final value = ArchiveMetadata.listFromJson(entry.value, growable: growable,);
-        if (value != null) {
-          map[entry.key] = value;
-        }
+        map[entry.key] = ArchiveMetadata.listFromJson(entry.value, growable: growable,);
       }
     }
     return map;

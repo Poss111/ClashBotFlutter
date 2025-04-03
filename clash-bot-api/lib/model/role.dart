@@ -1,7 +1,7 @@
 //
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
-// @dart=2.12
+// @dart=2.18
 
 // ignore_for_file: unused_element, unused_import
 // ignore_for_file: always_put_required_named_parameters_first
@@ -23,24 +23,24 @@ class Role {
 
   String toJson() => value;
 
-  static const TOP = Role._(r'TOP');
-  static const MID = Role._(r'MID');
-  static const JG = Role._(r'JG');
-  static const BOT = Role._(r'BOT');
-  static const SUPP = Role._(r'SUPP');
+  static const top = Role._(r'top');
+  static const mid = Role._(r'mid');
+  static const jg = Role._(r'jg');
+  static const bot = Role._(r'bot');
+  static const supp = Role._(r'supp');
 
   /// List of all possible values in this [enum][Role].
   static const values = <Role>[
-    TOP,
-    MID,
-    JG,
-    BOT,
-    SUPP,
+    top,
+    mid,
+    jg,
+    bot,
+    supp,
   ];
 
   static Role? fromJson(dynamic value) => RoleTypeTransformer().decode(value);
 
-  static List<Role>? listFromJson(dynamic json, {bool growable = false,}) {
+  static List<Role> listFromJson(dynamic json, {bool growable = false,}) {
     final result = <Role>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -73,12 +73,12 @@ class RoleTypeTransformer {
   /// and users are still using an old app with the old code.
   Role? decode(dynamic data, {bool allowNull = true}) {
     if (data != null) {
-      switch (data.toString()) {
-        case r'TOP': return Role.TOP;
-        case r'MID': return Role.MID;
-        case r'JG': return Role.JG;
-        case r'BOT': return Role.BOT;
-        case r'SUPP': return Role.SUPP;
+      switch (data) {
+        case r'top': return Role.top;
+        case r'mid': return Role.mid;
+        case r'jg': return Role.jg;
+        case r'bot': return Role.bot;
+        case r'supp': return Role.supp;
         default:
           if (!allowNull) {
             throw ArgumentError('Unknown enum value to decode: $data');
